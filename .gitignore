@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+logs/
+.venv/
+run_env.sh
+.DS_Store
