@@ -309,8 +309,8 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
             _debug_log("retrieve_synonym", skip="no synonyms")
             return {"retrieved_docs": []}
 
-        conds = " AND ".join([f"{column} ILIKE '%{k}%'" for k in synonyms])
-        sql = f"SELECT {column} FROM {table} WHERE {conds} LIMIT 5"
+        conds = " OR ".join([f"{column} ILIKE '%{k}%'" for k in synonyms])
+        sql = f"SELECT {column} FROM {table} WHERE ({conds}) LIMIT 5"
         _debug_log("retrieve_synonym", sql=sql)
         try:
             with engine.connect() as conn:

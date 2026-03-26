@@ -82,42 +82,71 @@ def _render_table_image(data, question, max_rows=50):
     # 截斷過長的文字
     for r in cell_text:
         for i, v in enumerate(r):
-            if len(v) > 30:
-                r[i] = v[:28] + "…"
+            if len(v) > 25:
+                r[i] = v[:23] + "…"
+
+    # 偵測數值欄位（用於靠右對齊）
+    numeric_cols = set()
+    for c in cols:
+        sample_vals = [row.get(c) for row in data[:10] if row.get(c) is not None]
+        if sample_vals and all(isinstance(v, (int, float)) for v in sample_vals):
+            numeric_cols.add(c)
 
     n_rows = len(cell_text)
     n_cols = len(cols)
-    fig_w = max(8, n_cols * 2.5)
-    fig_h = max(3, 0.4 * n_rows + 1.5)
+    # 根據欄位內容估算寬度
+    col_max_len = []
+    for j, c in enumerate(cols):
+        max_len = len(c)
+        for r in cell_text:
+            max_len = max(max_len, len(r[j]))
+        col_max_len.append(max_len)
+    total_chars = sum(col_max_len)
+    fig_w = max(10, total_chars * 0.18 + 2)
+    # 行高根據筆數動態調整，避免太擠或太鬆
+    row_height = 0.35 if n_rows > 30 else 0.4
+    fig_h = max(3, row_height * n_rows + 2)
+    # 限制最大高度，避免圖片過長
+    fig_h = min(fig_h, 28)
+
+    plt.rcParams["font.family"] = "Arial Unicode MS"
     fig, ax = plt.subplots(figsize=(fig_w, fig_h))
     ax.axis("off")
-    plt.rcParams["font.family"] = "Arial Unicode MS"
     title = question if len(question) <= 40 else question[:38] + "…"
-    ax.set_title(title, fontsize=14, pad=12)
+    ax.set_title(title, fontsize=14, pad=14, fontweight="bold")
 
     table = ax.table(
         cellText=cell_text,
         colLabels=cols,
         loc="center",
         cellLoc="center",
+        bbox=[0, 0, 1, 1],
     )
     table.auto_set_font_size(False)
-    table.set_fontsize(9)
-    table.scale(1, 1.4)
+    table.set_fontsize(9 if n_rows <= 30 else 8)
+    table.auto_set_column_width(list(range(n_cols)))
+    row_scale = 1.3 if n_rows > 30 else 1.4
+    table.scale(1, row_scale)
+
     # 表頭樣式
     for j in range(n_cols):
         cell = table[0, j]
         cell.set_facecolor("#4472C4")
         cell.set_text_props(color="white", fontweight="bold")
-    # 斑馬紋
+    # 資料列樣式
     for i in range(1, n_rows + 1):
         for j in range(n_cols):
+            cell = table[i, j]
+            # 斑馬紋
             if i % 2 == 0:
-                table[i, j].set_facecolor("#D9E2F3")
+                cell.set_facecolor("#D9E2F3")
+            # 數值欄位靠右對齊
+            if cols[j] in numeric_cols:
+                cell._loc = "right"
 
     if len(data) > max_rows:
         ax.text(
-            0.5, -0.02, f"（僅顯示前 {max_rows} 筆，共 {len(data)} 筆）",
+            0.5, -0.01, f"（僅顯示前 {max_rows} 筆，共 {len(data)} 筆）",
             transform=ax.transAxes, ha="center", fontsize=9, color="gray",
         )
 
