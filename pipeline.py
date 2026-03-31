@@ -6,6 +6,7 @@ LangGraph Pipeline — Graph 組裝
 """
 
 from typing import TypedDict, Any
+import os
 
 from langgraph.graph import StateGraph, END
 
@@ -32,6 +33,7 @@ class State(TypedDict):
     synonyms: list
     retrieved_docs: list
     strategy: str
+    plan: str
     sql: str
     sql_result: Any
     sample: Any
@@ -46,16 +48,13 @@ class State(TypedDict):
     chart_reason: str
     chart_code: str
     chart_image: str
+    schema_desc: str
 
 
 # =========================
 # 🔀 Routing
 # =========================
 def route_after_retrieval(state: State):
-    conditions = state.get("conditions", [])
-    has_keyword = any(c.get("type") == "keyword" for c in conditions)
-    if has_keyword and not state.get("retrieved_docs"):
-        return "format_answer"
     return "generate_sql"
 
 
@@ -102,7 +101,10 @@ graph.add_node("check_need_code", check_need_code)
 graph.add_node("generate_code", generate_code)
 graph.add_node("run_code", run_code)
 graph.add_node("format_answer", format_answer)
-graph.add_node("generate_chart", generate_chart)
+
+ENABLE_CHART = os.getenv("ENABLE_CHART", "true").lower() in ("true", "1", "yes")
+if ENABLE_CHART:
+    graph.add_node("generate_chart", generate_chart)
 
 graph.set_entry_point("retrieval")
 graph.add_conditional_edges("retrieval", route_after_retrieval)
@@ -111,7 +113,11 @@ graph.add_conditional_edges("execute_sql", route_after_execute)
 graph.add_conditional_edges("check_need_code", route_after_check)
 graph.add_edge("generate_code", "run_code")
 graph.add_conditional_edges("run_code", should_retry)
-graph.add_edge("format_answer", "generate_chart")
-graph.add_edge("generate_chart", END)
+
+if ENABLE_CHART:
+    graph.add_edge("format_answer", "generate_chart")
+    graph.add_edge("generate_chart", END)
+else:
+    graph.add_edge("format_answer", END)
 
 app = graph.compile()

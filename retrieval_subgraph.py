@@ -149,7 +149,7 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
         prompt = f"""根據使用者問題和資料庫 schema，分析問題中涉及的所有篩選條件。
 
 每個條件歸類為以下 type 之一：
-- "enum"：使用者提到的值可以在「已知欄位值」中找到精確或近似匹配，直接用已知值
+- "enum"：使用者提到的值可以在「已知欄位值」中找到精確或近似匹配，直接用已知值。注意：使用者的用詞可能和資料庫不完全一致（如「電器類」對應「家電商品類」），請用語意判斷找出最接近的已知值
 - "keyword"：使用者提到特定名稱（如商品名、品牌名）需要模糊搜尋才能找到
 - "range"：數值或時間範圍條件（如「2000元以上」「上個月」）
 - "none"：純計算/統計問題，不需要任何值篩選
@@ -158,6 +158,7 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
 - 一個問題可能有多個條件，全部列出
 - 如果完全不需要篩選，回傳一個 type=none 的條件即可
 - enum 類條件必須附上從已知欄位值中匹配到的精確值
+- 優先嘗試 enum 匹配，只有在已知欄位值中完全找不到相關值時才歸類為 keyword
 
 資料庫 Schema：
 {schema_info}

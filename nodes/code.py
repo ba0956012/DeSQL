@@ -11,7 +11,7 @@ from decimal import Decimal
 from langchain_core.messages import HumanMessage
 
 from llm import llm
-from utils import debug_log, clean_llm_json
+from utils import debug_log, clean_llm_json, strip_code_fences
 
 # 安全的 builtins 白名單
 SAFE_BUILTINS = {
@@ -127,6 +127,7 @@ SQL：{state["sql"]}
 
 資料樣本（共 {len(state.get("sql_result", []))} 筆）：
 {json.dumps(state["sample"], indent=2, ensure_ascii=False, default=str)}
+{f"處理規劃：{chr(10)}{state['plan']}{chr(10)}" if state.get("plan") else ""}
 {error_context}
 請寫 Python code 處理 data 變數中的資料：
 1. 將最終答案存入 result 變數
@@ -143,7 +144,8 @@ SQL：{state["sql"]}
 """
     debug_log("generate_code", prompt=prompt)
     res = llm.invoke([HumanMessage(content=prompt)])
-    return {"code": res.content}
+    code = strip_code_fences(res.content)
+    return {"code": code}
 
 
 def run_code(state):

@@ -193,6 +193,8 @@ cp .env.example .env
 | `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint URL |
 | `DATABASE_URL` | PostgreSQL connection string |
 | `LLM_MODEL` | Model name (default: `gpt-4.1-mini`) |
+| `LLM_REASONING_EFFORT` | Reasoning effort for supported models (optional: `low`/`medium`/`high`) |
+| `ENABLE_CHART` | Enable chart generation (default: `true`) |
 | `LOG_MAX_FILES` | Max log files to keep (default: `50`) |
 
 > ⚠️ **Database Support**: Currently only **PostgreSQL** is supported.
