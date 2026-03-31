@@ -62,6 +62,16 @@ def generate_sql(state):
             f"\n上次生成的 SQL 執行失敗，請根據錯誤訊息修正：\n"
             f"失敗的 SQL：\n{state['sql']}\n錯誤訊息：{state['error']}\n"
         )
+    elif state.get("sql") and not state.get("sql_result") and state.get("sql_retry", 0) > 0:
+        sql_error_context = (
+            f"\n上次生成的 SQL 執行成功但回傳 0 筆結果，WHERE 條件可能太嚴格或欄位值不匹配。"
+            f"\n上次的 SQL：\n{state['sql']}\n"
+            f"\n請嘗試以下放寬策略："
+            f"\n- 檢查 WHERE 中的值是否與資料庫實際值一致（如大小寫、全名 vs 縮寫）"
+            f"\n- 移除不確定的篩選條件，讓 Python 後續處理"
+            f"\n- 如果用了 ILIKE，嘗試更寬鬆的匹配"
+            f"\n- 記住：後續有 Python 可以做精確篩選，SQL 寧可多取不要漏取"
+        )
 
     all_rules = _BASE_SQL_RULES + DOMAIN_SQL_RULES
     rules_text = "\n".join(f"- {r}" for r in all_rules)
@@ -102,7 +112,10 @@ def execute_sql(state):
             rows = rp.fetchall()
         result = [dict(zip(cols, r)) for r in rows]
         debug_log("execute_sql", row_count=len(result))
-        return {"sql_result": result, "sample": result[:5], "error": ""}
+        output = {"sql_result": result, "sample": result[:5], "error": ""}
+        if not result:
+            output["sql_retry"] = state.get("sql_retry", 0) + 1
+        return output
     except Exception as e:
         debug_log("execute_sql", error=str(e))
         return {

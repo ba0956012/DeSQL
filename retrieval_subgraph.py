@@ -68,6 +68,7 @@ class RetrievalState(TypedDict):
     synonyms: list
     retrieved_docs: list
     strategy: str
+    schema_desc: str
 
 
 def format_enum_info(enum_values: dict) -> str:
@@ -101,18 +102,33 @@ def build_conditions_context(state: RetrievalState) -> str:
         tbl = keyword_cond.get("table", "")
         col = keyword_cond.get("column", "")
         tokens = state.get("tokens", [])
-        if tokens:
-            ilike_parts = " AND ".join([f"{col} ILIKE '%{t}%'" for t in tokens])
-            token_hint = f"\n建議的 WHERE 寫法：WHERE {ilike_parts}"
+
+        # 判斷是否有精確匹配（檢索結果中有值完全包含關鍵字）
+        exact_match = next((v for v in retrieved if kw.lower() == v.lower()), None)
+        if not exact_match:
+            exact_match = next((v for v in retrieved if kw.lower() in v.lower() and len(v) < len(kw) + 10), None)
+
+        if exact_match:
+            # 精確匹配 → 用 = 
+            parts.append(
+                f"以下是用關鍵字「{kw}」從 {tbl}.{col} 搜尋到的精確匹配值：\n"
+                + json.dumps(retrieved, ensure_ascii=False)
+                + f"\nSQL 的 WHERE 條件應使用精確匹配：WHERE {col} = '{exact_match}'"
+            )
         else:
-            token_hint = f"\n建議的 WHERE 寫法：WHERE {col} ILIKE '%{kw}%'"
-        parts.append(
-            f"以下是用關鍵字「{kw}」從 {tbl}.{col} 模糊搜尋到的樣本（僅供參考，實際可能更多）：\n"
-            + json.dumps(retrieved, ensure_ascii=False)
-            + "\n"
-            "SQL 的 WHERE 條件應使用 ILIKE 模糊搜尋，將關鍵字拆成多個詞分別匹配（用 AND 連接），不要用 IN 精確匹配。"
-            + token_hint
-        )
+            # 模糊匹配 → 用 ILIKE
+            if tokens:
+                ilike_parts = " AND ".join([f"{col} ILIKE '%{t}%'" for t in tokens])
+                token_hint = f"\n建議的 WHERE 寫法：WHERE {ilike_parts}"
+            else:
+                token_hint = f"\n建議的 WHERE 寫法：WHERE {col} ILIKE '%{kw}%'"
+            parts.append(
+                f"以下是用關鍵字「{kw}」從 {tbl}.{col} 模糊搜尋到的樣本（僅供參考，實際可能更多）：\n"
+                + json.dumps(retrieved, ensure_ascii=False)
+                + "\n"
+                "SQL 的 WHERE 條件應使用 ILIKE 模糊搜尋，將關鍵字拆成多個詞分別匹配（用 AND 連接），不要用 IN 精確匹配。"
+                + token_hint
+            )
 
     # range 條件
     range_conds = [c for c in conditions if c.get("type") == "range"]
@@ -146,6 +162,9 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
     # ----- Node functions（閉包，捕獲注入的依賴）-----
 
     def analyze_conditions(state: RetrievalState):
+        schema_desc = state.get("schema_desc", "")
+        schema_desc_section = f"\n欄位說明：\n{schema_desc}\n" if schema_desc else ""
+
         prompt = f"""根據使用者問題和資料庫 schema，分析問題中涉及的所有篩選條件。
 
 每個條件歸類為以下 type 之一：
@@ -162,7 +181,7 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
 
 資料庫 Schema：
 {schema_info}
-
+{schema_desc_section}
 {enum_info}
 
 使用者問題：{state["question"]}

@@ -64,6 +64,12 @@ def route_after_execute(state: State):
             "route_after_execute", action="retry SQL", sql_retry=state.get("sql_retry")
         )
         return "generate_sql"
+    # 查詢成功但 0 筆結果 → 可能 WHERE 條件太嚴格，重試一次
+    if not state.get("error") and not state.get("sql_result") and state.get("sql_retry", 0) <= 1:
+        debug_log(
+            "route_after_execute", action="retry SQL (empty result)", sql_retry=state.get("sql_retry")
+        )
+        return "generate_sql"
     return "check_need_code"
 
 

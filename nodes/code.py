@@ -39,6 +39,9 @@ SAFE_BUILTINS = {
     "any": any,
     "all": all,
     "isinstance": isinstance,
+    "hasattr": hasattr,
+    "getattr": getattr,
+    "type": type,
     "print": print,
     "Counter": Counter,
     "defaultdict": defaultdict,
@@ -139,7 +142,7 @@ SQL：{state["sql"]}
 注意：
 - 不能使用 import 語句
 - Counter、defaultdict、Decimal、datetime、timedelta、date 已可直接使用
-- SQL 回傳的日期/時間欄位是 datetime 物件（不是字串），數值可能是 Decimal
+- SQL 回傳的日期/時間欄位可能是 datetime 物件或字串，使用前先確認型別
 - 不要對 datetime 物件做字串解析，直接使用
 """
     debug_log("generate_code", prompt=prompt)
