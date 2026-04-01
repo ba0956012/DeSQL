@@ -13,7 +13,7 @@ from langgraph.graph import StateGraph, END
 from db import engine, SCHEMA_INFO, ENUM_VALUES
 from llm import llm
 from retrieval_subgraph import build_retrieval_subgraph
-from nodes.sql import generate_sql, execute_sql
+from nodes.sql import generate_sql, execute_sql, validate_sql_result
 from nodes.code import check_need_code, generate_code, run_code
 from nodes.answer import format_answer
 from nodes.chart import generate_chart
@@ -49,6 +49,7 @@ class State(TypedDict):
     chart_code: str
     chart_image: str
     schema_desc: str
+    sql_validation: str
 
 
 # =========================
@@ -68,6 +69,15 @@ def route_after_execute(state: State):
     if not state.get("error") and not state.get("sql_result") and state.get("sql_retry", 0) <= 1:
         debug_log(
             "route_after_execute", action="retry SQL (empty result)", sql_retry=state.get("sql_retry")
+        )
+        return "generate_sql"
+    return "validate_sql_result"
+
+
+def route_after_validate(state: State):
+    if state.get("error") and state.get("sql_validation"):
+        debug_log(
+            "route_after_validate", action="retry SQL (incomplete)", missing=state.get("sql_validation")
         )
         return "generate_sql"
     return "check_need_code"
@@ -103,6 +113,7 @@ graph = StateGraph(State)
 graph.add_node("retrieval", retrieval_subgraph)
 graph.add_node("generate_sql", generate_sql)
 graph.add_node("execute_sql", execute_sql)
+graph.add_node("validate_sql_result", validate_sql_result)
 graph.add_node("check_need_code", check_need_code)
 graph.add_node("generate_code", generate_code)
 graph.add_node("run_code", run_code)
@@ -116,6 +127,7 @@ graph.set_entry_point("retrieval")
 graph.add_conditional_edges("retrieval", route_after_retrieval)
 graph.add_edge("generate_sql", "execute_sql")
 graph.add_conditional_edges("execute_sql", route_after_execute)
+graph.add_conditional_edges("validate_sql_result", route_after_validate)
 graph.add_conditional_edges("check_need_code", route_after_check)
 graph.add_edge("generate_code", "run_code")
 graph.add_conditional_edges("run_code", should_retry)

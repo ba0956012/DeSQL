@@ -107,7 +107,7 @@ SQL：{state["sql"]}
         direct_answer = ""
 
     if not needs_code and direct_answer:
-        has_data = any(c.isdigit() for c in direct_answer) or len(direct_answer) > 100
+        has_data = any(c.isdigit() for c in str(direct_answer)) or len(str(direct_answer)) > 100
         if has_data:
             return {"needs_code": False, "final_answer": direct_answer}
         debug_log("check_need_code", override="direct_answer too vague")

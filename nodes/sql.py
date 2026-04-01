@@ -2,12 +2,13 @@
 SQL 生成與執行節點
 """
 
+import json
 from langchain_core.messages import HumanMessage
 from sqlalchemy import text as sa_text
 
 from db import engine, SCHEMA_INFO, ENUM_VALUES
 from llm import llm
-from utils import debug_log, strip_code_fences
+from utils import debug_log, strip_code_fences, clean_llm_json
 from retrieval_subgraph import format_enum_info, build_conditions_context
 from domain_rules import DOMAIN_SQL_RULES
 
@@ -58,10 +59,18 @@ def generate_sql(state):
     enum_info = format_enum_info(ENUM_VALUES)
     sql_error_context = ""
     if state.get("error") and state.get("sql"):
-        sql_error_context = (
-            f"\n上次生成的 SQL 執行失敗，請根據錯誤訊息修正：\n"
-            f"失敗的 SQL：\n{state['sql']}\n錯誤訊息：{state['error']}\n"
-        )
+        validation = state.get("sql_validation", "")
+        if validation:
+            sql_error_context = (
+                f"\n上次的 SQL 結果不完整，缺少：{validation}"
+                f"\n上次的 SQL：\n{state['sql']}\n"
+                f"\n請修正 SQL 加入缺少的欄位/資料。記住：Python 可以後續做篩選，SQL 應取回所有需要的資料。"
+            )
+        else:
+            sql_error_context = (
+                f"\n上次生成的 SQL 執行失敗，請根據錯誤訊息修正：\n"
+                f"失敗的 SQL：\n{state['sql']}\n錯誤訊息：{state['error']}\n"
+            )
     elif state.get("sql") and not state.get("sql_result") and state.get("sql_retry", 0) > 0:
         sql_error_context = (
             f"\n上次生成的 SQL 執行成功但回傳 0 筆結果，WHERE 條件可能太嚴格或欄位值不匹配。"
@@ -101,6 +110,50 @@ def generate_sql(state):
     sql = strip_code_fences(res.content)
     debug_log("generate_sql", final_sql=sql)
     return {"sql": sql}
+
+
+def validate_sql_result(state):
+    """檢查 SQL 結果是否包含足夠的資料來回答問題"""
+    sql_result = state.get("sql_result", [])
+    if not sql_result or state.get("error"):
+        return {}
+
+    sample_str = json.dumps(state.get("sample", [])[:5], indent=2, ensure_ascii=False, default=str)
+    prompt = f"""You are a SQL result validator. Check if the SQL query result contains sufficient data for Python to answer the question.
+
+Question: {state["question"]}
+SQL: {state.get("sql", "")}
+Row count: {len(sql_result)}
+Result sample:
+{sample_str}
+
+Check:
+1. Does the result contain all columns needed to answer the question?
+2. Are there any important columns missing that Python would need?
+3. Does the WHERE clause filter out data that Python needs for comparison/calculation?
+
+Output pure JSON only:
+{{"sufficient": true/false, "missing": "what is missing, if any"}}"""
+
+    debug_log("validate_sql_result", prompt=prompt)
+    res = llm.invoke([HumanMessage(content=prompt)])
+    try:
+        parsed = clean_llm_json(res.content)
+        sufficient = parsed.get("sufficient", True)
+        missing = parsed.get("missing", "")
+    except (json.JSONDecodeError, KeyError):
+        sufficient = True
+        missing = ""
+
+    debug_log("validate_sql_result", sufficient=sufficient, missing=missing)
+
+    if not sufficient and missing and state.get("sql_retry", 0) < 2:
+        return {
+            "error": f"SQL result incomplete: {missing}",
+            "sql_retry": state.get("sql_retry", 0) + 1,
+            "sql_validation": missing,
+        }
+    return {"sql_validation": ""}
 
 
 def execute_sql(state):
