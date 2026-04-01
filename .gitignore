@@ -5,6 +5,7 @@
 __pycache__/
 *.pyc
 logs/
+output/
 .venv/
 run_env.sh
 .DS_Store

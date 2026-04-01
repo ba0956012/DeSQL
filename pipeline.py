@@ -16,7 +16,11 @@ from retrieval_subgraph import build_retrieval_subgraph
 from nodes.sql import generate_sql, execute_sql, validate_sql_result
 from nodes.code import check_need_code, generate_code, run_code
 from nodes.answer import format_answer
-from nodes.chart import generate_chart
+CHART_ENGINE = os.getenv("CHART_ENGINE", "matplotlib")  # matplotlib | echarts
+if CHART_ENGINE == "echarts":
+    from nodes.chart_echarts import generate_chart
+else:
+    from nodes.chart import generate_chart
 from utils import debug_log
 
 
@@ -47,7 +51,9 @@ class State(TypedDict):
     chart_data: list
     chart_reason: str
     chart_code: str
+    chart_option: str
     chart_image: str
+    chart_html: str
     schema_desc: str
     sql_validation: str
 

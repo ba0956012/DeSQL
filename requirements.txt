@@ -6,4 +6,5 @@ psycopg2-binary==2.9.10
 streamlit==1.55.0
 matplotlib==3.10.8
 squarify==0.4.4
+pyecharts==2.1.0
 python-dotenv==1.2.1

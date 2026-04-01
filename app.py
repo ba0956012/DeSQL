@@ -69,8 +69,12 @@ if question:
     chart_reason = merged.get("chart_reason", "")
     if chart_reason:
         st.caption(f"📈 圖表判斷：{chart_reason}")
+    chart_html = merged.get("chart_html", "")
     chart_b64 = merged.get("chart_image", "")
-    if chart_b64:
+    if chart_html:
+        import streamlit.components.v1 as components
+        components.html(chart_html, height=550, scrolling=True)
+    elif chart_b64:
         st.image(base64.b64decode(chart_b64), width=700)
 
     # 指標
@@ -103,6 +107,10 @@ if question:
     if merged.get("chart_code"):
         with st.expander("📈 Chart Code"):
             st.code(merged["chart_code"], language="python")
+
+    if merged.get("chart_option"):
+        with st.expander("📊 ECharts Option JSON"):
+            st.code(merged["chart_option"], language="json")
 
     with st.expander("📊 Token 明細"):
         st.write(
