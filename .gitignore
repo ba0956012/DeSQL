@@ -9,3 +9,22 @@ output/
 .venv/
 run_env.sh
 .DS_Store
+
+# eval — 排除大型/生成/敏感檔案
+eval/.env.eval
+eval/__pycache__/
+eval/databases/*/*.sqlite
+eval/databases/*/database_description/
+eval/databases/*/dataset_description.md
+eval/databases/*/evidence_examples.md
+eval/dev.json
+eval/dev.sql
+eval/dev_tables.json
+eval/dev_tied_append.json
+eval/dev_databases.zip
+eval/results/
+eval/report/
+eval/run_output*.log
+eval/run_eval_api.py
+eval/report_template_greg.md
+eval/report_template_model.md

@@ -1,0 +1,32 @@
+-- JOIN keys: frpm.cdscode = schools.cdscode = satscores.cds
+-- frpm and schools share CDSCode; satscores uses "cds" column
+
+-- frpm: Free/Reduced Price Meal data
+-- "charter school (y/n)": 1=Yes, 0=No
+-- "enrollment (k-12)": K-12 total enrollment (grades 1-12)
+-- "free meal count (k-12)": eligible free rate = free meal count / enrollment
+-- "frpm count (k-12)": Free or Reduced Price Meal count; eligible FRPM rate = frpm count / enrollment
+-- Same pattern for "(ages 5-17)" columns
+-- "low grade" / "high grade": text values like 'K', '1', '9', '12'
+
+-- satscores: SAT scores per school
+-- cds: school identifier (JOIN key to schools.cdscode)
+-- sname: school name, dname: district name, cname: county name
+-- numtsttakr: number of SAT test takers
+-- avgscrread / avgscrmath / avgscrwrite: average scores in Reading/Math/Writing
+-- numge1500: test takers with total SAT >= 1500; excellence rate = numge1500 / numtsttakr
+
+-- schools: school directory
+-- statustype: 'Active', 'Closed', 'Merged', 'Pending'
+-- ncesdist: 7-digit NCES district ID; ncesschool: 5-digit NCES school ID
+-- street/city/zip/state: physical address; mailstreet/mailcity/mailzip/mailstate: mailing address
+-- charter: 1=charter, 0=not charter; charternum: 4-digit charter number
+-- fundingtype: 'Locally funded', 'Directly funded', 'Not in CS funding model'
+-- doc: District Ownership Code (00=COE, 31=State Special, 52=Elementary, 54=Unified, 56=High School)
+-- soc: School Ownership Code (60=Elementary, 62=Middle, 66=High School, 68=Continuation, etc.)
+-- eilcode: Education Level (ELEM, HS, INTMIDJR, ELEMHIGH, PS, A, UG)
+-- gsoffered: grade span offered (e.g. 'K-12', 'K-6'); gsserved: grade span actually served
+-- virtual: F=Exclusively Virtual, V=Primarily Virtual, C=Primarily Classroom, N=Not Virtual
+-- magnet: 1=Magnet, 0=Not Magnet
+-- opendate / closeddate: school open/close dates
+-- admfname1/admlname1/admemail1: primary administrator name and email

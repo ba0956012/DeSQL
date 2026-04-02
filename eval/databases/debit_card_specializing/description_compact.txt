@@ -1,0 +1,26 @@
+-- JOIN keys:
+-- transactions_1k.customerid = customers.customerid = yearmonth.customerid
+-- transactions_1k.gasstationid = gasstations.gasstationid
+-- transactions_1k.productid = products.productid
+
+-- customers: bank customers
+-- segment: client segment (e.g. 'SME', 'LAM', 'KAM')
+-- currency: payment currency (e.g. 'EUR', 'CZK')
+
+-- gasstations: gas station locations
+-- chainid: chain identifier
+-- country: country code (e.g. 'CZE', 'SVK')
+-- segment: chain segment (e.g. 'Value for money', 'Premium')
+
+-- products: product catalog
+-- description: product name/description
+
+-- transactions_1k: individual transactions (sample of 1000)
+-- date: transaction date; time: transaction time
+-- cardid: debit card used
+-- amount: quantity purchased
+-- price: unit price; total price = amount * price
+
+-- yearmonth: monthly consumption per customer
+-- date: year-month (e.g. '201201')
+-- consumption: total monthly consumption amount

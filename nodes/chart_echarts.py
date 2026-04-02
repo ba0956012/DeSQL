@@ -285,6 +285,8 @@ def _exec_echarts_code(code, plot_data):
 
     import uuid
     options_json = chart_obj.dump_options()
+    # 確保中文不被 escape 成 \uXXXX
+    options_json = json.dumps(json.loads(options_json), ensure_ascii=False, indent=2)
 
     # 組裝預覽用 HTML（Streamlit components.html 用）
     chart_id = uuid.uuid4().hex[:12]

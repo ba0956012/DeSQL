@@ -1,0 +1,37 @@
+-- JOIN keys:
+-- account.account_id = disp.account_id = loan.account_id = order.account_id = trans.account_id
+-- client.client_id = disp.client_id
+-- account.district_id = district.district_id = client.district_id
+-- card.disp_id = disp.disp_id
+
+-- account: bank accounts
+-- frequency: 'POPLATEK MESICNE'=monthly, 'POPLATEK TYDNE'=weekly, 'POPLATEK PO OBRATU'=after transaction
+-- date: account creation date (YYMMDD format)
+
+-- card: credit cards
+-- type: 'junior', 'classic', 'gold'
+-- issued: card issue date (YYMMDD format)
+
+-- client: bank clients
+-- gender: 'F'=female, 'M'=male
+-- birth_date: client birth date
+
+-- disp: links clients to accounts
+-- type: 'OWNER' (account owner), 'DISPONENT' (authorized user)
+
+-- district: geographic regions
+-- a2=district_name, a3=region, a4=inhabitants, a11=avg salary
+-- a12=unemployment rate 1995, a13=unemployment rate 1996
+
+-- loan: approved loans
+-- amount: in USD; duration: in months; payments: monthly payment amount
+-- status: 'A'=finished OK, 'B'=finished not paid, 'C'=running OK, 'D'=running in debt
+
+-- order: permanent payment orders
+-- k_symbol: 'POJISTNE'=insurance, 'SIPO'=household, 'LEASING'=leasing, 'UVER'=loan payment
+
+-- trans: transactions
+-- type: 'PRIJEM'=credit, 'VYDAJ'=withdrawal
+-- operation: 'VYBER KARTOU'=card withdrawal, 'VKLAD'=cash credit, 'PREVOD Z UCTU'=collection from bank, 'VYBER'=cash withdrawal, 'PREVOD NA UCET'=remittance to bank
+-- k_symbol: 'POJISTNE'=insurance, 'SLUZBY'=statement fee, 'UROK'=interest, 'SANKC. UROK'=sanction interest, 'SIPO'=household, 'DUCHOD'=pension, 'UVER'=loan
+-- amount/balance: in USD
