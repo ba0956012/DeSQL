@@ -81,7 +81,7 @@ def route_after_execute(state: State):
 
 
 def route_after_validate(state: State):
-    if state.get("error") and state.get("sql_validation"):
+    if state.get("error") and state.get("sql_validation") and state.get("sql_retry", 0) < 3:
         debug_log(
             "route_after_validate", action="retry SQL (incomplete)", missing=state.get("sql_validation")
         )

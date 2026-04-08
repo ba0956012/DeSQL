@@ -3,6 +3,7 @@ SQL 生成與執行節點
 """
 
 import json
+import os
 from langchain_core.messages import HumanMessage
 from sqlalchemy import text as sa_text
 
@@ -15,12 +16,15 @@ from domain_rules import DOMAIN_SQL_RULES
 # 通用 SQL 生成規則（與業務無關）
 _BASE_SQL_RULES = [
     "只生成 SELECT 語句，禁止 DML",
-    "SQL 的職責是「取回原始資料」，Python 的職責是「邏輯運算」",
-    "核心原則：SQL 取回的資料必須足夠讓後續 Python 程式碼能計算出最終答案",
+    "根據問題複雜度選擇 SQL 策略：",
+    "  - 簡單查詢（單一數值、排名、TOP N）：SQL 直接用 GROUP BY / ORDER BY / LIMIT / 聚合函數算出答案，不需要 Python 後處理",
+    "  - 複雜分析（多步驟計算、條件比較、what-if）：SQL 取回原始資料，讓 Python 做邏輯運算",
+    "核心原則：SQL 取回的資料必須足夠讓後續流程能得出最終答案",
     "適當使用 JOIN 取得需要的欄位，但避免為了實現邏輯而疊加複雜的子查詢",
     "JOIN 時 SELECT 的欄位必須加上表名前綴，避免 ambiguous column 錯誤",
-    "不要加 LIMIT，取回完整資料讓 Python 處理",
-    "如果問題是「假設性 / what-if」問題，SQL 必須取回完整資料，讓 Python 做 before/after 比較",
+    "如果問題問的是排名或 TOP N，SQL 應使用 ORDER BY + LIMIT 直接取出結果",
+    "如果問題問的是比例或百分比，SQL 應取回分子和分母所需的完整資料（不要只取其中一邊）",
+    "WHERE 條件寧鬆勿嚴：不確定的篩選條件不要加，讓 Python 後續處理",
     "WHERE 條件中的值，優先使用下方提供的「已確認精確值」和「已知欄位值」",
     "只輸出純 SQL，不要任何解釋或 markdown 格式",
 ]
@@ -112,18 +116,11 @@ def generate_sql(state):
     return {"sql": sql}
 
 
-def validate_sql_result(state):
-    """檢查 SQL 結果是否包含足夠的資料來回答問題"""
-    sql_result = state.get("sql_result", [])
-    if not sql_result or state.get("error"):
-        return {}
+_VALIDATE_PROMPT_LEGACY = """You are a SQL result validator. Check if the SQL query result contains sufficient data for Python to answer the question.
 
-    sample_str = json.dumps(state.get("sample", [])[:5], indent=2, ensure_ascii=False, default=str)
-    prompt = f"""You are a SQL result validator. Check if the SQL query result contains sufficient data for Python to answer the question.
-
-Question: {state["question"]}
-SQL: {state.get("sql", "")}
-Row count: {len(sql_result)}
+Question: {question}
+SQL: {sql}
+Row count: {row_count}
 Result sample:
 {sample_str}
 
@@ -135,12 +132,60 @@ Check:
 Output pure JSON only:
 {{"sufficient": true/false, "missing": "what is missing, if any"}}"""
 
+_VALIDATE_PROMPT_V2 = """你是一個基礎資料科學家，這次的任務是負責檢視SQL查詢到的資料是否足夠用於後續分析。
+
+重要原則：資料寧多勿少。如果不確定資料是否足夠，就判定為 sufficient。只有在你非常確定缺少關鍵資料時，才判定為 insufficient。
+
+分析需求（使用者問題）：{question}
+
+資料來源 SQL：
+{sql}
+
+取得的資料筆數：{row_count}
+資料樣本：
+{sample_str}
+
+請從資料分析的角度檢視：
+1. 如果問題附帶了 (Hint: ...) 提示，裡面提到的欄位或計算公式，在取回的資料中是否有對應的欄位可以使用？
+2. 問題中提到的篩選範圍（如特定地區、時間、類別），SQL 是否有做對應的篩選？如果沒篩選但資料全部取回了，那也沒問題（後續 Python 可以處理）。
+
+以下情況資料是足夠的，不需要重新取資料：
+- 資料比需要的多（後續分析可以再篩選）
+- 欄位名稱和問題用詞不完全一致（只要能對應就行）
+- 資料筆數看起來偏多或偏少（可能是正常的）
+
+只輸出純 JSON：
+{{"reasoning": "先說明你的判斷理由。如果資料不足，具體說明缺少什麼", "sufficient": true/false}}"""
+
+
+def validate_sql_result(state):
+    """檢查 SQL 結果是否包含足夠的資料來回答問題。
+    
+    透過環境變數 VALIDATE_PROMPT 切換版本：
+      - "legacy" 或未設定：使用舊版英文 prompt（只檢查欄位）
+      - "v2"：使用新版中文 prompt（全面檢查）
+    """
+    sql_result = state.get("sql_result", [])
+    if not sql_result or state.get("error"):
+        return {}
+
+    sample_str = json.dumps(state.get("sample", [])[:5], indent=2, ensure_ascii=False, default=str)
+
+    version = os.environ.get("VALIDATE_PROMPT", "legacy")
+    template = _VALIDATE_PROMPT_V2 if version == "v2" else _VALIDATE_PROMPT_LEGACY
+    prompt = template.format(
+        question=state["question"],
+        sql=state.get("sql", ""),
+        row_count=len(sql_result),
+        sample_str=sample_str,
+    )
+
     debug_log("validate_sql_result", prompt=prompt)
     res = llm.invoke([HumanMessage(content=prompt)])
     try:
         parsed = clean_llm_json(res.content)
         sufficient = parsed.get("sufficient", True)
-        missing = parsed.get("missing", "")
+        missing = parsed.get("reasoning", "") or parsed.get("missing", "")
     except (json.JSONDecodeError, KeyError):
         sufficient = True
         missing = ""
