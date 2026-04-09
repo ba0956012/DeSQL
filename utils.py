@@ -21,12 +21,13 @@ def clean_llm_json(text: str) -> dict:
 
 
 def strip_code_fences(text: str) -> str:
-    """清除 LLM 回傳中的 markdown code fences"""
+    """清除 LLM 回傳中的 markdown code fences 和尾部說明"""
     text = text.strip()
     if text.startswith("```"):
         text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-    if text.endswith("```"):
-        text = text[:-3]
+    # 找到第一個結尾的 ``` 並截斷（移除後面的 markdown 說明）
+    if "```" in text:
+        text = text[:text.index("```")]
     return text.strip()
 
 

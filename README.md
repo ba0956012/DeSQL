@@ -153,20 +153,13 @@ Especially when queries involve:
 
 ---
 
-## 🧪 Evaluation (Future Work)
+## 🧪 Evaluation
 
-We focus on:
+### BIRD-SQL Benchmark
 
-- **Answer Accuracy** (primary metric)
-- SQL Success Rate
-- Python Execution Success Rate
-- Token Cost per Query
+Evaluated on the BIRD-SQL dev set (259 questions across 3 databases) using LLM-as-Judge with gpt-4.1-mini.
 
-Future directions:
-
-- Compare with Text-to-SQL baseline
-- Statistical evaluation (e.g., bootstrap confidence intervals)
-- Prompt / agent optimization
+See `eval/README.md` for results and `eval/EXPERIMENT_LOG.md` for full experiment history.
 
 ---
 
@@ -227,10 +220,35 @@ desql/
 │   ├── sql.py                # SQL generation & execution
 │   ├── code.py               # Python sandbox & code generation
 │   ├── answer.py             # Answer formatting
+│   ├── question_analysis.py  # Question decomposition & schema mapping
 │   └── chart.py              # Chart generation
+├── eval/
+│   ├── run_eval.py           # BIRD-SQL evaluation runner
+│   ├── compare_results.py    # Experiment comparison tool
+│   ├── generate_report.py    # Report generation with charts
+│   ├── import_to_pg.py       # SQLite to PostgreSQL importer (with FK/PK)
+│   └── EXPERIMENT_LOG.md     # Full experiment history
+├── chart_service/            # Standalone chart microservice
+├── eval_service/             # Standalone eval microservice
 ├── app.py                    # Streamlit UI
 ├── tests/
 │   └── test_pipeline.py
 ├── run.sh
 └── requirements.txt
 ```
+
+## Changelog
+
+### v0.2.0
+- Add Question Analysis node for structured task planning
+- QA isolation: SQL generator follows QA instructions only (no raw question leakage)
+- datetime normalization for SQL results (datetime → date)
+- Sandbox security: safe import whitelist, blocked external modules
+- format_answer: preserve concrete values, no summarization
+- strip_code_fences: handle trailing markdown in LLM output
+- Evaluation tools: compare_results.py for experiment comparison
+
+### v0.1.0
+- Baseline pipeline with BIRD-SQL evaluation framework
+- Progressive retrieval subgraph, SQL self-healing, Python sandbox
+- Evaluation runner, report generation with charts

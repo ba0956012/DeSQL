@@ -83,6 +83,21 @@ def import_sqlite_to_pg(sqlite_path: str, pg_db_name: str):
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
     tables = [row[0] for row in cursor.fetchall() if row[0] != "sqlite_sequence"]
 
+    # 先從 SQLite 收集所有 FK 資訊（建表後統一加）
+    all_fks = []
+    for table_name in tables:
+        pg_table = table_name.lower()
+        try:
+            cursor.execute(f'PRAGMA foreign_key_list("{table_name}")')
+            for fk in cursor.fetchall():
+                # fk: (id, seq, table, from, to, on_update, on_delete, match)
+                ref_table = fk[2].lower()
+                from_col = fk[3].lower()
+                to_col = fk[4].lower()
+                all_fks.append((pg_table, from_col, ref_table, to_col))
+        except Exception:
+            pass
+
     # 連接 PG
     pg_engine = create_engine(f"{PG_BASE_URL}/{pg_db_name}")
 
@@ -176,6 +191,52 @@ def import_sqlite_to_pg(sqlite_path: str, pg_db_name: str):
                 raw_conn.commit()
 
         print(f"    📦 {pg_table_name}: {len(columns)} 欄位, {len(rows)} 筆")
+
+    # 建立 PK 和 FK constraints
+    # 先從 SQLite 取得 PK 資訊，建立 PK
+    for table_name in tables:
+        pg_table = table_name.lower()
+        try:
+            cursor.execute(f'PRAGMA table_info("{table_name}")')
+            pk_cols = [row[1].lower() for row in cursor.fetchall() if row[5] > 0]  # pk flag > 0
+            if pk_cols:
+                pk_col_str = ", ".join(f'"{c}"' for c in pk_cols)
+                with pg_engine.connect() as conn:
+                    try:
+                        conn.execute(text(
+                            f'ALTER TABLE "{pg_table}" ADD PRIMARY KEY ({pk_col_str})'
+                        ))
+                        conn.commit()
+                        print(f"    🔑 PK: {pg_table}({', '.join(pk_cols)})")
+                    except Exception as e:
+                        conn.rollback()
+                        # PK 可能因為重複資料失敗，改用 UNIQUE INDEX
+                        try:
+                            conn.execute(text(
+                                f'CREATE UNIQUE INDEX IF NOT EXISTS "idx_{pg_table}_pk" ON "{pg_table}" ({pk_col_str})'
+                            ))
+                            conn.commit()
+                            print(f"    🔑 UNIQUE: {pg_table}({', '.join(pk_cols)})")
+                        except Exception:
+                            conn.rollback()
+        except Exception:
+            pass
+
+    # 建立 FK constraints（每個獨立 transaction）
+    if all_fks:
+        for from_table, from_col, ref_table, to_col in all_fks:
+            fk_name = f"fk_{from_table}_{from_col}_{ref_table}"
+            with pg_engine.connect() as conn:
+                try:
+                    conn.execute(text(
+                        f'ALTER TABLE "{from_table}" ADD CONSTRAINT "{fk_name}" '
+                        f'FOREIGN KEY ("{from_col}") REFERENCES "{ref_table}" ("{to_col}")'
+                    ))
+                    conn.commit()
+                    print(f"    🔗 FK: {from_table}.{from_col} → {ref_table}.{to_col}")
+                except Exception as e:
+                    conn.rollback()
+                    print(f"    ⚠️  FK 跳過: {from_table}.{from_col} → {ref_table}.{to_col}")
 
     pg_engine.dispose()
     sqlite_conn.close()

@@ -60,7 +60,7 @@ def load_db_description(db_id: str, question: str = None) -> str:
     for csv_file in sorted(desc_dir.glob("*.csv")):
         table_name = csv_file.stem
         table_lines = []
-        with open(csv_file, encoding="utf-8") as f:
+        with open(csv_file, encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 col = row.get("original_column_name", "")
@@ -95,7 +95,7 @@ def load_full_description(db_id: str) -> str:
     for csv_file in sorted(desc_dir.glob("*.csv")):
         table_name = csv_file.stem.lower()
         lines.append(f"Table: {table_name}")
-        with open(csv_file, encoding="utf-8") as f:
+        with open(csv_file, encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 col = row.get("original_column_name", "").lower()
@@ -110,6 +110,32 @@ def load_full_description(db_id: str) -> str:
                     lines.append("".join(parts))
         lines.append("")
     return "\n".join(lines)
+
+
+def load_column_descs(db_id: str) -> dict:
+    """載入 BIRD CSV 欄位描述為 dict，格式: {table.column: "desc (val_desc)"}"""
+    desc_dir = EVAL_DIR / "databases" / db_id / "database_description"
+    if not desc_dir.exists():
+        return {}
+    import csv
+    result = {}
+    for csv_file in sorted(desc_dir.glob("*.csv")):
+        table_name = csv_file.stem.lower()
+        with open(csv_file, encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                col = row.get("original_column_name", "").strip().lower()
+                if not col:
+                    continue
+                desc = row.get("column_description", "").strip()
+                val_desc = row.get("value_description", "").strip()
+                if not desc and not val_desc:
+                    continue
+                text = desc
+                if val_desc and len(val_desc) < 200:
+                    text = f"{desc} ({val_desc})" if desc else val_desc
+                result[f"{table_name}.{col}"] = text
+    return result
 
 
 def llm_summarize_desc(question: str, desc: str) -> str:
@@ -227,7 +253,7 @@ def llm_judge(question: str, expected: list, actual_answer: str) -> dict:
         return {"correct": False, "reason": f"parse error: {res.content[:200]}"}
 
 
-def _write_eval_log(item, expected, pipeline_sql, pipeline_answer, verdict, use_evidence, use_desc, tag):
+def _write_eval_log(item, expected, pipeline_sql, pipeline_answer, verdict, use_evidence, use_desc, tag, final_answer="", task_plan="", code="", sql_row_count=0):
     eval_log = {
         "question_id": item["question_id"],
         "db_id": item["db_id"],
@@ -241,6 +267,10 @@ def _write_eval_log(item, expected, pipeline_sql, pipeline_answer, verdict, use_
         "expected_count": len(expected) if expected else 0,
         "pipeline_sql": pipeline_sql,
         "pipeline_answer": pipeline_answer,
+        "final_answer": final_answer,
+        "task_plan": task_plan,
+        "code": code,
+        "sql_row_count": sql_row_count,
         "judge_correct": verdict.get("correct", False),
         "judge_reason": verdict.get("reason", ""),
     }
@@ -256,7 +286,7 @@ def _write_eval_log(item, expected, pipeline_sql, pipeline_answer, verdict, use_
         json.dump(eval_log, f, ensure_ascii=False, indent=2)
 
 
-def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_desc: bool = False, desc_in_question: bool = False, dynamic_desc: bool = False, tag: str = None) -> dict:
+def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_desc: bool = False, desc_in_question: bool = False, dynamic_desc: bool = False, full_desc: bool = False, tag: str = None) -> dict:
     """跑單題，回傳評測結果 dict"""
     if verbose:
         print(f"\n📋 Question #{item['question_id']} ({item['difficulty']})")
@@ -278,6 +308,13 @@ def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_
         if use_evidence and item.get("evidence"):
             question += f"\n(Hint: {item['evidence']})"
         init_state = {"question": question, "retry": 0}
+
+        # 注入 BIRD 原始 CSV 欄位描述（需 --full-desc）
+        if full_desc:
+            col_descs = load_column_descs(item["db_id"])
+            if col_descs:
+                init_state["column_descs"] = col_descs
+
         if dynamic_desc:
             # 先設定 DB，避免 llm import 時觸發錯誤的 db 連線
             os.environ["DATABASE_URL"] = f"{PG_BASE_URL}/{DB_PREFIX}{item['db_id']}"
@@ -318,7 +355,15 @@ def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_
         print(f"   {icon} {verdict.get('reason', '')}")
 
     # 寫入評測 log
-    _write_eval_log(item, expected, result.get("sql", ""), answer, verdict, use_evidence, use_desc, tag)
+    raw_answer = result.get("final_answer", "")
+    _write_eval_log(
+        item, expected, result.get("sql", ""), answer, verdict,
+        use_evidence, use_desc, tag,
+        final_answer=raw_answer,
+        task_plan=result.get("task_plan", ""),
+        code=result.get("code", ""),
+        sql_row_count=len(result.get("sql_result", [])),
+    )
 
     return verdict
 
@@ -363,6 +408,7 @@ def main():
     parser.add_argument("--with-desc", action="store_true", help="附加 BIRD database description 到問題中")
     parser.add_argument("--desc-in-question", action="store_true", help="把 description 接在 question 裡（而非注入 SQL prompt）")
     parser.add_argument("--dynamic-desc", action="store_true", help="用 LLM 從完整 description 動態精簡出跟問題相關的欄位說明")
+    parser.add_argument("--full-desc", action="store_true", help="注入 BIRD 原始 CSV 欄位描述（load_full_description）")
     parser.add_argument("--tag", default=None, help="實驗標籤（如 v1, gpt4o, no_retrieval），用於區分不同版本的結果")
     args = parser.parse_args()
 
@@ -378,7 +424,7 @@ def main():
         if not item:
             print(f"❌ 找不到 db_id={args.db}, question_id={args.id}")
             sys.exit(1)
-        verdict = run_single(item, verbose=True, use_evidence=not args.no_evidence, use_desc=args.with_desc, desc_in_question=args.desc_in_question, dynamic_desc=args.dynamic_desc, tag=args.tag)
+        verdict = run_single(item, verbose=True, use_evidence=not args.no_evidence, use_desc=args.with_desc, desc_in_question=args.desc_in_question, dynamic_desc=args.dynamic_desc, full_desc=args.full_desc, tag=args.tag)
         icon = "✅" if verdict.get("correct") else "❌"
         print(f"\n結果：{icon} {'PASS' if verdict.get('correct') else 'FAIL'}")
     else:
@@ -387,7 +433,7 @@ def main():
             candidates = candidates[:args.limit]
 
         evidence_label = "without evidence" if args.no_evidence else "with evidence"
-        desc_label = " +dynamic-desc" if args.dynamic_desc else (" +desc(in Q)" if args.desc_in_question else (" +desc" if args.with_desc else ""))
+        desc_label = " +dynamic-desc" if args.dynamic_desc else (" +desc(in Q)" if args.desc_in_question else (" +desc" if args.with_desc else (" +full-desc" if args.full_desc else "")))
         tag_label = f", tag={args.tag}" if args.tag else ""
         print(f"🚀 開始評測：{args.db}（{len(candidates)} 題，{evidence_label}{desc_label}{tag_label}）\n")
         start = time.time()
@@ -403,7 +449,7 @@ def main():
                 print(f"[{i+1}/{len(candidates)}] ⏭️ #{item['question_id']} (已完成)")
                 continue
             print(f"[{i+1}/{len(candidates)}]", end="")
-            verdict = run_single(item, verbose=True, use_evidence=not args.no_evidence, use_desc=args.with_desc, desc_in_question=args.desc_in_question, dynamic_desc=args.dynamic_desc, tag=args.tag)
+            verdict = run_single(item, verbose=True, use_evidence=not args.no_evidence, use_desc=args.with_desc, desc_in_question=args.desc_in_question, dynamic_desc=args.dynamic_desc, full_desc=args.full_desc, tag=args.tag)
             results.append(verdict)
 
         elapsed = time.time() - start

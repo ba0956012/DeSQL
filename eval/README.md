@@ -15,29 +15,20 @@
 
 測試範圍：3 個 BIRD 資料庫，共 259 題。模型：gpt-4.1-mini。
 
-| 配置 | 準確率 | Simple | Moderate | Challenging |
-|------|--------|--------|----------|-------------|
-| evidence + compact desc (via State) | **64.9%** | 73.3% | 55.6% | 50.0% |
-| evidence + compact desc (in question) | 60.2% | 68.0% | 50.8% | 45.8% |
-| evidence only | 61.4% | 68.7% | 52.4% | 41.7% |
+| Version | Overall | Schools (89) | Debit Card (64) | Financial (106) |
+|---------|---------|-------------|-----------------|-----------------|
+| v0.1.0 | 168/259 (64.9%) | 60 (67.4%) | 39 (60.9%) | 69 (65.1%) |
+| v0.2.0 | 176/259 (67.9%) | 62 (69.7%) | 43 (67.2%) | 71 (67.0%) |
+
+See `EXPERIMENT_LOG.md` for full experiment history.
 
 ### 各資料庫表現
 
-| 資料庫 | 題數 | 最佳準確率 |
-|--------|------|-----------|
-| california_schools | 89 | 67.4% |
-| financial | 106 | 65.1% |
-| debit_card_specializing | 64 | 60.9% |
-
-### 模型比較（california_schools, 89 題）
-
-| 模型 | 準確率 |
-|------|--------|
-| gpt-4o | 66.3% |
-| gpt-4.1-mini | 64.0%~67.4% |
-| gpt-5.4-mini (reasoning=none) | 57.3% |
-| gpt-5.4-mini (reasoning=low) | 60.7% |
-| gpt-5.4-mini (reasoning=medium) | 53.9% |
+| 資料庫 | 題數 | v0.1.0 | v0.2.0 |
+|--------|------|--------|--------|
+| california_schools | 89 | 67.4% | 69.7% |
+| financial | 106 | 65.1% | 67.0% |
+| debit_card_specializing | 64 | 60.9% | 67.2% |
 
 ## Setup
 
