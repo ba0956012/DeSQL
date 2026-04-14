@@ -221,6 +221,7 @@ desql/
 │   ├── code.py               # Python sandbox & code generation
 │   ├── answer.py             # Answer formatting
 │   ├── question_analysis.py  # Question decomposition & schema mapping
+│   ├── schema_filter.py      # LLM-based schema column filtering
 │   └── chart.py              # Chart generation
 ├── eval/
 │   ├── run_eval.py           # BIRD-SQL evaluation runner
@@ -238,6 +239,13 @@ desql/
 ```
 
 ## Changelog
+
+### v0.3.0
+- Add LLM-based schema filter for large tables (>15 columns)
+- format_answer: short answer optimization to prevent value misinterpretation
+- generate_code: prevent redundant aggregation when SQL already computed results
+- Chart toggle: conditional chart_data in code generation prompt
+- strip_code_fences: regex-based extraction supporting mixed format output
 
 ### v0.2.0
 - Add Question Analysis node for structured task planning

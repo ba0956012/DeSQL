@@ -126,12 +126,15 @@ def generate_sql(state):
     all_rules = _BASE_SQL_RULES + DOMAIN_SQL_RULES
     rules_text = "\n".join(f"- {r}" for r in all_rules)
 
-    # 如果有 column_descs，把描述嵌入 DDL；否則用原始 SCHEMA_INFO
+    # 如果有 filtered_schema（欄位過濾後的 DDL），優先使用
+    base_schema = state.get("filtered_schema") or SCHEMA_INFO
+
+    # 如果有 column_descs，把描述嵌入 DDL；否則用 base schema
     column_descs = state.get("column_descs")
     if column_descs:
-        schema_text = _embed_descs_in_ddl(SCHEMA_INFO, column_descs)
+        schema_text = _embed_descs_in_ddl(base_schema, column_descs)
     else:
-        schema_text = SCHEMA_INFO
+        schema_text = base_schema
 
     schema_desc = state.get("schema_desc", "")
     schema_desc_section = f"\n欄位說明：\n{schema_desc}\n" if schema_desc else ""

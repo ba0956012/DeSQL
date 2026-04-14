@@ -4,6 +4,7 @@ Python code 生成、sandbox 執行節點
 
 import ast
 import json
+import os
 from datetime import datetime, timedelta, date
 from collections import Counter, defaultdict
 from decimal import Decimal
@@ -194,6 +195,8 @@ def generate_code(state):
     if not sql_result:
         return {"final_answer": "查無資料", "error": ""}
 
+    enable_chart = os.environ.get("ENABLE_CHART", "true").lower() in ("true", "1", "yes")
+
     error_context = ""
     if state.get("error") and state.get("code"):
         error_context = (
@@ -228,6 +231,12 @@ def generate_code(state):
     if not isinstance(sample, list):
         sample = [sample] if sample else []
 
+    chart_instruction = ""
+    if enable_chart:
+        chart_instruction = """4. 另外將適合畫圖的結構化資料存入 chart_data 變數（list of dict）
+   - chart_data 的 key 必須用使用者看得懂的名稱，不要用 ID
+   - 如果結果不適合畫圖（如單一數值、純列表、沒有數值比較），chart_data 設為空 list []"""
+
     prompt = f"""
 問題：{state["question"]}
 
@@ -243,24 +252,20 @@ SQL：{state["sql"]}
 請寫 Python code 處理 data 變數中的資料：
 1. 根據任務需求處理 data（計算、篩選、排序、整理格式等）
 2. 將最終答案存入 result 變數
-   - 如果資料已經是最終答案，直接整理格式即可
-   - 如果需要計算、篩選、排序，先處理再存入 result
+   - 如果 SQL 已經用 GROUP BY / ORDER BY / LIMIT / 聚合函數算出結果，不要再重複聚合，直接提取答案
+   - 如果 SQL 回傳原始資料，按照 Python 任務描述進行處理
    - result 應該是完整的答案，包含所有需要的數值和名稱
 3. 如果資料中有 None 值，做數學運算前要先過濾掉，不要省略
-4. 另外將適合畫圖的結構化資料存入 chart_data 變數（list of dict）
-   - chart_data 的 key 必須用使用者看得懂的名稱，不要用 ID
-   - 如果結果不適合畫圖（如單一數值、純列表、沒有數值比較），chart_data 設為空 list []
+{chart_instruction}
 
 重要提醒：
 - data 是 list of dict，每個 dict 的 key 就是 SQL SELECT 的欄位名（小寫）
-- 資料中可能有 None 值，做數學運算前要先檢查或過濾掉 None
 - 如果問題問的是「數量」或「有多少」，通常是 len(filtered_data) 或 sum，不要直接用 SQL 回傳的筆數
 - 如果問題問的是「比例」或「百分比」，確認分子和分母都從 data 中正確計算
 - 不能使用 import 語句
 - Counter、defaultdict、Decimal、datetime、timedelta、date 已可直接使用
-- SQL 回傳的日期欄位已統一為 datetime.date 物件（不是 datetime.datetime），直接用 < > == 比較即可，不需要轉換
-- 不要對 date 物件呼叫 .date() 方法（date 沒有這個方法）
-- 不要對 date 物件做字串解析，直接使用
+- SQL 回傳的日期欄位已統一為 datetime.date 物件，直接用 < > == 比較即可
+- 不要對 date 物件呼叫 .date() 方法或做字串解析
 """
     debug_log("generate_code", prompt=prompt)
     res = llm.invoke([HumanMessage(content=prompt)])

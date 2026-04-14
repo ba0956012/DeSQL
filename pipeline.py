@@ -16,6 +16,7 @@ from retrieval_subgraph import build_retrieval_subgraph
 from nodes.sql import generate_sql, execute_sql, validate_sql_result
 from nodes.code import generate_code, run_code
 from nodes.question_analysis import question_analysis
+from nodes.schema_filter import schema_filter
 from nodes.answer import format_answer
 CHART_ENGINE = os.getenv("CHART_ENGINE", "matplotlib")  # matplotlib | echarts
 if CHART_ENGINE == "echarts":
@@ -58,6 +59,7 @@ class State(TypedDict):
     schema_desc: str
     sql_validation: str
     column_descs: dict
+    filtered_schema: str
     task_plan: str
     qa_needs_python: bool
 
@@ -66,7 +68,7 @@ class State(TypedDict):
 # 🔀 Routing
 # =========================
 def route_after_retrieval(state: State):
-    return "question_analysis"
+    return "schema_filter"
 
 
 def route_after_execute(state: State):
@@ -130,6 +132,7 @@ retrieval_subgraph = build_retrieval_subgraph(
 graph = StateGraph(State)
 
 graph.add_node("retrieval", retrieval_subgraph)
+graph.add_node("schema_filter", schema_filter)
 graph.add_node("question_analysis", question_analysis)
 graph.add_node("generate_sql", generate_sql)
 graph.add_node("execute_sql", execute_sql)
@@ -144,6 +147,7 @@ if ENABLE_CHART:
 
 graph.set_entry_point("retrieval")
 graph.add_conditional_edges("retrieval", route_after_retrieval)
+graph.add_edge("schema_filter", "question_analysis")
 graph.add_edge("question_analysis", "generate_sql")
 graph.add_edge("generate_sql", "execute_sql")
 graph.add_conditional_edges("execute_sql", route_after_execute)
