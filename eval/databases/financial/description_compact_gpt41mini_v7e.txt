@@ -1,0 +1,35 @@
+-- JOIN KEYS:  
+-- order.account_id = account.account_id  
+-- account.district_id = district.district_id  
+-- card.disp_id = disp.disp_id  
+-- client.district_id = district.district_id  
+-- disp.client_id = client.client_id  
+-- disp.account_id = account.account_id  
+-- loan.account_id = account.account_id  
+-- trans.account_id = account.account_id  
+
+-- VALUE TRANSLATIONS:  
+-- account.frequency: POPLATEK MESICNE=monthly fee, POPLATEK PO OBRATU=fee after turnover, POPLATEK TYDNE=weekly fee  
+-- order.k_symbol: SIPO=household payment, UVER=loan, LEASING=leasing, POJISTNE=insurance  
+-- trans.type: PRIJEM=credit, VYDAJ=withdrawal, VYBER=withdrawal  
+-- trans.operation: VKLAD=deposit, VYBER=withdrawal, PREVOD NA UCET=transfer to account, PREVOD Z UCTU=transfer from account, VYBER KARTOU=card withdrawal  
+-- trans.k_symbol: DUCHOD=pension, POJISTNE=insurance, SANKC. UROK=penalty interest, SIPO=household payment, SLUZBY=services, UROK=interest, UVER=loan  
+
+-- MISLEADING COLUMNS:  
+-- order.account_to: recipient account number (NOT a bank code despite the name)  
+
+-- ANONYMOUS COLUMNS:  
+-- district.a2: district name (Czech)  
+-- district.a3: region name (English)  
+-- district.a4: population count  
+-- district.a5: likely count of subunits or municipalities  
+-- district.a6: likely count or code of administrative subdivisions  
+-- district.a7: likely count of smaller administrative units  
+-- district.a8: likely number of municipalities or districts within  
+-- district.a10: ratio of urban inhabitants (percentage)  
+-- district.a11: average salary (local currency units)  
+-- district.a12: unemployment rate 1995 (percent or ratio)  
+-- district.a13: unemployment rate 1996 (percent or ratio)  
+-- district.a14: number of entrepreneurs per 1000 inhabitants  
+-- district.a15: number of committed crimes 1995  
+-- district.a16: number of committed crimes 1996

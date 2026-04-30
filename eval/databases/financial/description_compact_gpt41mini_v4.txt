@@ -1,0 +1,29 @@
+-- JOIN keys: order.account_id → account.account_id  
+-- JOIN keys: account.district_id → district.district_id  
+-- JOIN keys: card.disp_id → disp.disp_id  
+-- JOIN keys: client.district_id → district.district_id  
+-- JOIN keys: disp.account_id → account.account_id  
+-- JOIN keys: disp.client_id → client.client_id  
+-- JOIN keys: loan.account_id → account.account_id  
+-- JOIN keys: trans.account_id → account.account_id  
+
+-- order: payment orders from accounts  
+-- account: bank accounts with branch and frequency  
+-- card: credit cards linked to dispositions  
+-- client: bank clients with demographics  
+-- disp: client-account relations and roles  
+-- district: geographic and socio-economic data  
+-- loan: loans linked to accounts with status  
+-- trans: account transactions  
+
+-- account.frequency: POPLATEK MESICNE=monthly fee, POPLATEK PO OBRATU=per transaction fee  
+-- disp.type: OWNER=account owner, DISPONENT=authorized user  
+-- loan.status: A=finished OK, B=finished unpaid, C=active OK, D=active in debt  
+-- order.k_symbol: SIPO=household payment, UVER=loan payment, POJISTNE=insurance, LEASING=leasing  
+-- trans.type: PRIJEM=credit, VYDAJ=withdrawal  
+-- trans.operation: VKLAD=cash deposit, VYBER=cash withdrawal, VYBER KARTOU=card withdrawal, PREVOD NA UCET=transfer out, PREVOD Z UCTU=transfer in  
+-- district.a10: urban population ratio (%)  
+-- district.a11: average salary  
+-- district.a12/a13: unemployment rate 1995/1996  
+-- district.a14: entrepreneurs per 1000 inhabitants  
+-- district.a15/a16: crimes committed 1995/1996

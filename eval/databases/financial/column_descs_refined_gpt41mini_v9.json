@@ -1,0 +1,12 @@
+{
+  "account.date": "account creation date stored as full DATE (YYYY-MM-DD), not YYMMDD as originally described",
+  "card.issued": "credit card issue date stored as full DATE (YYYY-MM-DD), not YYMMDD as originally described",
+  "disp.type": "type of disposition with values 'OWNER' and 'DISPONENT' only; 'USER' is not a valid type",
+  "loan.payments": "monthly payment amount in currency, not a count of months as 'unit: month' suggests",
+  "trans.type": "'PRIJEM' means credit, 'VYDAJ' means withdrawal, and 'VYBER' is a subtype of withdrawal (cash withdrawal), not described originally",
+  "district.a4": "population count or similar numeric demographic measure (description missing)",
+  "district.a5": "number of municipalities or related count/statistic (description missing)",
+  "district.a6": "number of districts or related count/statistic (description missing)",
+  "district.a7": "number of regions or related count/statistic (description missing)",
+  "district.a8": "additional numeric code or count related to municipality/district/region hierarchy (description missing)"
+}

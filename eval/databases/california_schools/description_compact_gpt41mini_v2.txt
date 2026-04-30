@@ -1,0 +1,39 @@
+-- frpm.cdscode = schools.cdscode  
+-- satscores.cds = schools.cdscode  
+
+-- frpm: free/reduced price meal program stats by school/year  
+-- satscores: SAT scores and test taker counts by school  
+-- schools: school and district master data  
+
+-- frpm.charter school (y/n): 0 = No, 1 = Yes  
+-- frpm.charter funding type: ['Directly funded', 'Locally funded', 'Not in CS funding model']  
+-- frpm.district type: see enum (e.g., 'County Office of Education (COE)', 'Unified School District')  
+-- frpm.educational option type: see enum (e.g., 'Traditional', 'Continuation School')  
+-- frpm.high grade / low grade: grade levels or 'K', 'P', 'Adult', 'Post Secondary'  
+-- frpm.nslp provision status: NSLP meal provision types (e.g., 'CEP', 'Provision 1')  
+-- frpm.school type: see enum (e.g., 'Elementary Schools (Public)', 'High Schools (Public)')  
+-- frpm.percent (%) eligible free/frpm = free meal or FRPM count / enrollment (k-12 or ages 5-17)  
+-- frpm.2013-14 calpads fall 1 certification status: CALPADS data certification flag  
+
+-- satscores.rtype: ['D' = district, 'S' = school] (unuseful)  
+-- satscores.numge1500: count of SAT test takers scoring ≥1500  
+-- satscores.excellence rate = numge1500 / numtsttakr  
+
+-- schools.charter: 1 = charter school, 0 = not  
+-- schools.charternum: 4-digit charter school number  
+-- schools.fundingtype: same enum as frpm.charter funding type  
+-- schools.doc: District Ownership Code (e.g., '00' = COE, '52' = Elementary)  
+-- schools.doctype: text description of doc code  
+-- schools.soc: School Ownership Code (numeric)  
+-- schools.soctype: text description of soc code  
+-- schools.edopscode / edopsname: educational option code and name (matches frpm.educational option type)  
+-- schools.eilcode / eilname: educational instruction level code and name (e.g., 'ELEMHIGH' = Elementary-High Combination)  
+-- schools.gsoffered / gsserved: grade span offered vs. grade span served (may differ)  
+-- schools.statustype: ['Active', 'Closed', 'Merged', 'Pending']  
+-- schools.virtual: ['F' = full virtual, 'N' = none, 'P' = partial virtual]  
+-- schools.magnet: 1 = magnet school/program, 0 = no  
+-- schools.admfname1 / admlname1 / admemail1: primary administrator's first name, last name, email (only active/pending)  
+
+-- Cross-table clarification:  
+-- frpm.cdscode and satscores.cds both represent CDSCode but differ in format (frpm uses text, satscores uses numeric-like text)  
+-- frpm.district code and schools.ncesdist differ: frpm.district code is numeric district ID, schools.ncesdist is 7-digit NCES district ID

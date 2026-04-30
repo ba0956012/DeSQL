@@ -1,0 +1,9 @@
+-- JOIN KEYS (required):
+-- frpm.cdscode = schools.cdscode
+-- satscores.cds = schools.cdscode
+
+-- AMBIGUOUS OR MISLEADING COLUMNS (only if applicable):
+-- frpm.county name: stores county name (NOT county code as description states)
+-- satscores.rtype: encodes entity type ("D"=district, "S"=school), more useful than described as "unuseful"
+-- schools.charter: contains BIGINT or "None" (missing), not strictly 0 or 1 as description suggests
+-- schools.virtual: codes like "N", "P", "F" represent virtual instruction types, not just a boolean or simple flag

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>Chart API 測試結果</title>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+  .meta { color: #666; font-size: 14px; margin: 6px 0; }
+  .chart { margin-top: 16px; border: 1px solid #ddd; border-radius: 4px; }
+</style>
+</head>
+<body>
+<h1>📊 Chart API 測試結果</h1>
+<p class="meta">Chart Type: <strong>pie</strong></p>
+<p class="meta">Reason: 使用者想分析各類別銷售佔比，資料筆數少且為單一維度，適合用圓餅圖呈現比例關係。</p>
+<div class="chart"><iframe srcdoc="<!DOCTYPE html>
+<html><head><meta charset=&quot;UTF-8&quot;>
+<script src=&quot;https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js&quot;></script>
+</head><body>
+<div id=&quot;dc88a47ef4c0&quot; style=&quot;width:800px;height:500px;&quot;></div>
+<script>
+var chart = echarts.init(document.getElementById('dc88a47ef4c0'));
+var option = {
+  &quot;animation&quot;: true,
+  &quot;animationThreshold&quot;: 2000,
+  &quot;animationDuration&quot;: 1000,
+  &quot;animationEasing&quot;: &quot;cubicOut&quot;,
+  &quot;animationDelay&quot;: 0,
+  &quot;animationDurationUpdate&quot;: 300,
+  &quot;animationEasingUpdate&quot;: &quot;cubicOut&quot;,
+  &quot;animationDelayUpdate&quot;: 0,
+  &quot;aria&quot;: {
+    &quot;enabled&quot;: false
+  },
+  &quot;series&quot;: [
+    {
+      &quot;type&quot;: &quot;pie&quot;,
+      &quot;name&quot;: &quot;銷售佔比&quot;,
+      &quot;colorBy&quot;: &quot;data&quot;,
+      &quot;legendHoverLink&quot;: true,
+      &quot;selectedMode&quot;: false,
+      &quot;selectedOffset&quot;: 10,
+      &quot;clockwise&quot;: true,
+      &quot;startAngle&quot;: 90,
+      &quot;minAngle&quot;: 0,
+      &quot;minShowLabelAngle&quot;: 0,
+      &quot;avoidLabelOverlap&quot;: true,
+      &quot;stillShowZeroSum&quot;: true,
+      &quot;percentPrecision&quot;: 2,
+      &quot;showEmptyCircle&quot;: true,
+      &quot;emptyCircleStyle&quot;: {
+        &quot;color&quot;: &quot;lightgray&quot;,
+        &quot;borderColor&quot;: &quot;#000&quot;,
+        &quot;borderWidth&quot;: 0,
+        &quot;borderType&quot;: &quot;solid&quot;,
+        &quot;borderDashOffset&quot;: 0,
+        &quot;borderCap&quot;: &quot;butt&quot;,
+        &quot;borderJoin&quot;: &quot;bevel&quot;,
+        &quot;borderMiterLimit&quot;: 10,
+        &quot;opacity&quot;: 1
+      },
+      &quot;data&quot;: [
+        {
+          &quot;name&quot;: &quot;電子產品&quot;,
+          &quot;value&quot;: 15000
+        },
+        {
+          &quot;name&quot;: &quot;服飾&quot;,
+          &quot;value&quot;: 8500
+        },
+        {
+          &quot;name&quot;: &quot;食品&quot;,
+          &quot;value&quot;: 12000
+        },
+        {
+          &quot;name&quot;: &quot;家具&quot;,
+          &quot;value&quot;: 6000
+        },
+        {
+          &quot;name&quot;: &quot;日用品&quot;,
+          &quot;value&quot;: 9200
+        }
+      ],
+      &quot;radius&quot;: [
+        &quot;40%&quot;,
+        &quot;70%&quot;
+      ],
+      &quot;center&quot;: [
+        &quot;50%&quot;,
+        &quot;50%&quot;
+      ],
+      &quot;label&quot;: {
+        &quot;show&quot;: true,
+        &quot;margin&quot;: 8,
+        &quot;formatter&quot;: &quot;{b}: {d}%&quot;,
+        &quot;richInheritPlainLabel&quot;: true,
+        &quot;valueAnimation&quot;: false
+      },
+      &quot;labelLine&quot;: {
+        &quot;show&quot;: true,
+        &quot;showAbove&quot;: false,
+        &quot;length&quot;: 15,
+        &quot;length2&quot;: 15,
+        &quot;smooth&quot;: false,
+        &quot;minTurnAngle&quot;: 90,
+        &quot;maxSurfaceAngle&quot;: 90
+      }
+    }
+  ],
+  &quot;legend&quot;: [
+    {
+      &quot;data&quot;: [
+        &quot;電子產品&quot;,
+        &quot;服飾&quot;,
+        &quot;食品&quot;,
+        &quot;家具&quot;,
+        &quot;日用品&quot;
+      ],
+      &quot;selected&quot;: {},
+      &quot;show&quot;: true,
+      &quot;left&quot;: &quot;left&quot;,
+      &quot;padding&quot;: 5,
+      &quot;itemGap&quot;: 10,
+      &quot;itemWidth&quot;: 25,
+      &quot;itemHeight&quot;: 14,
+      &quot;backgroundColor&quot;: &quot;transparent&quot;,
+      &quot;borderColor&quot;: &quot;#ccc&quot;,
+      &quot;borderRadius&quot;: 0,
+      &quot;pageButtonItemGap&quot;: 5,
+      &quot;pageButtonPosition&quot;: &quot;end&quot;,
+      &quot;pageFormatter&quot;: &quot;{current}/{total}&quot;,
+      &quot;pageIconColor&quot;: &quot;#2f4554&quot;,
+      &quot;pageIconInactiveColor&quot;: &quot;#aaa&quot;,
+      &quot;pageIconSize&quot;: 15,
+      &quot;animationDurationUpdate&quot;: 800,
+      &quot;selector&quot;: false,
+      &quot;selectorPosition&quot;: &quot;auto&quot;,
+      &quot;selectorItemGap&quot;: 7,
+      &quot;selectorButtonGap&quot;: 10,
+      &quot;triggerEvent&quot;: false
+    }
+  ],
+  &quot;tooltip&quot;: {
+    &quot;show&quot;: true,
+    &quot;trigger&quot;: &quot;item&quot;,
+    &quot;triggerOn&quot;: &quot;mousemove|click&quot;,
+    &quot;axisPointer&quot;: {
+      &quot;type&quot;: &quot;line&quot;
+    },
+    &quot;showContent&quot;: true,
+    &quot;alwaysShowContent&quot;: false,
+    &quot;showDelay&quot;: 0,
+    &quot;hideDelay&quot;: 100,
+    &quot;enterable&quot;: false,
+    &quot;confine&quot;: false,
+    &quot;appendToBody&quot;: false,
+    &quot;transitionDuration&quot;: 0.4,
+    &quot;displayTransition&quot;: true,
+    &quot;formatter&quot;: &quot;{b}: {c} ({d}%)&quot;,
+    &quot;textStyle&quot;: {
+      &quot;fontSize&quot;: 14,
+      &quot;richInheritPlainLabel&quot;: true
+    },
+    &quot;borderWidth&quot;: 0,
+    &quot;padding&quot;: 5,
+    &quot;order&quot;: &quot;seriesAsc&quot;
+  },
+  &quot;title&quot;: [
+    {
+      &quot;show&quot;: true,
+      &quot;text&quot;: &quot;各類別銷售佔比&quot;,
+      &quot;target&quot;: &quot;blank&quot;,
+      &quot;subtarget&quot;: &quot;blank&quot;,
+      &quot;padding&quot;: 5,
+      &quot;itemGap&quot;: 10,
+      &quot;textAlign&quot;: &quot;auto&quot;,
+      &quot;textVerticalAlign&quot;: &quot;auto&quot;,
+      &quot;triggerEvent&quot;: false
+    }
+  ],
+  &quot;toolbox&quot;: {
+    &quot;show&quot;: true,
+    &quot;orient&quot;: &quot;horizontal&quot;,
+    &quot;itemSize&quot;: 15,
+    &quot;itemGap&quot;: 10,
+    &quot;left&quot;: &quot;80%&quot;,
+    &quot;feature&quot;: {
+      &quot;saveAsImage&quot;: {}
+    }
+  }
+};
+chart.setOption(option);
+window.addEventListener('resize', function(){ chart.resize(); });
+</script>
+</body></html>" style="width:100%;height:600px;border:none;"></iframe></div>
+</body>
+</html>

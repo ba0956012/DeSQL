@@ -1,0 +1,14 @@
+-- JOIN keys: transactions_1k.customerid = customers.customerid  
+-- JOIN keys: transactions_1k.gasstationid = gasstations.gasstationid  
+-- JOIN keys: transactions_1k.productid = products.productid  
+-- JOIN keys: yearmonth.customerid = customers.customerid  
+
+-- customers: customer master data  
+-- gasstations: gas station master data  
+-- products: product master data  
+-- transactions_1k: individual fuel transactions  
+-- yearmonth: monthly consumption aggregates  
+
+-- gasstations.segment: chain segment category  
+-- transactions_1k.price: unit price per amount (total = amount * price)  
+-- yearmonth.date: format YYYYMM (e.g., 201207 = July 2012)

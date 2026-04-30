@@ -1,0 +1,9 @@
+-- transactions_1k.customerid = customers.customerid  
+-- transactions_1k.gasstationid = gasstations.gasstationid  
+-- transactions_1k.productid = products.productid  
+
+-- customers.segment: SME=Small and Medium Enterprise, LAM=Large Account Management  
+-- gasstations.country: CZE=Czech Republic, SVK=Slovakia  
+-- products.description: "Rucní zadání"=Manual entry, "Nafta"=Diesel  
+
+-- transactions_1k.price: total transaction price (amount x unit price), NOT unit price

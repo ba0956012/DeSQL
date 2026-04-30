@@ -1,0 +1,3216 @@
+{
+  "0": {
+    "question_id": 0,
+    "gold_sql": "SELECT `Free Meal Count (K-12)` / `Enrollment (K-12)` FROM frpm WHERE `County Name` = 'Alameda' ORDER BY (CAST(`Free Meal Count (K-12)` AS REAL) / `Enrollment (K-12)`) DESC LIMIT 1",
+    "pg_sql": "SELECT \"free meal count (k-12)\" / \"enrollment (k-12)\" FROM frpm WHERE \"county name\" = 'Alameda' ORDER BY (CAST(\"free meal count (k-12)\" AS REAL) / \"enrollment (k-12)\") DESC LIMIT 1",
+    "result": [
+      {
+        "?column?": null
+      }
+    ],
+    "row_count": 1
+  },
+  "1": {
+    "question_id": 1,
+    "gold_sql": "SELECT `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` FROM frpm WHERE `Educational Option Type` = 'Continuation School' AND `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` IS NOT NULL ORDER BY `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` ASC LIMIT 3",
+    "pg_sql": "SELECT \"free meal count (ages 5-17)\" / \"enrollment (ages 5-17)\" FROM frpm WHERE \"educational option type\" = 'Continuation School' AND \"free meal count (ages 5-17)\" / \"enrollment (ages 5-17)\" IS NOT NULL ORDER BY \"free meal count (ages 5-17)\" / \"enrollment (ages 5-17)\" ASC LIMIT 3",
+    "result": [
+      {
+        "?column?": 0.043478260869565216
+      },
+      {
+        "?column?": 0.07042253521126761
+      },
+      {
+        "?column?": 0.11363636363636363
+      }
+    ],
+    "row_count": 3
+  },
+  "2": {
+    "question_id": 2,
+    "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`District Name` = 'Fresno County Office of Education' AND T1.`Charter School (Y/N)` = 1",
+    "pg_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"district name\" = 'Fresno County Office of Education' AND T1.\"charter school (y/n)\" = 1",
+    "result": [
+      {
+        "zip": "93726-5309"
+      },
+      {
+        "zip": "93628-9602"
+      },
+      {
+        "zip": "93706-2611"
+      },
+      {
+        "zip": "93726-5208"
+      },
+      {
+        "zip": "93706-2819"
+      }
+    ],
+    "row_count": 5
+  },
+  "3": {
+    "question_id": 3,
+    "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.`FRPM Count (K-12)` DESC LIMIT 1",
+    "pg_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"frpm count (k-12)\" DESC LIMIT 1",
+    "result": [
+      {
+        "mailstreet": "3550 64th Avenue"
+      }
+    ],
+    "row_count": 1
+  },
+  "4": {
+    "question_id": 4,
+    "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`Charter Funding Type` = 'Directly funded' AND T1.`Charter School (Y/N)` = 1 AND T2.OpenDate > '2000-01-01'",
+    "pg_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"charter funding type\" = 'Directly funded' AND T1.\"charter school (y/n)\" = 1 AND T2.OpenDate > '2000-01-01'",
+    "result": [
+      {
+        "phone": null
+      },
+      {
+        "phone": "(510) 596-8901"
+      },
+      {
+        "phone": null
+      },
+      {
+        "phone": "(510) 686-4131"
+      },
+      {
+        "phone": "(510) 452-2063"
+      },
+      {
+        "phone": "(510) 842-1181"
+      },
+      {
+        "phone": "(510) 748-4008"
+      },
+      {
+        "phone": "(510) 748-4017"
+      },
+      {
+        "phone": "(510) 995-4300"
+      },
+      {
+        "phone": "(510) 748-4314"
+      },
+      {
+        "phone": "(510) 809-9800"
+      },
+      {
+        "phone": "(510) 809-9800"
+      },
+      {
+        "phone": "(510) 300-1340"
+      },
+      {
+        "phone": "(510) 300-1560"
+      },
+      {
+        "phone": "(510) 931-7868"
+      },
+      {
+        "phone": "(510) 543-4124"
+      },
+      {
+        "phone": "(510) 370-3334"
+      },
+      {
+        "phone": "(925) 443-1690"
+      },
+      {
+        "phone": "(510) 635-7170"
+      },
+      {
+        "phone": "(510) 562-5238"
+      },
+      {
+        "phone": "(510) 382-9932"
+      },
+      {
+        "phone": "(510) 562-8225"
+      },
+      {
+        "phone": "(510) 658-2900"
+      },
+      {
+        "phone": "(510) 904-6440"
+      },
+      {
+        "phone": "(510) 893-8701"
+      },
+      {
+        "phone": "(510) 893-8701"
+      },
+      {
+        "phone": "(510) 285-7511"
+      },
+      {
+        "phone": "(510) 893-8700"
+      },
+      {
+        "phone": "(510) 874-7255"
+      },
+      {
+        "phone": "(510) 436-5487"
+      },
+      {
+        "phone": "(510) 992-7800"
+      },
+      {
+        "phone": "(510) 879-1282"
+      },
+      {
+        "phone": "(510) 562-8030"
+      },
+      {
+        "phone": "(510) 436-9760"
+      },
+      {
+        "phone": "(510) 452-2100"
+      },
+      {
+        "phone": "(510) 633-0750"
+      },
+      {
+        "phone": "(510) 562-8030"
+      },
+      {
+        "phone": "(510) 689-2035"
+      },
+      {
+        "phone": "(510) 444-1702"
+      },
+      {
+        "phone": "(510) 577-9557"
+      },
+      {
+        "phone": "(510) 594-3900"
+      },
+      {
+        "phone": "(510) 562-8801"
+      },
+      {
+        "phone": "(510) 635-7737"
+      },
+      {
+        "phone": "(510) 638-9445"
+      },
+      {
+        "phone": "(510) 873-8800"
+      },
+      {
+        "phone": "(510) 568-3101"
+      },
+      {
+        "phone": "(510) 655-0540"
+      },
+      {
+        "phone": "(510) 879-3140"
+      },
+      {
+        "phone": "(510) 258-0106"
+      },
+      {
+        "phone": "(510) 317-2330"
+      }
+    ],
+    "row_count": 751
+  },
+  "5": {
+    "question_id": 5,
+    "gold_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+    "pg_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+    "result": [
+      {
+        "count": 4
+      }
+    ],
+    "row_count": 1
+  },
+  "6": {
+    "question_id": 6,
+    "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+    "pg_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = '1' AND T1.NumTstTakr > 500",
+    "result": [
+      {
+        "school": "Millikan High"
+      },
+      {
+        "school": "Polytechnic High"
+      },
+      {
+        "school": "Troy High"
+      }
+    ],
+    "row_count": 3
+  },
+  "7": {
+    "question_id": 7,
+    "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+    "pg_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+    "result": [
+      {
+        "phone": "(559) 265-3000"
+      }
+    ],
+    "row_count": 1
+  },
+  "8": {
+    "question_id": 8,
+    "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY `FRPM Count (K-12)` DESC LIMIT 1 )",
+    "pg_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"frpm count (k-12)\" DESC LIMIT 1 )",
+    "result": [],
+    "row_count": 0
+  },
+  "9": {
+    "question_id": 9,
+    "gold_sql": "SELECT COUNT(T2.`School Code`) FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.`Charter Funding Type` = 'Directly funded'",
+    "pg_sql": "SELECT COUNT(T2.\"school code\") FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.\"charter funding type\" = 'Directly funded'",
+    "result": [
+      {
+        "count": 2
+      }
+    ],
+    "row_count": 1
+  },
+  "10": {
+    "question_id": 10,
+    "gold_sql": "SELECT T2.`FRPM Count (Ages 5-17)` FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrRead DESC LIMIT 1",
+    "pg_sql": "SELECT T2.\"frpm count (ages 5-17)\" FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrRead DESC LIMIT 1",
+    "result": [
+      {
+        "frpm count (ages 5-17)": 37.0
+      }
+    ],
+    "row_count": 1
+  },
+  "11": {
+    "question_id": 11,
+    "gold_sql": "SELECT T2.CDSCode FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.`Enrollment (K-12)` + T2.`Enrollment (Ages 5-17)` > 500",
+    "pg_sql": "SELECT T2.CDSCode FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.\"enrollment (k-12)\" + T2.\"enrollment (ages 5-17)\" > 500",
+    "result": [
+      {
+        "cdscode": "01100170109835"
+      },
+      {
+        "cdscode": "01100170112607"
+      },
+      {
+        "cdscode": "01100170124172"
+      },
+      {
+        "cdscode": "01100170125567"
+      },
+      {
+        "cdscode": "01100176001788"
+      },
+      {
+        "cdscode": "01100176002000"
+      },
+      {
+        "cdscode": "01316170131763"
+      },
+      {
+        "cdscode": "01611190111765"
+      },
+      {
+        "cdscode": "01611190119222"
+      },
+      {
+        "cdscode": "01611190122085"
+      },
+      {
+        "cdscode": "01611190126656"
+      },
+      {
+        "cdscode": "01611190130229"
+      },
+      {
+        "cdscode": "01611190130609"
+      },
+      {
+        "cdscode": "01611190132878"
+      },
+      {
+        "cdscode": "01611196090005"
+      },
+      {
+        "cdscode": "01611196090013"
+      },
+      {
+        "cdscode": "01611196090021"
+      },
+      {
+        "cdscode": "01611196090039"
+      },
+      {
+        "cdscode": "01611196090047"
+      },
+      {
+        "cdscode": "01611196090054"
+      },
+      {
+        "cdscode": "01611196090112"
+      },
+      {
+        "cdscode": "01611196090120"
+      },
+      {
+        "cdscode": "01611196100374"
+      },
+      {
+        "cdscode": "01611196110779"
+      },
+      {
+        "cdscode": "01611270130450"
+      },
+      {
+        "cdscode": "01611276090146"
+      },
+      {
+        "cdscode": "01611276090161"
+      },
+      {
+        "cdscode": "01611276095376"
+      },
+      {
+        "cdscode": "01611276116222"
+      },
+      {
+        "cdscode": "01611430122689"
+      },
+      {
+        "cdscode": "01611430122697"
+      },
+      {
+        "cdscode": "01611430131177"
+      },
+      {
+        "cdscode": "01611436056857"
+      },
+      {
+        "cdscode": "01611436056865"
+      },
+      {
+        "cdscode": "01611436090187"
+      },
+      {
+        "cdscode": "01611436090195"
+      },
+      {
+        "cdscode": "01611436090211"
+      },
+      {
+        "cdscode": "01611436090252"
+      },
+      {
+        "cdscode": "01611436090278"
+      },
+      {
+        "cdscode": "01611436090286"
+      },
+      {
+        "cdscode": "01611436090294"
+      },
+      {
+        "cdscode": "01611436090302"
+      },
+      {
+        "cdscode": "01611436090310"
+      },
+      {
+        "cdscode": "01611436090328"
+      },
+      {
+        "cdscode": "01611436097729"
+      },
+      {
+        "cdscode": "01611436105316"
+      },
+      {
+        "cdscode": "01611500132225"
+      },
+      {
+        "cdscode": "01611506090351"
+      },
+      {
+        "cdscode": "01611506090369"
+      },
+      {
+        "cdscode": "01611506090385"
+      }
+    ],
+    "row_count": 7806
+  },
+  "12": {
+    "question_id": 12,
+    "gold_sql": "SELECT MAX(CAST(T1.`Free Meal Count (Ages 5-17)` AS REAL) / T1.`Enrollment (Ages 5-17)`) FROM frpm AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE CAST(T2.NumGE1500 AS REAL) / T2.NumTstTakr > 0.3",
+    "pg_sql": "SELECT MAX(CAST(T1.\"free meal count (ages 5-17)\" AS REAL) / T1.\"enrollment (ages 5-17)\") FROM frpm AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE CAST(T2.NumGE1500 AS REAL) / T2.NumTstTakr > 0.3",
+    "result": [
+      {
+        "max": 0.9049079754601227
+      }
+    ],
+    "row_count": 1
+  },
+  "13": {
+    "question_id": 13,
+    "gold_sql": "SELECT T1.Phone FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds ORDER BY CAST(T2.NumGE1500 AS REAL) / T2.NumTstTakr DESC LIMIT 3",
+    "pg_sql": "SELECT T1.Phone FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds ORDER BY CAST(T2.NumGE1500 AS REAL) / T2.NumTstTakr DESC LIMIT 3",
+    "result": [
+      {
+        "phone": "(559) 222-8439"
+      },
+      {
+        "phone": "(559) 265-3000"
+      },
+      {
+        "phone": "(559) 305-7565"
+      }
+    ],
+    "row_count": 3
+  },
+  "14": {
+    "question_id": 14,
+    "gold_sql": "SELECT T1.NCESSchool FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T2.`Enrollment (Ages 5-17)` DESC LIMIT 5",
+    "pg_sql": "SELECT T1.NCESSchool FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T2.\"enrollment (ages 5-17)\" DESC LIMIT 5",
+    "result": [
+      {
+        "ncesschool": "13810"
+      },
+      {
+        "ncesschool": "13083"
+      },
+      {
+        "ncesschool": "12842"
+      },
+      {
+        "ncesschool": "12611"
+      },
+      {
+        "ncesschool": "13820"
+      }
+    ],
+    "row_count": 5
+  },
+  "15": {
+    "question_id": 15,
+    "gold_sql": "SELECT T1.District FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Active' ORDER BY T2.AvgScrRead DESC LIMIT 1",
+    "pg_sql": "SELECT T1.District FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Active' ORDER BY T2.AvgScrRead DESC LIMIT 1",
+    "result": [
+      {
+        "district": "Fresno County Office of Education"
+      }
+    ],
+    "row_count": 1
+  },
+  "16": {
+    "question_id": 16,
+    "gold_sql": "SELECT COUNT(T1.CDSCode) FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Merged' AND T2.NumTstTakr < 100 AND T1.County = 'Lake'",
+    "pg_sql": "SELECT COUNT(T1.CDSCode) FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Merged' AND T2.NumTstTakr < 100 AND T1.County = 'Lake'",
+    "result": [
+      {
+        "count": 1
+      }
+    ],
+    "row_count": 1
+  },
+  "17": {
+    "question_id": 17,
+    "gold_sql": "SELECT CharterNum, AvgScrWrite, RANK() OVER (ORDER BY AvgScrWrite DESC) AS WritingScoreRank FROM schools AS T1  INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T2.AvgScrWrite > 499 AND CharterNum is not null",
+    "pg_sql": "SELECT CharterNum, AvgScrWrite, RANK() OVER (ORDER BY AvgScrWrite DESC) AS WritingScoreRank FROM schools AS T1  INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T2.AvgScrWrite > 499 AND CharterNum is not null",
+    "result": [
+      {
+        "charternum": "0210",
+        "avgscrwrite": 630,
+        "writingscorerank": 1
+      },
+      {
+        "charternum": "0890",
+        "avgscrwrite": 593,
+        "writingscorerank": 2
+      },
+      {
+        "charternum": "0290",
+        "avgscrwrite": 582,
+        "writingscorerank": 3
+      },
+      {
+        "charternum": "0930",
+        "avgscrwrite": 579,
+        "writingscorerank": 4
+      },
+      {
+        "charternum": "1169",
+        "avgscrwrite": 576,
+        "writingscorerank": 5
+      },
+      {
+        "charternum": "1079",
+        "avgscrwrite": 558,
+        "writingscorerank": 6
+      },
+      {
+        "charternum": "0120",
+        "avgscrwrite": 555,
+        "writingscorerank": 7
+      },
+      {
+        "charternum": "0747",
+        "avgscrwrite": 554,
+        "writingscorerank": 8
+      },
+      {
+        "charternum": "0612",
+        "avgscrwrite": 551,
+        "writingscorerank": 9
+      },
+      {
+        "charternum": "0759",
+        "avgscrwrite": 548,
+        "writingscorerank": 10
+      },
+      {
+        "charternum": "1071",
+        "avgscrwrite": 547,
+        "writingscorerank": 11
+      },
+      {
+        "charternum": "0572",
+        "avgscrwrite": 543,
+        "writingscorerank": 12
+      },
+      {
+        "charternum": "0658",
+        "avgscrwrite": 542,
+        "writingscorerank": 13
+      },
+      {
+        "charternum": "0271",
+        "avgscrwrite": 540,
+        "writingscorerank": 14
+      },
+      {
+        "charternum": "0284",
+        "avgscrwrite": 539,
+        "writingscorerank": 15
+      },
+      {
+        "charternum": "1070",
+        "avgscrwrite": 538,
+        "writingscorerank": 16
+      },
+      {
+        "charternum": "0844",
+        "avgscrwrite": 537,
+        "writingscorerank": 17
+      },
+      {
+        "charternum": "0180",
+        "avgscrwrite": 535,
+        "writingscorerank": 18
+      },
+      {
+        "charternum": "1398",
+        "avgscrwrite": 535,
+        "writingscorerank": 18
+      },
+      {
+        "charternum": "0056",
+        "avgscrwrite": 533,
+        "writingscorerank": 20
+      },
+      {
+        "charternum": "0248",
+        "avgscrwrite": 533,
+        "writingscorerank": 20
+      },
+      {
+        "charternum": "0050",
+        "avgscrwrite": 531,
+        "writingscorerank": 22
+      },
+      {
+        "charternum": "0084",
+        "avgscrwrite": 530,
+        "writingscorerank": 23
+      },
+      {
+        "charternum": "0419",
+        "avgscrwrite": 529,
+        "writingscorerank": 24
+      },
+      {
+        "charternum": "0147",
+        "avgscrwrite": 528,
+        "writingscorerank": 25
+      },
+      {
+        "charternum": "0588",
+        "avgscrwrite": 526,
+        "writingscorerank": 26
+      },
+      {
+        "charternum": "0037",
+        "avgscrwrite": 525,
+        "writingscorerank": 27
+      },
+      {
+        "charternum": "1580",
+        "avgscrwrite": 524,
+        "writingscorerank": 28
+      },
+      {
+        "charternum": "0019",
+        "avgscrwrite": 524,
+        "writingscorerank": 28
+      },
+      {
+        "charternum": "0835",
+        "avgscrwrite": 522,
+        "writingscorerank": 30
+      },
+      {
+        "charternum": "0838",
+        "avgscrwrite": 521,
+        "writingscorerank": 31
+      },
+      {
+        "charternum": "0169",
+        "avgscrwrite": 520,
+        "writingscorerank": 32
+      },
+      {
+        "charternum": "1083",
+        "avgscrwrite": 519,
+        "writingscorerank": 33
+      },
+      {
+        "charternum": "0493",
+        "avgscrwrite": 517,
+        "writingscorerank": 34
+      },
+      {
+        "charternum": "0267",
+        "avgscrwrite": 517,
+        "writingscorerank": 34
+      },
+      {
+        "charternum": "1314",
+        "avgscrwrite": 514,
+        "writingscorerank": 36
+      },
+      {
+        "charternum": "0109",
+        "avgscrwrite": 513,
+        "writingscorerank": 37
+      },
+      {
+        "charternum": "0664",
+        "avgscrwrite": 512,
+        "writingscorerank": 38
+      },
+      {
+        "charternum": "0756",
+        "avgscrwrite": 511,
+        "writingscorerank": 39
+      },
+      {
+        "charternum": "1571",
+        "avgscrwrite": 509,
+        "writingscorerank": 40
+      },
+      {
+        "charternum": "0537",
+        "avgscrwrite": 508,
+        "writingscorerank": 41
+      },
+      {
+        "charternum": "1427",
+        "avgscrwrite": 508,
+        "writingscorerank": 41
+      },
+      {
+        "charternum": "0579",
+        "avgscrwrite": 506,
+        "writingscorerank": 43
+      },
+      {
+        "charternum": "0512",
+        "avgscrwrite": 506,
+        "writingscorerank": 43
+      },
+      {
+        "charternum": "0127",
+        "avgscrwrite": 505,
+        "writingscorerank": 45
+      },
+      {
+        "charternum": "0477",
+        "avgscrwrite": 504,
+        "writingscorerank": 46
+      },
+      {
+        "charternum": "0565",
+        "avgscrwrite": 503,
+        "writingscorerank": 47
+      },
+      {
+        "charternum": "0730",
+        "avgscrwrite": 503,
+        "writingscorerank": 47
+      },
+      {
+        "charternum": "1208",
+        "avgscrwrite": 502,
+        "writingscorerank": 49
+      },
+      {
+        "charternum": "0332",
+        "avgscrwrite": 502,
+        "writingscorerank": 49
+      }
+    ],
+    "row_count": 50
+  },
+  "18": {
+    "question_id": 18,
+    "gold_sql": "SELECT COUNT(T1.CDSCode) FROM frpm AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.`Charter Funding Type` = 'Directly funded' AND T1.`County Name` = 'Fresno' AND T2.NumTstTakr <= 250",
+    "pg_sql": "SELECT COUNT(T1.CDSCode) FROM frpm AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.\"charter funding type\" = 'Directly funded' AND T1.\"county name\" = 'Fresno' AND T2.NumTstTakr <= 250",
+    "result": [
+      {
+        "count": 14
+      }
+    ],
+    "row_count": 1
+  },
+  "19": {
+    "question_id": 19,
+    "gold_sql": "SELECT T1.Phone FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds ORDER BY T2.AvgScrMath DESC LIMIT 1",
+    "pg_sql": "SELECT T1.Phone FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds ORDER BY T2.AvgScrMath DESC LIMIT 1",
+    "result": [
+      {
+        "phone": "(559) 265-3000"
+      }
+    ],
+    "row_count": 1
+  },
+  "20": {
+    "question_id": 20,
+    "gold_sql": "SELECT COUNT(T1.`School Name`) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Amador' AND T1.`Low Grade` = 9 AND T1.`High Grade` = 12",
+    "pg_sql": "SELECT COUNT(T1.\"school name\") FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Amador' AND T1.\"low grade\" = '9' AND T1.\"high grade\" = '12'",
+    "result": [
+      {
+        "count": 3
+      }
+    ],
+    "row_count": 1
+  },
+  "21": {
+    "question_id": 21,
+    "gold_sql": "SELECT COUNT(CDSCode) FROM frpm WHERE `County Name` = 'Los Angeles' AND `Free Meal Count (K-12)` > 500 AND `FRPM Count (K-12)`< 700",
+    "pg_sql": "SELECT COUNT(CDSCode) FROM frpm WHERE \"county name\" = 'Los Angeles' AND \"free meal count (k-12)\" > 500 AND \"frpm count (k-12)\"< 700",
+    "result": [
+      {
+        "count": 249
+      }
+    ],
+    "row_count": 1
+  },
+  "22": {
+    "question_id": 22,
+    "gold_sql": "SELECT sname FROM satscores WHERE cname = 'Contra Costa' AND sname IS NOT NULL ORDER BY NumTstTakr DESC LIMIT 1",
+    "pg_sql": "SELECT sname FROM satscores WHERE cname = 'Contra Costa' AND sname IS NOT NULL ORDER BY NumTstTakr DESC LIMIT 1",
+    "result": [
+      {
+        "sname": "Dougherty Valley High"
+      }
+    ],
+    "row_count": 1
+  },
+  "23": {
+    "question_id": 23,
+    "gold_sql": "SELECT T1.School, T1.Street FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.`Enrollment (K-12)` - T2.`Enrollment (Ages 5-17)` > 30",
+    "pg_sql": "SELECT T1.School, T1.Street FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.\"enrollment (k-12)\" - T2.\"enrollment (ages 5-17)\" > 30",
+    "result": [
+      {
+        "school": "Alameda County Community",
+        "street": "313 West Winton Avenue"
+      },
+      {
+        "school": "California School for the Deaf-Fremont",
+        "street": "39350 Gallaudet Drive"
+      },
+      {
+        "school": "Alameda High",
+        "street": "2201 Encinal Avenue"
+      },
+      {
+        "school": "Encinal High",
+        "street": "210 Central Avenue"
+      },
+      {
+        "school": "Island High (Continuation)",
+        "street": "1900 Third Street"
+      },
+      {
+        "school": "Albany High",
+        "street": "603 Key Route Boulevard"
+      },
+      {
+        "school": "Ocean View Elementary",
+        "street": "1000 Jackson Street"
+      },
+      {
+        "school": "Berkeley High",
+        "street": "1980 Allston Way"
+      },
+      {
+        "school": "Castro Valley High",
+        "street": "19400 Santa Maria Avenue"
+      },
+      {
+        "school": "Independent Elementary",
+        "street": "21201 Independent School Road"
+      },
+      {
+        "school": "American High",
+        "street": "36300 Fremont Boulevard"
+      },
+      {
+        "school": "Robertson High (Continuation)",
+        "street": "4455 Seneca Park Avenue"
+      },
+      {
+        "school": "Irvington High",
+        "street": "41800 Blacow Road"
+      },
+      {
+        "school": "John F. Kennedy High",
+        "street": "39999 Blacow Road"
+      },
+      {
+        "school": "Washington High",
+        "street": "38442 Fremont Boulevard"
+      },
+      {
+        "school": "Brier Elementary",
+        "street": "39201 Sundale Drive"
+      },
+      {
+        "school": "J. Haley Durham Elementary",
+        "street": "40292 Leslie Street"
+      },
+      {
+        "school": "Parkmont Elementary",
+        "street": "2601 Parkside Drive"
+      },
+      {
+        "school": "Brookvale Elementary",
+        "street": "3400 Nicolet Avenue"
+      },
+      {
+        "school": "Fred E. Weibel Elementary",
+        "street": "45135 South Grimmer Boulevard"
+      },
+      {
+        "school": "Brenkwitz High",
+        "street": "22100 Princeton Street"
+      },
+      {
+        "school": "Hayward High",
+        "street": "1633 East Avenue"
+      },
+      {
+        "school": "Mt. Eden High",
+        "street": "2300 Panama Street"
+      },
+      {
+        "school": "Tennyson High",
+        "street": "27035 Whitman Road"
+      },
+      {
+        "school": "Del Valle Continuation High",
+        "street": "2253 Fifth Street"
+      },
+      {
+        "school": "Granada High",
+        "street": "400 Wall Street"
+      },
+      {
+        "school": "Livermore High",
+        "street": "600 Maple Street"
+      },
+      {
+        "school": "Newark Memorial High",
+        "street": "39375 Cedar Boulevard"
+      },
+      {
+        "school": "Core Learning Academy at Conley-Caraballo High",
+        "street": "541 Blanche Street"
+      },
+      {
+        "school": "James Logan High",
+        "street": "1800 H Street"
+      },
+      {
+        "school": "Civicorps Corpsmember Academy",
+        "street": "101 Myrtle Street"
+      },
+      {
+        "school": "Oakland International High",
+        "street": "4521 Webster Street"
+      },
+      {
+        "school": "Ralph J. Bunche High",
+        "street": "1240 18th Street"
+      },
+      {
+        "school": "Gateway to College at Laney College",
+        "street": "900 Fallon Street"
+      },
+      {
+        "school": "Castlemont High",
+        "street": "8601 MacArthur Boulevard"
+      },
+      {
+        "school": "Fremont High",
+        "street": "4610 Foothill Boulevard"
+      },
+      {
+        "school": "Rudsdale Continuation",
+        "street": "8251 Fontaine Street"
+      },
+      {
+        "school": "Dewey Academy",
+        "street": "1111 2nd Avenue"
+      },
+      {
+        "school": "Oakland High",
+        "street": "1023 MacArthur Boulevard"
+      },
+      {
+        "school": "Oakland Technical High",
+        "street": "4351 Broadway"
+      },
+      {
+        "school": "Skyline High",
+        "street": "12250 Skyline Boulevard"
+      },
+      {
+        "school": "Independent Study, Sojourner Truth",
+        "street": "8251 Fontaine Street"
+      },
+      {
+        "school": "Piedmont High",
+        "street": "800 Magnolia Avenue"
+      },
+      {
+        "school": "San Leandro High",
+        "street": "2200 Bancroft Avenue"
+      },
+      {
+        "school": "Arroyo High",
+        "street": "15701 Lorenzo Avenue"
+      },
+      {
+        "school": "San Lorenzo High",
+        "street": "50 East Lewelling Boulevard"
+      },
+      {
+        "school": "Dublin High",
+        "street": "8151 Village Parkway"
+      },
+      {
+        "school": "James Dougherty Elementary",
+        "street": "5301 Hibernia Drive"
+      },
+      {
+        "school": "Foothill High",
+        "street": "4375 Foothill Road"
+      },
+      {
+        "school": "Amador Valley High",
+        "street": "1155 Santa Rita Road"
+      }
+    ],
+    "row_count": 1239
+  },
+  "24": {
+    "question_id": 24,
+    "gold_sql": "SELECT T2.`School Name` FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE CAST(T2.`Free Meal Count (K-12)` AS REAL) / T2.`Enrollment (K-12)` > 0.1 AND T1.NumGE1500 > 0",
+    "pg_sql": "(manually corrected)",
+    "result": [
+      {
+        "school name": "Mira Monte High"
+      },
+      {
+        "school name": "Azusa High"
+      },
+      {
+        "school name": "Clovis North High"
+      },
+      {
+        "school name": "Clovis West High"
+      },
+      {
+        "school name": "Buchanan High"
+      },
+      {
+        "school name": "Clovis East High"
+      },
+      {
+        "school name": "Clovis High"
+      },
+      {
+        "school name": "Coalinga High"
+      },
+      {
+        "school name": "Fowler High"
+      },
+      {
+        "school name": "Design Science Early College High"
+      }
+    ],
+    "row_count": 10
+  },
+  "25": {
+    "question_id": 25,
+    "gold_sql": "SELECT T1.sname, T2.`Charter Funding Type` FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T2.`District Name` LIKE 'Riverside%' GROUP BY T1.sname, T2.`Charter Funding Type` HAVING CAST(SUM(T1.AvgScrMath) AS REAL) / COUNT(T1.cds) > 400",
+    "pg_sql": "SELECT T1.sname, T2.\"charter funding type\" FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T2.\"district name\" LIKE 'Riverside%' GROUP BY T1.sname, T2.\"charter funding type\" HAVING CAST(SUM(T1.AvgScrMath) AS REAL) / COUNT(T1.cds) > 400",
+    "result": [
+      {
+        "sname": "Arlington High",
+        "charter funding type": null
+      },
+      {
+        "sname": "John W. North High",
+        "charter funding type": null
+      },
+      {
+        "sname": "Martin Luther King Jr. High",
+        "charter funding type": null
+      },
+      {
+        "sname": "Polytechnic High",
+        "charter funding type": null
+      },
+      {
+        "sname": "Ramona High",
+        "charter funding type": null
+      },
+      {
+        "sname": "River Springs Charter",
+        "charter funding type": "Directly funded"
+      }
+    ],
+    "row_count": 6
+  },
+  "26": {
+    "question_id": 26,
+    "gold_sql": "SELECT T1.`School Name`, T2.Street, T2.City, T2.State, T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Monterey' AND T1.`Free Meal Count (Ages 5-17)` > 800 AND T1.`School Type` = 'High Schools (Public)'",
+    "pg_sql": "SELECT T1.\"school name\", T2.Street, T2.City, T2.State, T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Monterey' AND T1.\"free meal count (ages 5-17)\" > 800 AND T1.\"school type\" = 'High Schools (Public)'",
+    "result": [
+      {
+        "school name": "Alisal High",
+        "street": "777 Williams Road",
+        "city": "Salinas",
+        "state": "CA",
+        "zip": "93905-1907"
+      },
+      {
+        "school name": "Everett Alvarez High",
+        "street": "1900 Independence Boulevard",
+        "city": "Salinas",
+        "state": "CA",
+        "zip": "93906-5300"
+      },
+      {
+        "school name": "North Salinas High",
+        "street": "55 Kip Drive",
+        "city": "Salinas",
+        "state": "CA",
+        "zip": "93906-2908"
+      },
+      {
+        "school name": "Salinas High",
+        "street": "726 South Main Street",
+        "city": "Salinas",
+        "state": "CA",
+        "zip": "93901-3243"
+      },
+      {
+        "school name": "Soledad High",
+        "street": "425 Gabilan Drive",
+        "city": "Soledad",
+        "state": "CA",
+        "zip": "93960-3207"
+      }
+    ],
+    "row_count": 5
+  },
+  "27": {
+    "question_id": 27,
+    "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime('%Y', T2.OpenDate) > '1991' OR strftime('%Y', T2.ClosedDate) < '2000'",
+    "pg_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE EXTRACT(YEAR FROM T2.OpenDate)::INTEGER > '1991' OR EXTRACT(YEAR FROM T2.ClosedDate)::INTEGER < '2000'",
+    "result": [
+      {
+        "school": "FAME Public Charter",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Envision Academy for Arts & Technology",
+        "avgscrwrite": null,
+        "phone": "(510) 596-8901"
+      },
+      {
+        "school": "Aspire California College Preparatory Academy",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Community School for Creative Education",
+        "avgscrwrite": null,
+        "phone": "(510) 686-4131"
+      },
+      {
+        "school": "Yu Ming Charter",
+        "avgscrwrite": null,
+        "phone": "(510) 452-2063"
+      },
+      {
+        "school": "Urban Montessori Charter",
+        "avgscrwrite": null,
+        "phone": "(510) 842-1181"
+      },
+      {
+        "school": "Technical, Agricultural & Nat.",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Berkeley Trade & Tech. College",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Oakland Unity Middle",
+        "avgscrwrite": null,
+        "phone": "(510) 969-5302"
+      },
+      {
+        "school": "Canyon Valley Adult School",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Roosevelt High (Defunct)",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "University High School (Defunc",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Washington Evening High (Defun",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Chabot Ranch",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Juvenile Court Schools",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Las Vistas School",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Senior Camp",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Snedigar Cottage",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Koster/Whiteford Special Center",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Whiteford School (TMR)",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Alameda County Special Education",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Buena Vista School (Girls)",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Whiteford (June) School",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "School for School-Age Mothers",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Sequoia Deaf/Blind Program",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Burke (William P.) Special Center",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "East County Dch",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "La Fleche (Rock) Special Center",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Motta (Ronald) Special Center",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "New Village Community Public Charter East Bay",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "David W. Gordon,Govt. Affairs",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "College Preparatory & Architecture Academy",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Alameda Science and Technology Institute",
+        "avgscrwrite": null,
+        "phone": "(510) 748-4021"
+      },
+      {
+        "school": "Ruby Bridges Elementary",
+        "avgscrwrite": null,
+        "phone": "(510) 748-4006"
+      },
+      {
+        "school": "Nea Community Learning Center",
+        "avgscrwrite": null,
+        "phone": "(510) 748-4008"
+      },
+      {
+        "school": "The Academy of Alameda",
+        "avgscrwrite": null,
+        "phone": "(510) 748-4017"
+      },
+      {
+        "school": "Maya Lin",
+        "avgscrwrite": null,
+        "phone": "(510) 337-7027"
+      },
+      {
+        "school": "Encinal Junior Jets",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Alameda City Unified Alternative Educ.",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Alameda Community Learning Center",
+        "avgscrwrite": null,
+        "phone": "(510) 995-4300"
+      },
+      {
+        "school": "Alternatives in Action",
+        "avgscrwrite": null,
+        "phone": "(510) 748-4314"
+      },
+      {
+        "school": "The Academy of Alameda Elementary",
+        "avgscrwrite": null,
+        "phone": "(510) 748-4017"
+      },
+      {
+        "school": "Encinal Junior/Senior High",
+        "avgscrwrite": null,
+        "phone": "(510) 748-4023"
+      },
+      {
+        "school": "Franklin Elementary",
+        "avgscrwrite": null,
+        "phone": "(510) 748-4004"
+      },
+      {
+        "school": "Mastick Elementary",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Porter Elementary",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Grand Alternative",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Bay Farm",
+        "avgscrwrite": null,
+        "phone": "(510) 748-4010"
+      },
+      {
+        "school": "Albany Children's Center",
+        "avgscrwrite": null,
+        "phone": null
+      },
+      {
+        "school": "Albany Adult",
+        "avgscrwrite": null,
+        "phone": null
+      }
+    ],
+    "row_count": 8574
+  },
+  "28": {
+    "question_id": 28,
+    "gold_sql": "SELECT T2.School, T2.DOC FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.FundingType = 'Locally funded' AND (T1.`Enrollment (K-12)` - T1.`Enrollment (Ages 5-17)`) > (SELECT AVG(T3.`Enrollment (K-12)` - T3.`Enrollment (Ages 5-17)`) FROM frpm AS T3 INNER JOIN schools AS T4 ON T3.CDSCode = T4.CDSCode WHERE T4.FundingType = 'Locally funded')",
+    "pg_sql": "SELECT T2.School, T2.DOC FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.FundingType = 'Locally funded' AND (T1.\"enrollment (k-12)\" - T1.\"enrollment (ages 5-17)\") > (SELECT AVG(T3.\"enrollment (k-12)\" - T3.\"enrollment (ages 5-17)\") FROM frpm AS T3 INNER JOIN schools AS T4 ON T3.CDSCode = T4.CDSCode WHERE T4.FundingType = 'Locally funded')",
+    "result": [
+      {
+        "school": "Mountain Oaks",
+        "doc": "00"
+      },
+      {
+        "school": "Castle Rock",
+        "doc": "00"
+      },
+      {
+        "school": "Charter Community School Home Study Academy",
+        "doc": "00"
+      },
+      {
+        "school": "Clovis Online Charter",
+        "doc": "54"
+      },
+      {
+        "school": "Washington Elementary",
+        "doc": "52"
+      },
+      {
+        "school": "West Park Charter Academy",
+        "doc": "52"
+      },
+      {
+        "school": "Mattole Valley Charter (#159)",
+        "doc": "54"
+      },
+      {
+        "school": "YouthBuild Charter School of California",
+        "doc": "00"
+      },
+      {
+        "school": "The Education Corps",
+        "doc": "00"
+      },
+      {
+        "school": "College Bridge Academy",
+        "doc": "00"
+      },
+      {
+        "school": "Kern Workforce 2000 Academy",
+        "doc": "56"
+      },
+      {
+        "school": "Kings River-Hardwick Elementary",
+        "doc": "52"
+      },
+      {
+        "school": "Soledad Enrichment Action Charter High",
+        "doc": "00"
+      },
+      {
+        "school": "Chatsworth Charter High",
+        "doc": "54"
+      },
+      {
+        "school": "Grover Cleveland Charter High",
+        "doc": "54"
+      },
+      {
+        "school": "Sylmar Charter High",
+        "doc": "54"
+      },
+      {
+        "school": "Taft Charter High",
+        "doc": "54"
+      },
+      {
+        "school": "Calahan Community Charter",
+        "doc": "54"
+      },
+      {
+        "school": "Carpenter Community Charter",
+        "doc": "54"
+      },
+      {
+        "school": "YES Academy",
+        "doc": "54"
+      },
+      {
+        "school": "Pomelo Community Charter",
+        "doc": "54"
+      },
+      {
+        "school": "Serrania Avenue Charter For Enriched Studies",
+        "doc": "54"
+      },
+      {
+        "school": "Westwood Charter Elementary",
+        "doc": "54"
+      },
+      {
+        "school": "Wilbur Charter For Enriched Academics",
+        "doc": "54"
+      },
+      {
+        "school": "Marlton",
+        "doc": "54"
+      },
+      {
+        "school": "School of Extended Educational Options",
+        "doc": "54"
+      },
+      {
+        "school": "Madera County Independent Academy",
+        "doc": "00"
+      },
+      {
+        "school": "Pioneer Technical Center",
+        "doc": "00"
+      },
+      {
+        "school": "Monterey County Home Charter",
+        "doc": "00"
+      },
+      {
+        "school": "Forest Charter",
+        "doc": "00"
+      },
+      {
+        "school": "Union Hill Elementary",
+        "doc": "52"
+      },
+      {
+        "school": "Come Back Kids",
+        "doc": "00"
+      },
+      {
+        "school": "George Washington Charter",
+        "doc": "54"
+      },
+      {
+        "school": "Elk Grove Charter",
+        "doc": "54"
+      },
+      {
+        "school": "Visions In Education",
+        "doc": "54"
+      },
+      {
+        "school": "San Juan Choices Charter",
+        "doc": "54"
+      },
+      {
+        "school": "Natomas Charter",
+        "doc": "54"
+      },
+      {
+        "school": "Riverside Preparatory",
+        "doc": "52"
+      },
+      {
+        "school": "Delta Home Charter",
+        "doc": "52"
+      },
+      {
+        "school": "Delta Charter Online",
+        "doc": "52"
+      },
+      {
+        "school": "Delta Charter",
+        "doc": "52"
+      },
+      {
+        "school": "Stockton High",
+        "doc": "54"
+      },
+      {
+        "school": "Grizzly ChalleNGe Charter",
+        "doc": "00"
+      },
+      {
+        "school": "Arundel Elementary",
+        "doc": "52"
+      },
+      {
+        "school": "Fammatre Elementary",
+        "doc": "52"
+      },
+      {
+        "school": "Castlemont Elementary",
+        "doc": "52"
+      },
+      {
+        "school": "Lynhaven Elementary",
+        "doc": "52"
+      },
+      {
+        "school": "Rosemary Elementary",
+        "doc": "52"
+      },
+      {
+        "school": "Pacific Coast Charter",
+        "doc": "54"
+      },
+      {
+        "school": "Fairmont Charter Elementary",
+        "doc": "54"
+      }
+    ],
+    "row_count": 57
+  },
+  "29": {
+    "question_id": 29,
+    "gold_sql": "SELECT T2.OpenDate FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.`Enrollment (K-12)` DESC LIMIT 1",
+    "pg_sql": "SELECT T2.OpenDate FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"enrollment (k-12)\" DESC LIMIT 1",
+    "result": [
+      {
+        "opendate": "2006-08-29"
+      }
+    ],
+    "row_count": 1
+  },
+  "30": {
+    "question_id": 30,
+    "gold_sql": "SELECT T2.City FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode GROUP BY T2.City ORDER BY SUM(T1.`Enrollment (K-12)`) ASC LIMIT 5",
+    "pg_sql": "SELECT T2.City FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode GROUP BY T2.City ORDER BY SUM(T1.\"enrollment (k-12)\") ASC LIMIT 5",
+    "result": [
+      {
+        "city": "Coulterville"
+      },
+      {
+        "city": "Shaver Lake"
+      },
+      {
+        "city": "Pinecrest"
+      },
+      {
+        "city": "Woody"
+      },
+      {
+        "city": "Hyampom"
+      }
+    ],
+    "row_count": 5
+  },
+  "31": {
+    "question_id": 31,
+    "gold_sql": "SELECT CAST(`Free Meal Count (K-12)` AS REAL) / `Enrollment (K-12)` FROM frpm ORDER BY `Enrollment (K-12)` DESC LIMIT 9, 2",
+    "pg_sql": "SELECT CAST(\"free meal count (k-12)\" AS REAL) / \"enrollment (k-12)\" FROM frpm ORDER BY \"enrollment (k-12)\" DESC LIMIT 2 OFFSET 9",
+    "result": [
+      {
+        "?column?": 0.1344364012409514
+      },
+      {
+        "?column?": 0.2905894519131334
+      }
+    ],
+    "row_count": 2
+  },
+  "32": {
+    "question_id": 32,
+    "gold_sql": "SELECT CAST(T1.`FRPM Count (K-12)` AS REAL) / T1.`Enrollment (K-12)` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.SOC = 66 ORDER BY T1.`FRPM Count (K-12)` DESC LIMIT 5",
+    "pg_sql": "SELECT CAST(T1.\"frpm count (k-12)\" AS REAL) / T1.\"enrollment (k-12)\" FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.SOC = '66' ORDER BY T1.\"frpm count (k-12)\" DESC LIMIT 5",
+    "result": [
+      {
+        "?column?": null
+      },
+      {
+        "?column?": null
+      },
+      {
+        "?column?": null
+      },
+      {
+        "?column?": 0.9179476526796843
+      },
+      {
+        "?column?": 0.9993290841999329
+      }
+    ],
+    "row_count": 5
+  },
+  "33": {
+    "question_id": 33,
+    "gold_sql": "SELECT T2.Website, T1.`School Name` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`Free Meal Count (Ages 5-17)` BETWEEN 1900 AND 2000 AND T2.Website IS NOT NULL",
+    "pg_sql": "SELECT T2.Website, T1.\"school name\" FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"free meal count (ages 5-17)\" BETWEEN 1900 AND 2000 AND T2.Website IS NOT NULL",
+    "result": [
+      {
+        "website": "http://lhs.lynwood.edlioschool.com/",
+        "school name": "Lynwood High"
+      },
+      {
+        "website": "www.auhsd.us/katella",
+        "school name": "Katella High"
+      }
+    ],
+    "row_count": 2
+  },
+  "34": {
+    "question_id": 34,
+    "gold_sql": "SELECT CAST(T2.`Free Meal Count (Ages 5-17)` AS REAL) / T2.`Enrollment (Ages 5-17)` FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.AdmFName1 = 'Kacey' AND T1.AdmLName1 = 'Gibson'",
+    "pg_sql": "SELECT CAST(T2.\"free meal count (ages 5-17)\" AS REAL) / T2.\"enrollment (ages 5-17)\" FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.AdmFName1 = 'Kacey' AND T1.AdmLName1 = 'Gibson'",
+    "result": [
+      {
+        "?column?": 0.20174165457184326
+      }
+    ],
+    "row_count": 1
+  },
+  "35": {
+    "question_id": 35,
+    "gold_sql": "SELECT T2.AdmEmail1 FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`Charter School (Y/N)` = 1 ORDER BY T1.`Enrollment (K-12)` ASC LIMIT 1",
+    "pg_sql": "SELECT T2.AdmEmail1 FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"charter school (y/n)\" = 1 ORDER BY T1.\"enrollment (k-12)\" ASC LIMIT 1",
+    "result": [
+      {
+        "admemail1": "mjennings@kesd.org"
+      }
+    ],
+    "row_count": 1
+  },
+  "36": {
+    "question_id": 36,
+    "gold_sql": "SELECT T2.AdmFName1, T2.AdmLName1, T2.AdmFName2, T2.AdmLName2, T2.AdmFName3, T2.AdmLName3 FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+    "pg_sql": "SELECT T2.AdmFName1, T2.AdmLName1, T2.AdmFName2, T2.AdmLName2, T2.AdmFName3, T2.AdmLName3 FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+    "result": [
+      {
+        "admfname1": "Jim",
+        "admlname1": "Yovino",
+        "admfname2": null,
+        "admlname2": null,
+        "admfname3": null,
+        "admlname3": null
+      }
+    ],
+    "row_count": 1
+  },
+  "37": {
+    "question_id": 37,
+    "gold_sql": "SELECT T2.Street, T2.City, T2.State, T2.Zip FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY CAST(T1.NumGE1500 AS REAL) / T1.NumTstTakr ASC LIMIT 1",
+    "pg_sql": "SELECT T2.Street, T2.City, T2.State, T2.Zip FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY CAST(T1.NumGE1500 AS REAL) / T1.NumTstTakr ASC LIMIT 1",
+    "result": [
+      {
+        "street": "222 North Virgil Avenue",
+        "city": "Los Angeles",
+        "state": "CA",
+        "zip": "90004-3622"
+      }
+    ],
+    "row_count": 1
+  },
+  "38": {
+    "question_id": 38,
+    "gold_sql": "SELECT T2.Website FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.NumTstTakr BETWEEN 2000 AND 3000 AND T2.County = 'Los Angeles'",
+    "pg_sql": "SELECT T2.Website FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.NumTstTakr BETWEEN 2000 AND 3000 AND T2.County = 'Los Angeles'",
+    "result": [
+      {
+        "website": "www.avdistrict.org"
+      },
+      {
+        "website": "www.lbschools.net"
+      },
+      {
+        "website": "www.hartdistrict.org"
+      }
+    ],
+    "row_count": 3
+  },
+  "39": {
+    "question_id": 39,
+    "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime('%Y', T2.OpenDate) = '1980' AND T2.County = 'Fresno'",
+    "pg_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE EXTRACT(YEAR FROM T2.OpenDate)::INTEGER = '1980' AND T2.County = 'Fresno'",
+    "result": [
+      {
+        "avg": "137.8888888888888889"
+      }
+    ],
+    "row_count": 1
+  },
+  "40": {
+    "question_id": 40,
+    "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.District = 'Fresno Unified' AND T1.AvgScrRead IS NOT NULL ORDER BY T1.AvgScrRead ASC LIMIT 1",
+    "pg_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.District = 'Fresno Unified' AND T1.AvgScrRead IS NOT NULL ORDER BY T1.AvgScrRead ASC LIMIT 1",
+    "result": [
+      {
+        "phone": "(559) 248-5100"
+      }
+    ],
+    "row_count": 1
+  },
+  "41": {
+    "question_id": 41,
+    "gold_sql": "SELECT School FROM (SELECT T2.School,T1.AvgScrRead, RANK() OVER (PARTITION BY T2.County ORDER BY T1.AvgScrRead DESC) AS rnk FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' ) ranked_schools WHERE rnk <= 5",
+    "pg_sql": "(manually corrected)",
+    "result": [
+      {
+        "school": "Academy of Arts and Sciences: Fresno"
+      },
+      {
+        "school": "Dunlap Leadership Academy"
+      },
+      {
+        "school": "Insight School of California"
+      },
+      {
+        "school": "California Virtual Academy @ Kings"
+      },
+      {
+        "school": "National University Academy, Armona"
+      },
+      {
+        "school": "Academy of Arts and Sciences: Los Angeles (9-12)"
+      },
+      {
+        "school": "Los Angeles County Online High"
+      },
+      {
+        "school": "Desert Sands Charter"
+      },
+      {
+        "school": "SIATech Academy South"
+      },
+      {
+        "school": "iQ Academy California-Los Angeles"
+      },
+      {
+        "school": "California Preparatory Academy"
+      },
+      {
+        "school": "Capistrano Connections Academy"
+      },
+      {
+        "school": "Rivercrest Preparatory"
+      },
+      {
+        "school": "Riverside Virtual"
+      },
+      {
+        "school": "Southern California Online Academy"
+      },
+      {
+        "school": "Oasis High (Alternative)"
+      },
+      {
+        "school": "San Diego Virtual"
+      },
+      {
+        "school": "Academy of Arts and Sciences"
+      },
+      {
+        "school": "RAI Online Charter"
+      },
+      {
+        "school": "California Virtual Academy @ San Joaquin"
+      },
+      {
+        "school": "Renew Virtual Academy K12 #1"
+      },
+      {
+        "school": "Delta Home Charter"
+      },
+      {
+        "school": "Valley View Charter Prep"
+      },
+      {
+        "school": "Delta Charter Online"
+      },
+      {
+        "school": "California Virtual Academy @ San Mateo"
+      },
+      {
+        "school": "California Virtual Academy @ Sonoma"
+      },
+      {
+        "school": "Academy of Arts and Sciences: Sonoma"
+      },
+      {
+        "school": "California Virtual Academy @ Sutter"
+      },
+      {
+        "school": "California Connections Academy@Central"
+      },
+      {
+        "school": "California Virtual Academy @ Jamestown"
+      },
+      {
+        "school": "Academy of Arts and Sciences: Thousand Oaks & Simi Valley"
+      }
+    ],
+    "row_count": 31
+  },
+  "42": {
+    "question_id": 42,
+    "gold_sql": "SELECT T2.EdOpsName FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrMath DESC LIMIT 1",
+    "pg_sql": "SELECT T2.EdOpsName FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrMath DESC LIMIT 1",
+    "result": [
+      {
+        "edopsname": null
+      }
+    ],
+    "row_count": 1
+  },
+  "43": {
+    "question_id": 43,
+    "gold_sql": "SELECT T1.AvgScrMath, T2.County FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath IS NOT NULL ORDER BY T1.AvgScrMath + T1.AvgScrRead + T1.AvgScrWrite ASC LIMIT 1",
+    "pg_sql": "SELECT T1.AvgScrMath, T2.County FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath IS NOT NULL ORDER BY T1.AvgScrMath + T1.AvgScrRead + T1.AvgScrWrite ASC LIMIT 1",
+    "result": [
+      {
+        "avgscrmath": 314,
+        "county": "Los Angeles"
+      }
+    ],
+    "row_count": 1
+  },
+  "44": {
+    "question_id": 44,
+    "gold_sql": "SELECT T1.AvgScrWrite, T2.City FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+    "pg_sql": "SELECT T1.AvgScrWrite, T2.City FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+    "result": [
+      {
+        "avgscrwrite": null,
+        "city": "Fresno"
+      }
+    ],
+    "row_count": 1
+  },
+  "45": {
+    "question_id": 45,
+    "gold_sql": "SELECT T2.School, T1.AvgScrWrite FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.AdmFName1 = 'Ricci' AND T2.AdmLName1 = 'Ulrich'",
+    "pg_sql": "SELECT T2.School, T1.AvgScrWrite FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.AdmFName1 = 'Ricci' AND T2.AdmLName1 = 'Ulrich'",
+    "result": [
+      {
+        "school": "Buchanan High",
+        "avgscrwrite": 507
+      }
+    ],
+    "row_count": 1
+  },
+  "46": {
+    "question_id": 46,
+    "gold_sql": "SELECT T2.School FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.DOC = 31 ORDER BY T1.`Enrollment (K-12)` DESC LIMIT 1",
+    "pg_sql": "SELECT T2.School FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.DOC = '31' ORDER BY T1.\"enrollment (k-12)\" DESC LIMIT 1",
+    "result": [
+      {
+        "school": "California School for the Deaf-Fremont"
+      }
+    ],
+    "row_count": 1
+  },
+  "47": {
+    "question_id": 47,
+    "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime('%Y', OpenDate) = '1980'",
+    "pg_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = '52' AND County = 'Alameda' AND EXTRACT(YEAR FROM OpenDate)::INTEGER = '1980'",
+    "result": [
+      {
+        "?column?": 1.4166666666666667
+      }
+    ],
+    "row_count": 1
+  },
+  "48": {
+    "question_id": 48,
+    "gold_sql": "SELECT CAST(SUM(CASE WHEN DOC = 54 THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN DOC = 52 THEN 1 ELSE 0 END) FROM schools WHERE StatusType = 'Merged' AND County = 'Orange'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN DOC = '54' THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN DOC = '52' THEN 1 ELSE 0 END) FROM schools WHERE StatusType = 'Merged' AND County = 'Orange'",
+    "result": [
+      {
+        "?column?": 0.5714285714285714
+      }
+    ],
+    "row_count": 1
+  },
+  "49": {
+    "question_id": 49,
+    "gold_sql": "SELECT DISTINCT County, School, ClosedDate FROM schools WHERE County = ( SELECT County FROM schools WHERE StatusType = 'Closed' GROUP BY County ORDER BY COUNT(School) DESC LIMIT 1 ) AND StatusType = 'Closed' AND school IS NOT NULL",
+    "pg_sql": "SELECT DISTINCT County, School, ClosedDate FROM schools WHERE County = ( SELECT County FROM schools WHERE StatusType = 'Closed' GROUP BY County ORDER BY COUNT(School) DESC LIMIT 1 ) AND StatusType = 'Closed' AND school IS NOT NULL",
+    "result": [
+      {
+        "county": "Los Angeles",
+        "school": "ABC Charter Middle",
+        "closeddate": "2009-06-10"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "ABC Evening High School",
+        "closeddate": "1994-11-23"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "ARTLAB at Sonia Sotomayor Learning Academics",
+        "closeddate": "2014-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Abraham Lincoln Elementary",
+        "closeddate": "2009-04-28"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Academy for Recording Arts",
+        "closeddate": "2010-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Academy of Arts and Sciences: Los Angeles (K-8)",
+        "closeddate": "2016-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Academy of Culture and Technology",
+        "closeddate": "2006-07-12"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Academy of Medical & Health Sciences at Roosevelt High",
+        "closeddate": "2013-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Acton (Eh)",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Acton Elementary",
+        "closeddate": "2004-07-01"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Adams (John)(Aphasia)",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Addams (Jane) (Eh, Autistic)",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Agoura High",
+        "closeddate": "1985-11-14"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Agua Dulce Elementary",
+        "closeddate": "2015-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Agua-Dulce School (Eh)",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Airport Junior High",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alain Leroy Locke 3 College Preparatory Academy",
+        "closeddate": "2013-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Albert Einstein Academy Elementary",
+        "closeddate": "2015-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Albert Einstein Academy for Letters, Arts & Sciences - Odyssey",
+        "closeddate": "2015-08-19"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alhambra Community Day",
+        "closeddate": "2006-08-18"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alhambra Independent Study",
+        "closeddate": "1985-03-06"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Allendale Elementary",
+        "closeddate": "2006-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alliance Christine O'Donovan Middle Academy",
+        "closeddate": "2013-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alliance College-Ready Academy High No. 7",
+        "closeddate": "2012-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alliance College-Ready Middle Academy 7",
+        "closeddate": "2015-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alliance Richard Merkin Middle",
+        "closeddate": "2013-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alondra",
+        "closeddate": "2009-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alpha Home for Boys",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alternative Education Work Center",
+        "closeddate": "1994-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alternative Junior High",
+        "closeddate": "1987-11-23"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alternative Learning Center (Cont.)",
+        "closeddate": "1991-12-05"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alternative Learning Ctr. (Cont.)",
+        "closeddate": "1992-03-03"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Alternative School",
+        "closeddate": "1984-06-28"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Amar Elementary",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Amargosa Sixth Grade Center",
+        "closeddate": "1991-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Anahuacalmecac International Preparatory High School of North America",
+        "closeddate": "2013-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Anahuacalmecac International University Preparatory of North America",
+        "closeddate": "2015-09-10"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Anchorage Street Elementary",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Andrews Elementary",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Animo Film and Theater Arts Charter High",
+        "closeddate": "2010-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Animo Justice Charter High",
+        "closeddate": "2010-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Animo Locke ACE Academy",
+        "closeddate": "2011-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Animo Locke Charter High School #3",
+        "closeddate": "2011-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Animo Locke II College Preparatory Academy",
+        "closeddate": "2013-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Animo Locke Technology High",
+        "closeddate": "2013-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Annette Crawford Home for Girl",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Antecello Preparatory Academy",
+        "closeddate": "2012-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Antelope School (EMR)",
+        "closeddate": "1989-06-30"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Antelope Valley Desert Montessori Schools, Inc.",
+        "closeddate": "2009-09-15"
+      },
+      {
+        "county": "Los Angeles",
+        "school": "Arcadia Adult Evening School",
+        "closeddate": "1994-06-03"
+      }
+    ],
+    "row_count": 858
+  },
+  "50": {
+    "question_id": 50,
+    "gold_sql": "SELECT T2.MailStreet, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrMath DESC LIMIT 6, 1",
+    "pg_sql": "SELECT T2.MailStreet, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrMath DESC LIMIT 1 OFFSET 6",
+    "result": [
+      {
+        "mailstreet": "1550 Herndon Avenue",
+        "school": "Gateway High (Continuation)"
+      }
+    ],
+    "row_count": 1
+  },
+  "51": {
+    "question_id": 51,
+    "gold_sql": "SELECT T2.MailStreet, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrRead IS NOT NULL ORDER BY T1.AvgScrRead ASC LIMIT 1",
+    "pg_sql": "SELECT T2.MailStreet, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrRead IS NOT NULL ORDER BY T1.AvgScrRead ASC LIMIT 1",
+    "result": [
+      {
+        "mailstreet": "1050 York Street",
+        "school": "S.F. International High"
+      }
+    ],
+    "row_count": 1
+  },
+  "52": {
+    "question_id": 52,
+    "gold_sql": "SELECT COUNT(T1.cds) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.MailCity = 'Lakeport' AND (T1.AvgScrRead + T1.AvgScrMath + T1.AvgScrWrite) >= 1500",
+    "pg_sql": "SELECT COUNT(T1.cds) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.MailCity = 'Lakeport' AND (T1.AvgScrRead + T1.AvgScrMath + T1.AvgScrWrite) >= 1500",
+    "result": [
+      {
+        "count": 2
+      }
+    ],
+    "row_count": 1
+  },
+  "53": {
+    "question_id": 53,
+    "gold_sql": "SELECT T1.NumTstTakr FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.MailCity = 'Fresno'",
+    "pg_sql": "SELECT T1.NumTstTakr FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.MailCity = 'Fresno'",
+    "result": [
+      {
+        "numtsttakr": 6
+      },
+      {
+        "numtsttakr": 5
+      },
+      {
+        "numtsttakr": 328
+      },
+      {
+        "numtsttakr": 335
+      },
+      {
+        "numtsttakr": 2216
+      },
+      {
+        "numtsttakr": 74
+      },
+      {
+        "numtsttakr": 8
+      },
+      {
+        "numtsttakr": 113
+      },
+      {
+        "numtsttakr": 10
+      },
+      {
+        "numtsttakr": 334
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 104
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 421
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 368
+      },
+      {
+        "numtsttakr": 144
+      },
+      {
+        "numtsttakr": 211
+      },
+      {
+        "numtsttakr": 212
+      },
+      {
+        "numtsttakr": 217
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 368
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 368
+      },
+      {
+        "numtsttakr": 114
+      },
+      {
+        "numtsttakr": 0
+      },
+      {
+        "numtsttakr": 1
+      },
+      {
+        "numtsttakr": 113
+      }
+    ],
+    "row_count": 32
+  },
+  "54": {
+    "question_id": 54,
+    "gold_sql": "SELECT School, MailZip FROM schools WHERE AdmFName1 = 'Avetik' AND AdmLName1 = 'Atoian'",
+    "pg_sql": "SELECT School, MailZip FROM schools WHERE AdmFName1 = 'Avetik' AND AdmLName1 = 'Atoian'",
+    "result": [
+      {
+        "school": "Fairview Middle",
+        "mailzip": "93926-0238"
+      }
+    ],
+    "row_count": 1
+  },
+  "55": {
+    "question_id": 55,
+    "gold_sql": "SELECT CAST(SUM(CASE WHEN County = 'Colusa' THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN County = 'Humboldt' THEN 1 ELSE 0 END) FROM schools WHERE MailState = 'CA'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN County = 'Colusa' THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN County = 'Humboldt' THEN 1 ELSE 0 END) FROM schools WHERE MailState = 'CA'",
+    "result": [
+      {
+        "?column?": 0.18090452261306533
+      }
+    ],
+    "row_count": 1
+  },
+  "56": {
+    "question_id": 56,
+    "gold_sql": "SELECT COUNT(CDSCode) FROM schools WHERE City = 'San Joaquin' AND MailState = 'CA' AND StatusType = 'Active'",
+    "pg_sql": "SELECT COUNT(CDSCode) FROM schools WHERE City = 'San Joaquin' AND MailState = 'CA' AND StatusType = 'Active'",
+    "result": [
+      {
+        "count": 2
+      }
+    ],
+    "row_count": 1
+  },
+  "57": {
+    "question_id": 57,
+    "gold_sql": "SELECT T2.Phone, T2.Ext FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrWrite DESC LIMIT 332, 1",
+    "pg_sql": "SELECT T2.Phone, T2.Ext FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrWrite DESC LIMIT 1 OFFSET 332",
+    "result": [
+      {
+        "phone": "(760) 631-5842",
+        "ext": null
+      }
+    ],
+    "row_count": 1
+  },
+  "58": {
+    "question_id": 58,
+    "gold_sql": "SELECT Phone, Ext, School FROM schools WHERE Zip = '95203-3704'",
+    "pg_sql": "SELECT Phone, Ext, School FROM schools WHERE Zip = '95203-3704'",
+    "result": [
+      {
+        "phone": "(209) 933-7470",
+        "ext": "2222",
+        "school": "Spanos (Alex G.) Elementary"
+      }
+    ],
+    "row_count": 1
+  },
+  "59": {
+    "question_id": 59,
+    "gold_sql": "SELECT Website FROM schools WHERE (AdmFName1 = 'Mike' AND AdmLName1 = 'Larson') OR (AdmFName1 = 'Dante' AND AdmLName1 = 'Alvarez')",
+    "pg_sql": "SELECT Website FROM schools WHERE (AdmFName1 = 'Mike' AND AdmLName1 = 'Larson') OR (AdmFName1 = 'Dante' AND AdmLName1 = 'Alvarez')",
+    "result": [
+      {
+        "website": "http://ripon.ca.rse.schoolinsites.com/"
+      },
+      {
+        "website": "http://ripona.ca.rse.schoolinsites.com/"
+      }
+    ],
+    "row_count": 2
+  },
+  "60": {
+    "question_id": 60,
+    "gold_sql": "SELECT Website FROM schools WHERE County = 'San Joaquin' AND Virtual = 'P' AND Charter = 1",
+    "pg_sql": "SELECT Website FROM schools WHERE County = 'San Joaquin' AND Virtual = 'P' AND Charter = '1'",
+    "result": [
+      {
+        "website": "www.riovalley.org"
+      },
+      {
+        "website": "www.mantecausd.net"
+      }
+    ],
+    "row_count": 2
+  },
+  "61": {
+    "question_id": 61,
+    "gold_sql": "SELECT COUNT(School) FROM schools WHERE DOC = 52 AND Charter = 1 AND City = 'Hickman'",
+    "pg_sql": "SELECT COUNT(School) FROM schools WHERE DOC = '52' AND Charter = '1' AND City = 'Hickman'",
+    "result": [
+      {
+        "count": 3
+      }
+    ],
+    "row_count": 1
+  },
+  "62": {
+    "question_id": 62,
+    "gold_sql": "SELECT COUNT(T2.School) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Los Angeles' AND T2.Charter = 0 AND CAST(T1.`Free Meal Count (K-12)` AS REAL) * 100 / T1.`Enrollment (K-12)` < 0.18",
+    "pg_sql": "SELECT COUNT(T2.School) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Los Angeles' AND T2.Charter = '0' AND CAST(T1.\"free meal count (k-12)\" AS REAL) * 100 / T1.\"enrollment (k-12)\" < 0.18",
+    "result": [
+      {
+        "count": 1
+      }
+    ],
+    "row_count": 1
+  },
+  "63": {
+    "question_id": 63,
+    "gold_sql": "SELECT AdmFName1, AdmLName1, School, City FROM schools WHERE Charter = 1 AND CharterNum = '00D2'",
+    "pg_sql": "SELECT AdmFName1, AdmLName1, School, City FROM schools WHERE Charter = '1' AND CharterNum = '00D2'",
+    "result": [
+      {
+        "admfname1": "Bobby",
+        "admlname1": "Rodriguez",
+        "school": "Ronald W. Reagan Elementary",
+        "city": "Kingsburg"
+      },
+      {
+        "admfname1": "Misti",
+        "admlname1": "Jennings",
+        "school": "Island Community Day",
+        "city": "Kingsburg"
+      },
+      {
+        "admfname1": "Matt",
+        "admlname1": "Stovall",
+        "school": "Lincoln Elementary",
+        "city": "Kingsburg"
+      },
+      {
+        "admfname1": "Shawn",
+        "admlname1": "Marshall",
+        "school": "Roosevelt Elementary",
+        "city": "Kingsburg"
+      },
+      {
+        "admfname1": "Jennifer",
+        "admlname1": "DuPras",
+        "school": "Washington Elementary",
+        "city": "Kingsburg"
+      },
+      {
+        "admfname1": "Laura",
+        "admlname1": "North",
+        "school": "Rafer Johnson Junior High",
+        "city": "Kingsburg"
+      },
+      {
+        "admfname1": "Misti",
+        "admlname1": "Jennings",
+        "school": "Kingsburg Community Charter Extension",
+        "city": "Kingsburg"
+      },
+      {
+        "admfname1": null,
+        "admlname1": null,
+        "school": "Little Red Schoolhouse",
+        "city": null
+      }
+    ],
+    "row_count": 8
+  },
+  "64": {
+    "question_id": 64,
+    "gold_sql": "SELECT COUNT(*) FROM schools WHERE CharterNum = '00D4' AND MailCity = 'Hickman'",
+    "pg_sql": "SELECT COUNT(*) FROM schools WHERE CharterNum = '00D4' AND MailCity = 'Hickman'",
+    "result": [
+      {
+        "count": 3
+      }
+    ],
+    "row_count": 1
+  },
+  "65": {
+    "question_id": 65,
+    "gold_sql": "SELECT CAST(SUM(CASE WHEN FundingType = 'Locally funded' THEN 1 ELSE 0 END) AS REAL) * 100 / SUM(CASE WHEN FundingType != 'Locally funded' THEN 1 ELSE 0 END) FROM schools WHERE County = 'Santa Clara' AND Charter = 1",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN FundingType = 'Locally funded' THEN 1 ELSE 0 END) AS REAL) * 100 / SUM(CASE WHEN FundingType != 'Locally funded' THEN 1 ELSE 0 END) FROM schools WHERE County = 'Santa Clara' AND Charter = '1'",
+    "result": [
+      {
+        "?column?": 33.333333333333336
+      }
+    ],
+    "row_count": 1
+  },
+  "66": {
+    "question_id": 66,
+    "gold_sql": "SELECT COUNT(School) FROM schools WHERE strftime('%Y', OpenDate) BETWEEN '2000' AND '2005' AND County = 'Stanislaus' AND FundingType = 'Directly funded'",
+    "pg_sql": "SELECT COUNT(School) FROM schools WHERE EXTRACT(YEAR FROM OpenDate)::INTEGER BETWEEN '2000' AND '2005' AND County = 'Stanislaus' AND FundingType = 'Directly funded'",
+    "result": [
+      {
+        "count": 7
+      }
+    ],
+    "row_count": 1
+  },
+  "67": {
+    "question_id": 67,
+    "gold_sql": "SELECT COUNT(School) FROM schools WHERE strftime('%Y', ClosedDate) = '1989' AND City = 'San Francisco' AND DOCType = 'Community College District'",
+    "pg_sql": "SELECT COUNT(School) FROM schools WHERE EXTRACT(YEAR FROM ClosedDate)::INTEGER = '1989' AND City = 'San Francisco' AND DOCType = 'Community College District'",
+    "result": [
+      {
+        "count": 2
+      }
+    ],
+    "row_count": 1
+  },
+  "68": {
+    "question_id": 68,
+    "gold_sql": "SELECT County FROM schools WHERE strftime('%Y', ClosedDate) BETWEEN '1980' AND '1989' AND StatusType = 'Closed' AND SOC = 11 GROUP BY County ORDER BY COUNT(School) DESC LIMIT 1",
+    "pg_sql": "SELECT County FROM schools WHERE EXTRACT(YEAR FROM ClosedDate)::INTEGER BETWEEN '1980' AND '1989' AND StatusType = 'Closed' AND SOC = '11' GROUP BY County ORDER BY COUNT(School) DESC LIMIT 1",
+    "result": [
+      {
+        "county": "Calaveras"
+      }
+    ],
+    "row_count": 1
+  },
+  "69": {
+    "question_id": 69,
+    "gold_sql": "SELECT NCESDist FROM schools WHERE SOC = 31",
+    "pg_sql": "SELECT NCESDist FROM schools WHERE SOC = '31'",
+    "result": [
+      {
+        "ncesdist": "0600002"
+      },
+      {
+        "ncesdist": "0600003"
+      },
+      {
+        "ncesdist": "0600007"
+      }
+    ],
+    "row_count": 3
+  },
+  "70": {
+    "question_id": 70,
+    "gold_sql": "SELECT COUNT(School) FROM schools WHERE (StatusType = 'Closed' OR StatusType = 'Active') AND SOC = 69 AND County = 'Alpine'",
+    "pg_sql": "SELECT COUNT(School) FROM schools WHERE (StatusType = 'Closed' OR StatusType = 'Active') AND SOC = '69' AND County = 'Alpine'",
+    "result": [
+      {
+        "count": 2
+      }
+    ],
+    "row_count": 1
+  },
+  "71": {
+    "question_id": 71,
+    "gold_sql": "SELECT T1.`District Code` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.City = 'Fresno' AND T2.Magnet = 0",
+    "pg_sql": "SELECT T1.\"district code\" FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.City = 'Fresno' AND T2.Magnet = '0'",
+    "result": [
+      {
+        "district code": 10108
+      },
+      {
+        "district code": 10108
+      },
+      {
+        "district code": 10108
+      },
+      {
+        "district code": 10108
+      },
+      {
+        "district code": 10108
+      },
+      {
+        "district code": 10108
+      },
+      {
+        "district code": 10108
+      },
+      {
+        "district code": 10108
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62117
+      },
+      {
+        "district code": 62158
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      },
+      {
+        "district code": 62166
+      }
+    ],
+    "row_count": 151
+  },
+  "72": {
+    "question_id": 72,
+    "gold_sql": "SELECT T1.`Enrollment (Ages 5-17)` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.EdOpsCode = 'SSS' AND T2.City = 'Fremont' AND T1.`Academic Year` BETWEEN 2014 AND 2015",
+    "pg_sql": "SELECT T1.\"enrollment (ages 5-17)\" FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.EdOpsCode = 'SSS' AND T2.City = 'Fremont' AND T1.\"academic year\" BETWEEN '2014' AND '2015'",
+    "result": [
+      {
+        "enrollment (ages 5-17)": 40.0
+      },
+      {
+        "enrollment (ages 5-17)": 335.0
+      }
+    ],
+    "row_count": 2
+  },
+  "73": {
+    "question_id": 73,
+    "gold_sql": "SELECT T1.`FRPM Count (Ages 5-17)` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.MailStreet = 'PO Box 1040' AND T2.SOCType = 'Youth Authority Facilities'",
+    "pg_sql": "SELECT T1.\"frpm count (ages 5-17)\" FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.MailStreet = 'PO Box 1040' AND T2.SOCType = 'Youth Authority Facilities'",
+    "result": [
+      {
+        "frpm count (ages 5-17)": 5.0
+      }
+    ],
+    "row_count": 1
+  },
+  "74": {
+    "question_id": 74,
+    "gold_sql": "SELECT MIN(T1.`Low Grade`) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.NCESDist = '0613360' AND T2.EdOpsCode = 'SPECON'",
+    "pg_sql": "SELECT MIN(T1.\"low grade\") FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.NCESDist = '0613360' AND T2.EdOpsCode = 'SPECON'",
+    "result": [
+      {
+        "min": "K"
+      }
+    ],
+    "row_count": 1
+  },
+  "75": {
+    "question_id": 75,
+    "gold_sql": "SELECT T2.EILName, T2.School FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`NSLP Provision Status` = 'Breakfast Provision 2' AND T1.`County Code` = 37",
+    "pg_sql": "SELECT T2.EILName, T2.School FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"nslp provision status\" = 'Breakfast Provision 2' AND T1.\"county code\" = '37'",
+    "result": [
+      {
+        "eilname": "Elementary",
+        "school": "Lemon Grove Academy for the Sciences and Humanities"
+      },
+      {
+        "eilname": "Elementary",
+        "school": "Monterey Heights Elementary"
+      },
+      {
+        "eilname": "Elementary",
+        "school": "Mt. Vernon Elementary"
+      },
+      {
+        "eilname": "Elementary",
+        "school": "San Altos Elementary"
+      },
+      {
+        "eilname": "Elementary",
+        "school": "San Miguel Elementary"
+      },
+      {
+        "eilname": "Elementary",
+        "school": "Vista La Mesa Academy"
+      },
+      {
+        "eilname": "High School",
+        "school": "Torrey Pines High"
+      },
+      {
+        "eilname": "High School",
+        "school": "La Costa Canyon High"
+      }
+    ],
+    "row_count": 8
+  },
+  "76": {
+    "question_id": 76,
+    "gold_sql": "SELECT T2.City FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`NSLP Provision Status` = 'Lunch Provision 2' AND T2.County = 'Merced' AND T1.`Low Grade` = 9 AND T1.`High Grade` = 12 AND T2.EILCode = 'HS'",
+    "pg_sql": "SELECT T2.City FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"nslp provision status\" = 'Lunch Provision 2' AND T2.County = 'Merced' AND T1.\"low grade\" = '9' AND T1.\"high grade\" = '12' AND T2.EILCode = 'HS'",
+    "result": [
+      {
+        "city": "Le Grand"
+      }
+    ],
+    "row_count": 1
+  },
+  "77": {
+    "question_id": 77,
+    "gold_sql": "SELECT T2.School, T1.`FRPM Count (Ages 5-17)` * 100 / T1.`Enrollment (Ages 5-17)` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Los Angeles' AND T2.GSserved = 'K-9'",
+    "pg_sql": "SELECT T2.School, T1.\"frpm count (ages 5-17)\" * 100 / T1.\"enrollment (ages 5-17)\" FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Los Angeles' AND T2.GSserved = 'K-9'",
+    "result": [
+      {
+        "school": "White Oak Elementary",
+        "?column?": 3.755868544600939
+      },
+      {
+        "school": "The Accelerated",
+        "?column?": 97.63888888888889
+      }
+    ],
+    "row_count": 2
+  },
+  "78": {
+    "question_id": 78,
+    "gold_sql": "SELECT GSserved FROM schools WHERE City = 'Adelanto' GROUP BY GSserved ORDER BY COUNT(GSserved) DESC LIMIT 1",
+    "pg_sql": "SELECT GSserved FROM schools WHERE City = 'Adelanto' GROUP BY GSserved ORDER BY COUNT(GSserved) DESC LIMIT 1",
+    "result": [
+      {
+        "gsserved": "K-6"
+      }
+    ],
+    "row_count": 1
+  },
+  "79": {
+    "question_id": 79,
+    "gold_sql": "SELECT County, COUNT(Virtual) FROM schools WHERE (County = 'San Diego' OR County = 'Santa Barbara') AND Virtual = 'F' GROUP BY County ORDER BY COUNT(Virtual) DESC LIMIT 1",
+    "pg_sql": "SELECT County, COUNT(Virtual) FROM schools WHERE (County = 'San Diego' OR County = 'Santa Barbara') AND Virtual = 'F' GROUP BY County ORDER BY COUNT(Virtual) DESC LIMIT 1",
+    "result": [
+      {
+        "county": "San Diego",
+        "count": 8
+      }
+    ],
+    "row_count": 1
+  },
+  "80": {
+    "question_id": 80,
+    "gold_sql": "SELECT T1.`School Type`, T1.`School Name`, T2.Latitude FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T2.Latitude DESC LIMIT 1",
+    "pg_sql": "SELECT T1.\"school type\", T1.\"school name\", T2.Latitude FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T2.Latitude DESC LIMIT 1",
+    "result": [
+      {
+        "school type": "County Community",
+        "school name": "Central Middle - RISE",
+        "latitude": null
+      }
+    ],
+    "row_count": 1
+  },
+  "81": {
+    "question_id": 81,
+    "gold_sql": "SELECT T2.City, T1.`Low Grade`, T1.`School Name` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.State = 'CA' ORDER BY T2.Latitude ASC LIMIT 1",
+    "pg_sql": "SELECT T2.City, T1.\"low grade\", T1.\"school name\" FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.State = 'CA' ORDER BY T2.Latitude ASC LIMIT 1",
+    "result": [
+      {
+        "city": "San Ysidro",
+        "low grade": "K",
+        "school name": "Willow Elementary"
+      }
+    ],
+    "row_count": 1
+  },
+  "82": {
+    "question_id": 82,
+    "gold_sql": "SELECT GSoffered FROM schools ORDER BY ABS(longitude) DESC LIMIT 1",
+    "pg_sql": "SELECT GSoffered FROM schools ORDER BY ABS(longitude) DESC LIMIT 1",
+    "result": [
+      {
+        "gsoffered": null
+      }
+    ],
+    "row_count": 1
+  },
+  "83": {
+    "question_id": 83,
+    "gold_sql": "SELECT T2.City, COUNT(T2.CDSCode) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.Magnet = 1 AND T2.GSoffered = 'K-8' AND T1.`NSLP Provision Status` = 'Multiple Provision Types' GROUP BY T2.City",
+    "pg_sql": "SELECT T2.City, COUNT(T2.CDSCode) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.Magnet = '1' AND T2.GSoffered = 'K-8' AND T1.\"nslp provision status\" = 'Multiple Provision Types' GROUP BY T2.City",
+    "result": [
+      {
+        "city": "Adelanto",
+        "count": 1
+      }
+    ],
+    "row_count": 1
+  },
+  "84": {
+    "question_id": 84,
+    "gold_sql": "SELECT DISTINCT T1.AdmFName1, T1.District FROM schools AS T1 INNER JOIN ( SELECT admfname1 FROM schools GROUP BY admfname1 ORDER BY COUNT(admfname1) DESC LIMIT 2 ) AS T2 ON T1.AdmFName1 = T2.admfname1",
+    "pg_sql": "SELECT DISTINCT T1.AdmFName1, T1.District FROM schools AS T1 INNER JOIN ( SELECT admfname1 FROM schools GROUP BY admfname1 ORDER BY COUNT(admfname1) DESC LIMIT 2 ) AS T2 ON T1.AdmFName1 = T2.admfname1",
+    "result": [
+      {
+        "admfname1": "David",
+        "district": "Alameda County Office of Education"
+      },
+      {
+        "admfname1": "David",
+        "district": "Alvord Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Antelope Valley Union High"
+      },
+      {
+        "admfname1": "David",
+        "district": "Arcadia Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Bakersfield City"
+      },
+      {
+        "admfname1": "David",
+        "district": "Banning Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Beverly Hills Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Brawley Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Buckeye Union Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Cajon Valley Union"
+      },
+      {
+        "admfname1": "David",
+        "district": "Calistoga Joint Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Center Joint Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Charter Oak Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Chico Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Chula Vista Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Compton Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Corning Union Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Cottonwood Union Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Desert Sands Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "El Dorado County Office of Education"
+      },
+      {
+        "admfname1": "David",
+        "district": "El Rancho Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Empire Union Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Fairfield-Suisun Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Folsom-Cordova Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Fremont Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Fresno Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Gilroy Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Grossmont Union High"
+      },
+      {
+        "admfname1": "David",
+        "district": "Hart-Ransom Union Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Hayward Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Hesperia Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Hueneme Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Jefferson Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Julian Union High"
+      },
+      {
+        "admfname1": "David",
+        "district": "Kelseyville Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Kern High"
+      },
+      {
+        "admfname1": "David",
+        "district": "Lafayette Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Lakeport Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Lakeside Union Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Lancaster Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Long Beach Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Los Angeles Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Madera Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Manteca Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Mariposa County Office of Education"
+      },
+      {
+        "admfname1": "David",
+        "district": "Mariposa County Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Marysville Joint Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Menifee Union Elementary"
+      },
+      {
+        "admfname1": "David",
+        "district": "Middletown Unified"
+      },
+      {
+        "admfname1": "David",
+        "district": "Modesto City Elementary"
+      }
+    ],
+    "row_count": 215
+  },
+  "85": {
+    "question_id": 85,
+    "gold_sql": "SELECT T1.`Free Meal Count (K-12)` * 100 / T1.`Enrollment (K-12)`, T1.`District Code` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.AdmFName1 = 'Alusine'",
+    "pg_sql": "SELECT T1.\"free meal count (k-12)\" * 100 / T1.\"enrollment (k-12)\", T1.\"district code\" FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.AdmFName1 = 'Alusine'",
+    "result": [
+      {
+        "?column?": 70.15113350125945,
+        "district code": 64857
+      }
+    ],
+    "row_count": 1
+  },
+  "86": {
+    "question_id": 86,
+    "gold_sql": "SELECT AdmLName1, District, County, School FROM schools WHERE CharterNum = '0040'",
+    "pg_sql": "SELECT AdmLName1, District, County, School FROM schools WHERE CharterNum = '0040'",
+    "result": [
+      {
+        "admlname1": "Aguilar",
+        "district": "San Francisco Unified",
+        "county": "San Francisco",
+        "school": "Creative Arts Charter"
+      }
+    ],
+    "row_count": 1
+  },
+  "87": {
+    "question_id": 87,
+    "gold_sql": "SELECT T2.AdmEmail1, T2.AdmEmail2 FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'San Bernardino' AND T2.City = 'San Bernardino' AND T2.DOC = 54 AND strftime('%Y', T2.OpenDate) BETWEEN '2009' AND '2010' AND T2.SOC = 62",
+    "pg_sql": "SELECT T2.AdmEmail1, T2.AdmEmail2 FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'San Bernardino' AND T2.City = 'San Bernardino' AND T2.DOC = '54' AND EXTRACT(YEAR FROM T2.OpenDate)::INTEGER BETWEEN '2009' AND '2010' AND T2.SOC = '62'",
+    "result": [
+      {
+        "admemail1": "a.lucero@realjourney.org",
+        "admemail2": "j.hernandez@realjourney.org"
+      }
+    ],
+    "row_count": 1
+  },
+  "88": {
+    "question_id": 88,
+    "gold_sql": "SELECT T2.AdmEmail1, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+    "pg_sql": "SELECT T2.AdmEmail1, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+    "result": [
+      {
+        "admemail1": "jyovino@fcoe.org",
+        "school": null
+      }
+    ],
+    "row_count": 1
+  }
+}

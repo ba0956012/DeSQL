@@ -1,0 +1,23 @@
+{
+  "customers.customerid": "unique numeric customer identifier",
+  "customers.segment": "customer segment code, e.g. SME, LAM",
+  "customers.currency": "customer currency code, e.g. EUR, CZK",
+  "gasstations.gasstationid": "unique numeric gas station identifier",
+  "gasstations.chainid": "numeric ID of gas station chain",
+  "gasstations.country": "country code of gas station location, e.g. CZE=Czech Republic, SVK=Slovakia",
+  "gasstations.segment": "gas station chain segment, e.g. Value for money, Premium, Discount",
+  "products.productid": "unique numeric product identifier",
+  "products.description": "product name/type in Czech, e.g. 'Rucní zadání' = Manual input, 'Nafta' = Diesel fuel, 'Special' = Special",
+  "transactions_1k.transactionid": "unique numeric transaction identifier",
+  "transactions_1k.date": "transaction date in YYYY-MM-DD format",
+  "transactions_1k.time": "transaction time in HH:MM:SS format",
+  "transactions_1k.customerid": "numeric customer ID referencing customers",
+  "transactions_1k.cardid": "numeric card ID used in transaction (payment or loyalty card)",
+  "transactions_1k.gasstationid": "numeric gas station ID referencing gasstations",
+  "transactions_1k.productid": "numeric product ID referencing products",
+  "transactions_1k.amount": "quantity count of product units purchased",
+  "transactions_1k.price": "total price of transaction (amount × unit price), not unit price",
+  "yearmonth.customerid": "numeric customer ID referencing customers",
+  "yearmonth.date": "year and month in YYYYMM format, e.g. 201207=July 2012",
+  "yearmonth.consumption": "numeric quantity consumed or purchased in the month"
+}

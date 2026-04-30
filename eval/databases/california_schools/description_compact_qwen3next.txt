@@ -1,0 +1,38 @@
+-- frpm.cdscode = schools.cdscode
+-- satscores.cds = schools.cdscode
+-- frpm: FRL/FRPM eligibility data by school
+-- satscores: SAT performance data by school
+-- schools: School/district metadata and geographic info
+-- frpm.enrollment (k-12): Total K-12 enrolled students
+-- frpm.free meal count (k-12): Count of students eligible for free meals (K-12)
+-- frpm.frpm count (k-12): Count of students eligible for FRPM (K-12)
+-- frpm.percent (%%) eligible free (k-12): free meal count / enrollment (k-12)
+-- frpm.percent (%%) eligible frpm (k-12): frpm count / enrollment (k-12)
+-- frpm.enrollment (ages 5-17): Estimated enrollment ages 5-17 (not exact K-12)
+-- frpm.free meal count (ages 5-17): Free meal eligible ages 5-17
+-- frpm.frpm count (ages 5-17): FRPM eligible ages 5-17
+-- frpm.percent (%%) eligible free (ages 5-17): free meal count (5-17) / enrollment (5-17)
+-- frpm.percent (%%) eligible frpm (ages 5-17): frpm count (5-17) / enrollment (5-17)
+-- frpm.charter school (y/n): 1=charter, 0=not charter
+-- frpm.district type: COE=County Office of Education, Unified=Unified School District, etc.
+-- frpm.school type: Maps to soctype, e.g., "High Schools (Public)"
+-- satscores.enroll12: Enrollment grades 1-12 (matches frpm enrollment k-12)
+-- satscores.numtsttakr: Total SAT test takers
+-- satscores.numge1500: Test takers with total score >=1500
+-- satscores.excellence rate = numge1500 / numtsttakr
+-- satscores.rtype: D=District, S=School
+-- schools.charter: 1=charter, 0=not charter (same as frpm.charter school (y/n))
+-- schools.doc: District Ownership Code (00=COE, 52=Elementary, 54=Unified, 56=High School)
+-- schools.doctype: Text description of doc (matches frpm.district type)
+-- schools.soc: School Ownership Code (65=Elementary, 66=High School, etc.)
+-- schools.soctype: Text description of soc (matches frpm.school type)
+-- schools.gsserved: CALPADS-reported grade span served (K-12 only)
+-- schools.gsoffered: Actual grade span offered (may include P, Adult, etc.)
+-- schools.fundingtype: Directly funded/Locally funded/Not in CS funding model (matches frpm.chr. funding type)
+-- schools.eilcode: EIL code (ELEM=Elementary, HS=High School, ELEMHIGH=Combination)
+-- schools.eilname: Text description of eilcode
+-- schools.edopscode: Education option code (TRAD=Traditional, COMM=Community Day, etc.)
+-- schools.edopsname: Text description of edopscode (matches frpm.educational option type)
+-- schools.virtual: F=Fully virtual, N=Not virtual, P=Partial virtual
+-- admfname1/admlname1/admemail1: Principal/Superintendent (only if active/pending)
+-- admfname3/admlname3/admemail3: Not useful (dummy values populated)

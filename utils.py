@@ -11,13 +11,37 @@ _logger = logging.getLogger("pipeline")
 
 
 def clean_llm_json(text: str) -> dict:
-    """清除 LLM 回傳中的 markdown 包裹，解析 JSON"""
+    """清除 LLM 回傳中的 markdown 包裹，解析 JSON。
+
+    支援：
+    1. 純 JSON（無 code fence）
+    2. 整段被 ```json ... ``` 包裹
+    3. 前後有說明文字，中間夾 ```json ... ``` block
+    4. 不合法 JSON（換行、trailing comma、comment 等）透過 json_repair 修復
+    """
+    import re
     text = text.strip()
-    if text.startswith("```"):
-        text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-    if text.endswith("```"):
-        text = text[:-3]
-    return json.loads(text.strip())
+
+    # 嘗試從 code fence 中提取 JSON block
+    m = re.search(r'```(?:json)?\s*\n(.*?)```', text, re.DOTALL)
+    if m:
+        text = m.group(1).strip()
+    else:
+        # fallback: 去掉頭尾 code fence（相容舊行為）
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        text = text.strip()
+
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        from json_repair import repair_json
+        repaired = repair_json(text, return_objects=True)
+        if isinstance(repaired, dict):
+            return repaired
+        raise
 
 
 def strip_code_fences(text: str) -> str:

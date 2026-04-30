@@ -1,0 +1,18 @@
+-- JOIN KEYS:
+-- transactions_1k.customerid = customers.customerid
+-- transactions_1k.gasstationid = gasstations.gasstationid
+-- transactions_1k.productid = products.productid
+-- yearmonth.customerid = customers.customerid
+
+-- VALUE TRANSLATIONS:
+-- customers.segment: SME=Small and Medium Enterprises, LAM=Large Account Management
+-- gasstations.country: CZE=Czech Republic, SVK=Slovakia
+-- gasstations.segment: Value for money=budget segment, Premium=high-end segment, Other=other segments, Discount=discount segment, Noname=no brand
+-- products.description: "Rucní zadání"=Manual entry, "Nafta"=Diesel fuel, "Special"=Special product/category
+
+-- MISLEADING COLUMNS:
+-- transactions_1k.price: total price paid for the transaction line (NOT unit price)
+-- yearmonth.date: year-month period indicator in YYYYMM format (NOT a full date)
+
+-- ANONYMOUS COLUMNS:
+-- transactions_1k.amount: quantity of product units sold

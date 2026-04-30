@@ -1,0 +1,13 @@
+-- JOIN KEYS:
+-- frpm.cdscode = satscores.cds
+-- frpm.cdscode = schools.cdscode
+-- frpm.district code = schools.ncesdist
+-- frpm.charter school number = schools.charternum
+
+-- VALUE TRANSLATIONS:
+-- satscores.rtype: D=District, S=School
+-- schools.virtual: N=No virtual instruction, P=Partial virtual instruction, F=Full virtual instruction
+-- frpm.low grade: K=Kindergarten, P=Preschool, Adult=Adult education
+-- frpm.high grade: K=Kindergarten, P=Preschool, Adult=Adult education
+-- frpm.charter school (y/n): 0=No, 1=Yes
+-- schools.charter: 0=No, 1=Yes

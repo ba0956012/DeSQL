@@ -1,0 +1,18 @@
+{
+  "frpm.county name": "Stores full county name (e.g., 'Alameda'), contrary to its misleading description claiming it is a county code.",
+  "satscores.cds": "12-digit SAT-reporting CDS code with '1' prepended to the standard 14-digit CDSCode (e.g., '1100170109835') to distinguish SAT data from CALPADS data.",
+  "satscores.rtype": "Indicates data level: 'S' for school-level SAT scores, 'D' for district-level aggregated scores.",
+  "satscores.dname": "Full name of the district associated with the SAT data, not merely a 'segment' as described.",
+  "schools.charter": "Text field where '1' indicates a charter school and 'None' indicates non-charter (not a boolean 0/1 as described).",
+  "schools.magnet": "Text field where '0' indicates not a magnet school and 'None' indicates unknown or unreported — inconsistent with claimed boolean 1/0 format.",
+  "schools.eilcode": "Short code representing the institution's grade-span level (e.g., 'HS', 'ELEMHIGH'), mapping to eilname for full interpretation.",
+  "schools.eilname": "Full textual description of the grade-span level (e.g., 'High School') corresponding to the eilcode.",
+  "schools.doc": "Numeric code identifying the district's ownership type (e.g., '00'), linked to doctype for human-readable interpretation.",
+  "schools.edopscode": "Short code denoting the educational model (e.g., 'TRAD'), paired with edopsname for detailed definition.",
+  "schools.gsoffered": "Grade range the school officially offers (e.g., 'K-12'), which may exceed the grades actually served per CALPADS.",
+  "schools.gsserved": "Grade range of students actually enrolled, as reported in CALPADS Fall 1 data — limited to K-12 range.",
+  "schools.virtual": "Type of virtual instruction: 'N' for none, 'P' for partial, 'F' for full (though 'F' is rarely observed).",
+  "schools.admfname3": "Third administrator’s first name, used in some districts; contrary to description, it is populated and useful.",
+  "schools.admlname3": "Third administrator’s last name, used in some districts; contrary to description, it is populated and useful.",
+  "schools.admemail3": "Third administrator’s email, used in some districts; contrary to description, it is populated and useful."
+}

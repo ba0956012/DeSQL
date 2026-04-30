@@ -1,0 +1,16 @@
+-- transactions_1k.customerid = customers.customerid  
+-- transactions_1k.gasstationid = gasstations.gasstationid  
+-- transactions_1k.productid = products.productid  
+-- yearmonth.customerid = customers.customerid  
+
+-- customers: customer info with segment and currency  
+-- gasstations: gas station info with chain and segment  
+-- products: product catalog  
+-- transactions_1k: individual fuel transactions  
+-- yearmonth: monthly consumption per customer  
+
+-- customers.currency: CZK=Czech koruna, EUR=Euro  
+-- customers.segment: KAM=Key Account Manager, LAM=Local Account Manager, SME=Small/Medium Enterprise  
+-- gasstations.country: CZE=Czech Republic, SVK=Slovakia  
+-- gasstations.segment: Discount=low price, Noname=no brand, Other=other types, Premium=high quality, Value for money=balanced quality/price  
+-- yearmonth.date: YYYYMM format, e.g. 201207=July 2012

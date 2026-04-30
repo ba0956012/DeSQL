@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+openai
+pydantic
+pydantic-settings
+matplotlib
+pyecharts
+squarify
+httpx
+pytest
+hypothesis

@@ -1,0 +1,13 @@
+-- frpm.cdscode = schools.cdscode  
+-- frpm.district code = schools.ncesdist  
+-- frpm.school code = schools.ncesschool  
+
+-- satscores.rtype: D=district-level record, S=school-level record  
+-- schools.virtual: N=No virtual, P=Partial virtual, F=Full virtual  
+
+-- frpm.percent (%) eligible free (k-12): stored as ratio 0-1 (NOT percentage)  
+-- frpm.percent (%) eligible frpm (k-12): stored as ratio 0-1 (NOT percentage)  
+-- frpm.percent (%) eligible free (ages 5-17): stored as ratio 0-1 (NOT percentage)  
+-- frpm.percent (%) eligible frpm (ages 5-17): stored as ratio 0-1 (NOT percentage)  
+
+-- frpm.irc: constant placeholder, always 1 (NOT useful)

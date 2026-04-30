@@ -187,6 +187,11 @@ cp .env.example .env
 | `DATABASE_URL` | PostgreSQL connection string |
 | `LLM_MODEL` | Model name (default: `gpt-4.1-mini`) |
 | `LLM_REASONING_EFFORT` | Reasoning effort for supported models (optional: `low`/`medium`/`high`) |
+| `PROMPT_PROFILE` | Prompt profile (default: `default`). See `prompts/` for available profiles |
+| `LLM_PROVIDER` | LLM provider: `azure` (default) or `bedrock` |
+| `SQL_LLM_PROVIDER` / `SQL_LLM_MODEL` | Override LLM for SQL generation node (optional) |
+| `CODE_LLM_PROVIDER` / `CODE_LLM_MODEL` | Override LLM for code generation node (optional) |
+| `QA_LLM_PROVIDER` / `QA_LLM_MODEL` | Override LLM for QA / schema_filter nodes (optional) |
 | `ENABLE_CHART` | Enable chart generation (default: `true`) |
 | `LOG_MAX_FILES` | Max log files to keep (default: `50`) |
 
@@ -210,12 +215,26 @@ desql/
 ├── .env.example              # Environment variables template
 ├── config.py                 # Settings (reads from .env)
 ├── db.py                     # DB connection, schema, enum loading
-├── llm.py                    # LLM initialization
+├── llm.py                    # LLM initialization (Azure + Bedrock, per-node model config)
 ├── logger.py                 # Per-run logging with auto-cleanup
 ├── utils.py                  # Shared utilities
 ├── domain_rules.py           # Domain-specific SQL rules
 ├── pipeline.py               # State, routing, graph assembly
 ├── retrieval_subgraph.py     # Progressive keyword retrieval
+├── prompts/
+│   ├── __init__.py           # Profile loader (PROMPT_PROFILE env var)
+│   ├── default/              # gpt-4.1-mini Chinese prompts
+│   │   ├── question_analysis.py
+│   │   ├── sql.py
+│   │   ├── code.py
+│   │   ├── answer.py
+│   │   └── schema_filter.py
+│   └── qwen3_en/             # Qwen3 English prompts (tuned for Bedrock)
+│       ├── question_analysis.py
+│       ├── sql.py
+│       ├── code.py
+│       ├── answer.py
+│       └── schema_filter.py
 ├── nodes/
 │   ├── sql.py                # SQL generation & execution
 │   ├── code.py               # Python sandbox & code generation
@@ -239,6 +258,24 @@ desql/
 ```
 
 ## Changelog
+
+### v0.4.1
+- Robust JSON parsing: `clean_llm_json` now extracts JSON from mixed LLM output (text + code fence) and uses `json_repair` as fallback for malformed JSON
+- Pipeline robustness: defensive handling for non-standard LLM outputs (missing keys, list-instead-of-dict, dict-in-list)
+- Added `json_repair` to requirements.txt
+- Eval: traceback output for pipeline errors in verbose mode
+
+### v0.4.0
+- Multi-LLM support: per-node model configuration (SQL_LLM, CODE_LLM, QA_LLM, SCHEMA_LLM)
+- AWS Bedrock provider: BedrockChat wrapper for Qwen3 models via Converse API
+- Prompt profile system: `prompts/` directory with swappable profiles via `PROMPT_PROFILE` env var
+  - `default`: gpt-4.1-mini Chinese prompts (original)
+  - `qwen3_en`: Qwen3 English prompts (tuned for Bedrock)
+- Schema description corrections: analyze-and-refine pipeline verifies column descriptions against actual data samples, auto-corrects misleading descriptions (e.g., `price` misidentified as unit price)
+- Schema summary generator: `eval/generate_schema_summary.py` for one-time DB description refinement
+- Parallel eval: `--workers N` for concurrent question evaluation
+- Eval improvements: `--desc-tag` for A/B testing different descriptions, removed sys.modules hack
+- Qwen3 prompt tuning results: ~72% (259 questions) vs gpt-4.1-mini ~71%
 
 ### v0.3.0
 - Add LLM-based schema filter for large tables (>15 columns)

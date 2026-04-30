@@ -1,0 +1,9 @@
+-- SECTION 1 — JOIN KEYS (required):
+-- order.account_id = account.account_id  
+-- account.district_id = district.district_id  
+-- card.disp_id = disp.disp_id  
+-- client.district_id = district.district_id  
+-- disp.client_id = client.client_id  
+-- disp.account_id = account.account_id  
+-- loan.account_id = account.account_id  
+-- trans.account_id = account.account_id

@@ -18,6 +18,7 @@ from nodes.code import generate_code, run_code
 from nodes.question_analysis import question_analysis
 from nodes.schema_filter import schema_filter
 from nodes.answer import format_answer
+from nodes.result_validator import validate_result
 CHART_ENGINE = os.getenv("CHART_ENGINE", "matplotlib")  # matplotlib | echarts
 if CHART_ENGINE == "echarts":
     from nodes.chart_echarts import generate_chart
@@ -60,8 +61,11 @@ class State(TypedDict):
     sql_validation: str
     column_descs: dict
     filtered_schema: str
+    semantic_notes: str
     task_plan: str
     qa_needs_python: bool
+    result_validated: bool
+    _conditions_context: str
 
 
 # =========================
@@ -87,18 +91,18 @@ def route_after_execute(state: State):
 
 
 def route_after_validate(state: State):
-    # 只有在 SQL 結果為空且 validate 判斷不足時才重試
-    # 如果已經有結果，即使 validate 說不足也繼續往下（避免重試後反而更差）
-    if state.get("error") and state.get("sql_validation") and state.get("sql_retry", 0) < 3:
-        if not state.get("sql_result"):
-            debug_log(
-                "route_after_validate", action="retry SQL (incomplete, no result)", missing=state.get("sql_validation")
-            )
-            return "generate_sql"
-        else:
-            debug_log(
-                "route_after_validate", action="skip retry (has result)", missing=state.get("sql_validation")
-            )
+    # Validation found insufficient data → retry SQL
+    if state.get("sql_validation") and state.get("sql_retry", 0) < 3:
+        debug_log(
+            "route_after_validate", action="retry SQL (validation)", reason=state.get("sql_validation")[:100]
+        )
+        return "generate_sql"
+    # SQL error → retry
+    if state.get("error") and state.get("sql_retry", 0) < 3 and not state.get("sql_result"):
+        debug_log(
+            "route_after_validate", action="retry SQL (error, no result)"
+        )
+        return "generate_sql"
     # 查無資料直接到 format_answer
     if not state.get("sql_result") and not state.get("error"):
         return "format_answer"
@@ -112,6 +116,23 @@ def should_retry(state: State):
         if state.get("sql_retry", 0) < 2 and any(kw in error_msg for kw in ["KeyError", "IndexError", "查無", "not found", "missing"]):
             debug_log("should_retry", action="retry SQL (code found data issue)", error=error_msg)
             return "generate_sql"
+        return "generate_code"
+    # run_code 成功 → 進入結果驗證
+    if not state.get("error"):
+        return "validate_result"
+    return "format_answer"
+
+
+def route_after_validate_result(state: State):
+    """結果驗證後的路由：有 error 且還有重試機會 → 重試 code 或 SQL"""
+    if state.get("error") and state.get("retry", 0) < 2:
+        error_msg = state.get("error", "")
+        # 如果驗證器指出是 SQL 層面的問題，回退到 SQL 重試
+        sql_keywords = ["SQL", "查詢條件", "WHERE", "JOIN", "篩選", "query"]
+        if state.get("sql_retry", 0) < 3 and any(kw in error_msg for kw in sql_keywords):
+            debug_log("route_after_validate_result", action="retry SQL", error=error_msg[:100])
+            return "generate_sql"
+        debug_log("route_after_validate_result", action="retry code", error=error_msg[:100])
         return "generate_code"
     return "format_answer"
 
@@ -139,6 +160,7 @@ graph.add_node("execute_sql", execute_sql)
 graph.add_node("validate_sql_result", validate_sql_result)
 graph.add_node("generate_code", generate_code)
 graph.add_node("run_code", run_code)
+graph.add_node("validate_result", validate_result)
 graph.add_node("format_answer", format_answer)
 
 ENABLE_CHART = os.getenv("ENABLE_CHART", "true").lower() in ("true", "1", "yes")
@@ -154,6 +176,7 @@ graph.add_conditional_edges("execute_sql", route_after_execute)
 graph.add_conditional_edges("validate_sql_result", route_after_validate)
 graph.add_edge("generate_code", "run_code")
 graph.add_conditional_edges("run_code", should_retry)
+graph.add_conditional_edges("validate_result", route_after_validate_result)
 
 if ENABLE_CHART:
     graph.add_edge("format_answer", "generate_chart")

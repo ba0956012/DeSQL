@@ -1,0 +1,35 @@
+-- JOIN keys:
+-- order.account_id = account.account_id
+-- account.district_id = district.district_id
+-- card.disp_id = disp.disp_id
+-- client.district_id = district.district_id
+-- disp.account_id = account.account_id
+-- disp.client_id = client.client_id
+-- loan.account_id = account.account_id
+-- trans.account_id = account.account_id
+
+-- Table purposes:
+-- order: records outgoing payment orders from accounts
+-- account: bank accounts with branch location and fee frequency
+-- card: credit cards linked to dispositions
+-- client: bank clients with demographic info
+-- disp: links clients to accounts with roles (OWNER or DISPONENT)
+-- district: geographic and socio-economic data by district
+-- loan: loans linked to accounts with status and payment info
+-- trans: account transactions with types and operations
+
+-- Column notes:
+-- order.bank_to: recipient bank code (two-letter)
+-- order.k_symbol: payment purpose (e.g. SIPO = household payment)
+-- account.frequency: fee frequency in Czech (e.g. POPLATEK MESICNE = monthly fee)
+-- disp.type: disposition role (OWNER = account owner, DISPONENT = authorized user)
+-- district.a2: district name (Czech)
+-- district.a3: region name (English)
+-- district.a10: ratio of urban inhabitants (percentage)
+-- district.a11: average salary
+-- district.a12, a13: unemployment rates for 1995 and 1996
+-- district.a14: entrepreneurs per 1000 inhabitants
+-- district.a15, a16: crimes committed in 1995 and 1996
+-- loan.status: loan repayment status (A=finished OK, B=finished unpaid, C=running OK, D=in debt)
+-- trans.type: transaction direction (PRIJEM = credit, VYDAJ = withdrawal)
+-- trans.operation: transaction mode (e.g. VKLAD = cash deposit, VYBER = cash withdrawal)

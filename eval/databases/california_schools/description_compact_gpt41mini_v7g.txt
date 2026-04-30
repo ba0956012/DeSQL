@@ -1,0 +1,13 @@
+-- JOIN KEYS:  
+-- frpm.cdscode = schools.cdscode  
+-- frpm.cdscode = satscores.cds  
+
+-- VALUE TRANSLATIONS:  
+-- satscores.rtype: D=district, S=school  
+-- schools.virtual: N=No virtual, P=Partial virtual, F=Full virtual  
+
+-- MISLEADING COLUMNS:  
+-- frpm.county name: stores county name (NOT county code)  
+
+-- ANONYMOUS COLUMNS:  
+-- (none)

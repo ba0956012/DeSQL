@@ -1,0 +1,10 @@
+{
+  "gasstations.country": "Two-letter ISO 3166-1 alpha-2 country code where the gas station is located (values: 'CZE', 'SVK').",
+  "gasstations.segment": "Market positioning tier of the gas station based on pricing and service strategy (values: 'Value for money', 'Premium', 'Discount', etc.).",
+  "products.description": "Product name in Czech language (e.g., 'Nafta' = Diesel), with occasional English terms retained.",
+  "transactions_1k.time": "Time of transaction stored as TEXT in 24-hour HH:MM:SS format, not as a TIME type.",
+  "transactions_1k.amount": "Quantity of fuel purchased in liters (not monetary amount).",
+  "transactions_1k.price": "Price per liter in local currency, calculated as total amount divided by quantity.",
+  "yearmonth.date": "Year and month in YYYYMM text format, representing the billing period, not a full date.",
+  "yearmonth.consumption": "Total monthly fuel consumption in liters for the customer."
+}

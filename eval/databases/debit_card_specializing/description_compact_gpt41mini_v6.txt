@@ -1,0 +1,4 @@
+-- customers.customerid = transactions_1k.customerid  
+-- gasstations.gasstationid = transactions_1k.gasstationid  
+-- products.productid = transactions_1k.productid  
+-- customers.customerid = yearmonth.customerid

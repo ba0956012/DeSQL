@@ -1,0 +1,35 @@
+-- order.account_id = account.account_id  
+-- account.district_id = district.district_id  
+-- card.disp_id = disp.disp_id  
+-- disp.client_id = client.client_id  
+-- disp.account_id = account.account_id  
+-- client.district_id = district.district_id  
+-- loan.account_id = account.account_id  
+-- trans.account_id = account.account_id  
+
+-- account.frequency: POPLATEK MESICNE=monthly fee, POPLATEK PO OBRATU=fee after turnover, POPLATEK TYDNE=weekly fee  
+-- order.k_symbol: SIPO=household payment, UVER=loan, LEASING=leasing, POJISTNE=insurance  
+-- disp.type: OWNER=account owner, DISPONENT=authorized user  
+-- trans.type: PRIJEM=credit, VYBER=withdrawal, VYDAJ=expenditure  
+-- trans.operation: VKLAD=deposit, VYBER=withdrawal, PREVOD NA UCET=transfer to account, PREVOD Z UCTU=transfer from account, VYBER KARTOU=card withdrawal  
+-- trans.k_symbol: DUCHOD=pension, POJISTNE=insurance, SANKC. UROK=penalty interest, SIPO=household payment, SLUZBY=services, UROK=interest, UVER=loan  
+
+-- account.date: stored as standard DATE YYYY-MM-DD (NOT YYMMDD as description suggests)  
+-- card.issued: stored as standard DATE YYYY-MM-DD (NOT YYMMDD as description suggests)  
+
+-- district.a2: district name (Czech)  
+-- district.a3: region name (English)  
+-- district.a5: likely municipality or subregion code (exact meaning unclear)  
+-- district.a6: likely municipality or subregion code (exact meaning unclear)  
+-- district.a7: likely municipality or subregion code (exact meaning unclear)  
+-- district.a8: likely municipality or subregion code (exact meaning unclear)  
+
+-- district.a9: not useful (marked as such)  
+
+-- district.a10: ratio of urban inhabitants (percentage)  
+-- district.a11: average salary (likely monthly or annual in local currency)  
+-- district.a12: unemployment rate 1995 (percentage)  
+-- district.a13: unemployment rate 1996 (percentage)  
+-- district.a14: number of entrepreneurs per 1000 inhabitants  
+-- district.a15: number of committed crimes 1995  
+-- district.a16: number of committed crimes 1996

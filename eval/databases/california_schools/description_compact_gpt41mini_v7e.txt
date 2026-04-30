@@ -1,0 +1,12 @@
+-- JOIN KEYS:  
+-- frpm.cdscode = satscores.cds  
+-- frpm.cdscode = schools.cdscode  
+-- frpm.district code = schools.ncesdist  
+-- schools.ncesdist = satscores.cds (prefix match on district part)  
+
+-- VALUE TRANSLATIONS:  
+-- satscores.rtype: D=District, S=School  
+-- schools.virtual: N=No virtual instruction, P=Partial virtual instruction, F=Full virtual instruction  
+
+-- ANONYMOUS COLUMNS:  
+-- None

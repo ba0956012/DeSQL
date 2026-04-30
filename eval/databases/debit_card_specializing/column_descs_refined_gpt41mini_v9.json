@@ -1,0 +1,6 @@
+{
+  "gasstations.segment": "Market positioning segment of the gas station chain, categorical labels such as 'Value for money', 'Premium', 'Other'.",
+  "products.description": "Product description text, often in Czech (e.g., 'Rucní zadání' means 'Manual input', 'Nafta' means 'Diesel fuel').",
+  "transactions_1k.price": "Total price paid for the transaction (not unit price), e.g., total amount = amount x unit price.",
+  "yearmonth.date": "Year and month in YYYYMM format representing the period, not a full date."
+}

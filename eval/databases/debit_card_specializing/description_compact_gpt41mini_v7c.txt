@@ -1,0 +1,15 @@
+-- JOIN KEYS:
+-- transactions_1k.customerid = customers.customerid
+-- transactions_1k.gasstationid = gasstations.gasstationid
+-- transactions_1k.productid = products.productid
+-- yearmonth.customerid = customers.customerid
+
+-- VALUE TRANSLATIONS:
+-- customers.segment: SME=Small and Medium Enterprise, LAM=Large Account Management
+-- customers.currency: EUR=Euro, CZK=Czech Koruna
+-- gasstations.country: CZE=Czech Republic, SVK=Slovakia
+-- gasstations.segment: Value for money=budget segment, Premium=high-end segment, Other=various, Discount=low price segment, Noname=no brand
+
+-- MISLEADING COLUMNS:
+-- transactions_1k.price: total transaction price (amount * unit price), NOT unit price
+-- products.description: product descriptions are in Czech language (NOT English)

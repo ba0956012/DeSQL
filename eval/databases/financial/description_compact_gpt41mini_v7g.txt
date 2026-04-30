@@ -1,0 +1,40 @@
+-- JOIN KEYS:
+-- order.account_id = account.account_id
+-- order.account_to = account.account_id
+-- account.district_id = district.district_id
+-- card.disp_id = disp.disp_id
+-- disp.client_id = client.client_id
+-- disp.account_id = account.account_id
+-- client.district_id = district.district_id
+-- loan.account_id = account.account_id
+-- trans.account_id = account.account_id
+
+-- VALUE TRANSLATIONS:
+-- order.bank_to: YZ=bank code example, ST=bank code example, QR=bank code example
+-- order.k_symbol: SIPO=household payment, UVER=loan payment
+-- account.frequency: POPLATEK MESICNE=monthly fee
+-- disp.type: OWNER=account owner, DISPONENT=authorized user
+-- loan.status: A=status code A, B=status code B, C=status code C, D=status code D
+-- trans.type: PRIJEM=credit, VYBER=withdrawal, VYDAJ=expense
+-- trans.operation: VYBER KARTOU=card withdrawal, VKLAD=cash deposit, PREVOD Z UCTU=incoming transfer, VYBER=cash withdrawal, PREVOD NA UCET=outgoing transfer
+
+-- MISLEADING COLUMNS:
+-- account.date: standard DATE format YYYY-MM-DD (NOT YYMMDD as described)
+-- card.issued: standard DATE format YYYY-MM-DD (NOT YYMMDD as described)
+
+-- ANONYMOUS COLUMNS:
+-- district.a2: district name in Czech
+-- district.a3: region name in English
+-- district.a4: population count
+-- district.a5: unknown numeric field, possibly municipality/subregion code
+-- district.a6: likely municipality or administrative code
+-- district.a7: likely municipality or administrative code
+-- district.a8: likely municipality or administrative code
+-- district.a9: not useful numeric field
+-- district.a10: ratio of urban inhabitants (percentage)
+-- district.a11: average salary
+-- district.a12: unemployment rate 1995
+-- district.a13: unemployment rate 1996
+-- district.a14: number of entrepreneurs per 1000 inhabitants
+-- district.a15: number of committed crimes 1995
+-- district.a16: number of committed crimes 1996

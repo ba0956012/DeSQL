@@ -1,0 +1,38 @@
+-- JOIN KEYS:  
+-- order.account_id = account.account_id  
+-- account.district_id = district.district_id  
+-- card.disp_id = disp.disp_id  
+-- client.district_id = district.district_id  
+-- disp.client_id = client.client_id  
+-- disp.account_id = account.account_id  
+-- loan.account_id = account.account_id  
+-- trans.account_id = account.account_id  
+
+-- VALUE TRANSLATIONS:  
+-- account.frequency: POPLATEK MESICNE=monthly fee, POPLATEK PO OBRATU=fee per turnover, POPLATEK TYDNE=weekly fee  
+-- card.type: junior=junior card, classic=classic card, gold=gold card  
+-- client.gender: F=female, M=male  
+-- disp.type: OWNER=account owner, DISPONENT=authorized user  
+-- loan.status: A=good standing, B=delayed, C=defaulted, D=written off (as described)  
+-- trans.type: PRIJEM=credit, VYBER=withdrawal, VYDAJ=expenditure  
+-- trans.operation: VKLAD=deposit, VYBER=withdrawal, PREVOD NA UCET=transfer to account, PREVOD Z UCTU=transfer from account, VYBER KARTOU=card withdrawal  
+-- trans.k_symbol: DUCHOD=pension, POJISTNE=insurance, SANKC. UROK=penalty interest, SIPO=household payment, SLUZBY=services, UROK=interest, UVER=loan  
+
+-- MISLEADING COLUMNS:  
+-- account.date: actual format is standard DATE YYYY-MM-DD (NOT YYMMDD as described)  
+-- card.issued: actual format is standard DATE YYYY-MM-DD (NOT YYMMDD as described)  
+-- disp.type: no 'USER' value found, only 'OWNER' and 'DISPONENT' present (NOT as description suggests)  
+-- district.a9: numeric but marked "not useful" (actual meaning unclear)  
+
+-- ANONYMOUS COLUMNS:  
+-- district.a2: district name (Czech)  
+-- district.a3: region name (English)  
+-- district.a4: population count (approximate)  
+-- district.a5, a6, a7, a8: administrative or statistical numeric codes/counts (exact meaning unclear)  
+-- district.a10: ratio of urban inhabitants (percentage)  
+-- district.a11: average salary (likely monthly or annual)  
+-- district.a12: unemployment rate 1995 (percent or fraction)  
+-- district.a13: unemployment rate 1996 (percent or fraction)  
+-- district.a14: entrepreneurs per 1000 inhabitants  
+-- district.a15: number of committed crimes 1995  
+-- district.a16: number of committed crimes 1996

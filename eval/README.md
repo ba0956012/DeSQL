@@ -20,16 +20,19 @@
 | v0.1.0 | 168/259 (64.9%) | 60 (67.4%) | 39 (60.9%) | 69 (65.1%) |
 | v0.2.0 | 176/259 (67.9%) | 62 (69.7%) | 43 (67.2%) | 71 (67.0%) |
 | v0.3.0 | 182/259 (70.3%) | 62 (69.7%) | 43 (67.2%) | 77 (72.6%) |
+| v0.4.0 (Qwen3) | ~187/259 (~72%) | ~63 (~71%) | ~49 (~77%) | ~75 (~71%) |
+
+v0.4.0 uses Qwen3 Next 80B + Qwen3 Coder 30B on Bedrock with English prompts and analyze-and-refine schema corrections.
 
 See `EXPERIMENT_LOG.md` for full experiment history.
 
 ### 各資料庫表現
 
-| 資料庫 | 題數 | v0.1.0 | v0.2.0 | v0.3.0 |
-|--------|------|--------|--------|--------|
-| california_schools | 89 | 67.4% | 69.7% | 69.7% |
-| financial | 106 | 65.1% | 67.0% | 72.6% |
-| debit_card_specializing | 64 | 60.9% | 67.2% | 67.2% |
+| 資料庫 | 題數 | v0.1.0 | v0.2.0 | v0.3.0 | v0.4.0 (Qwen3) |
+|--------|------|--------|--------|--------|----------------|
+| california_schools | 89 | 67.4% | 69.7% | 69.7% | ~71% |
+| financial | 106 | 65.1% | 67.0% | 72.6% | ~71% |
+| debit_card_specializing | 64 | 60.9% | 67.2% | 67.2% | ~77% |
 
 ## Setup
 
@@ -69,7 +72,37 @@ python eval/import_to_pg.py
 - 偵測日期格式欄位轉為 DATE 型別
 - 建立 `bird_` 前綴的獨立 database
 
-### 4. 執行評測
+## 復現 v0.4.0 評測結果
+
+完成 Setup 步驟 1-3 後，依序執行：
+
+```bash
+# Step 1: 產生精煉欄位描述修正（一次性，約 2-3 分鐘/DB）
+python -u eval/generate_schema_summary.py --all --model-tag gpt41mini_v9
+
+# Step 2: 三個 DB 並行跑（各開一個終端機）
+# california_schools
+PROMPT_PROFILE=qwen3_en LLM_PROVIDER=bedrock LLM_MODEL=qwen.qwen3-next-80b-a3b \
+SQL_LLM_PROVIDER=bedrock SQL_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
+CODE_LLM_PROVIDER=bedrock CODE_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
+python eval/run_eval.py --db california_schools --full-desc --desc-tag gpt41mini_v9 --tag v040 --workers 3
+
+# debit_card_specializing
+PROMPT_PROFILE=qwen3_en LLM_PROVIDER=bedrock LLM_MODEL=qwen.qwen3-next-80b-a3b \
+SQL_LLM_PROVIDER=bedrock SQL_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
+CODE_LLM_PROVIDER=bedrock CODE_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
+python eval/run_eval.py --db debit_card_specializing --full-desc --desc-tag gpt41mini_v9 --tag v040 --workers 3
+
+# financial
+PROMPT_PROFILE=qwen3_en LLM_PROVIDER=bedrock LLM_MODEL=qwen.qwen3-next-80b-a3b \
+SQL_LLM_PROVIDER=bedrock SQL_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
+CODE_LLM_PROVIDER=bedrock CODE_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
+python eval/run_eval.py --db financial --full-desc --desc-tag gpt41mini_v9 --tag v040 --workers 3
+```
+
+預期結果：~72% overall（±3% due to LLM randomness）。
+
+## 執行評測（通用）
 
 ```bash
 # 單題測試
@@ -78,14 +111,30 @@ python eval/run_eval.py --db california_schools --id 0
 # 該 DB 全部（自動跳過已完成的題目）
 python eval/run_eval.py --db california_schools --tag desql_evidence
 
-# 附加精簡版欄位描述（推薦，透過 State 注入 SQL prompt）
-python eval/run_eval.py --db california_schools --with-desc --tag desql_41mini_run2
+# 使用 BIRD CSV 欄位描述（推薦）
+python eval/run_eval.py --db california_schools --full-desc --tag desql_41mini_run2
 
-# 把描述放在 question 裡
-python eval/run_eval.py --db california_schools --with-desc --desc-in-question --tag desql_41mini_desc_in_q
+# 使用精煉的欄位描述修正（需先執行 generate_schema_summary.py）
+python eval/run_eval.py --db california_schools --full-desc --desc-tag gpt41mini_v9 --tag desql_refined
+
+# 並行跑（加速 2-3 倍）
+python eval/run_eval.py --db california_schools --full-desc --tag desql_test --workers 3
+
+# 使用 Qwen3 模型
+PROMPT_PROFILE=qwen3_en LLM_PROVIDER=bedrock LLM_MODEL=qwen.qwen3-next-80b-a3b \
+SQL_LLM_PROVIDER=bedrock SQL_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
+CODE_LLM_PROVIDER=bedrock CODE_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
+python eval/run_eval.py --db california_schools --full-desc --tag qwen3_test --workers 3
 
 # 不使用 evidence hint
 python eval/run_eval.py --db california_schools --no-evidence --tag desql_no_evidence
+```
+
+### 4b. 產生精煉欄位描述（可選）
+
+```bash
+# 用 analyze-and-refine 策略驗證並修正欄位描述
+python eval/generate_schema_summary.py --all --model-tag gpt41mini_v9
 ```
 
 ### 5. 查看結果
@@ -129,7 +178,8 @@ python eval/generate_html.py eval/report/california_schools/REPORT.md
 | `rerun_sql.py` | 重新執行指定題目的 SQL |
 | `test_pg.py` | PostgreSQL 連線測試 |
 | `report_template.md` | 報告模板 |
-| `databases/*/description_compact.txt` | 精簡版欄位描述（由 Claude Opus 4.6 從 BIRD CSV 精簡而成） |
+| `databases/*/description_compact.txt` | 精簡版欄位描述（由 LLM 從 BIRD CSV 精簡而成） |
+| `databases/*/column_descs_refined_*.json` | 精煉的欄位描述修正（analyze-and-refine 產出） |
 | `databases/*/dataset_description.md` | 資料集說明 |
 | `databases/*/evidence_examples.md` | Evidence hint 範例 |
 
@@ -141,8 +191,10 @@ python eval/generate_html.py eval/report/california_schools/REPORT.md
 | `--id` | 單題模式：指定 question_id | - |
 | `--limit` | 批次模式：最多跑幾題 | 全部 |
 | `--tag` | 實驗標籤，結果存入 `results/{tag}/` | - |
-| `--with-desc` | 附加精簡版欄位描述 | false |
-| `--desc-in-question` | 描述放在 question 裡（搭配 --with-desc） | false |
+| `--full-desc` | 注入 BIRD CSV 欄位描述 | false |
+| `--desc-tag` | 指定精煉描述版本（如 gpt41mini_v9） | - |
+| `--workers` | 並行 worker 數 | 1 |
+| `--with-desc` | 附加精簡版欄位描述（舊版） | false |
 | `--no-evidence` | 不使用 evidence hint | false |
 
 ## 已測試的資料庫

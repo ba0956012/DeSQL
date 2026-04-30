@@ -8,3 +8,4 @@ matplotlib==3.10.8
 squarify==0.4.4
 pyecharts==2.1.0
 python-dotenv==1.2.1
+json_repair==0.59.5

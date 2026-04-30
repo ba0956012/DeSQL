@@ -32,12 +32,27 @@ _logger = logging.getLogger("langgraph_sql_python")
 
 def _clean_llm_json(text: str) -> dict:
     """清除 LLM 回傳中的 markdown 包裹，解析 JSON"""
+    import re
     text = text.strip()
-    if text.startswith("```"):
-        text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-    if text.endswith("```"):
-        text = text[:-3]
-    return json.loads(text.strip())
+
+    m = re.search(r'```(?:json)?\s*\n(.*?)```', text, re.DOTALL)
+    if m:
+        text = m.group(1).strip()
+    else:
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        text = text.strip()
+
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        from json_repair import repair_json
+        repaired = repair_json(text, return_objects=True)
+        if isinstance(repaired, dict):
+            return repaired
+        raise
 
 
 def _debug_log(node_name: str, **kwargs):
@@ -91,8 +106,13 @@ def build_conditions_context(state: RetrievalState) -> str:
     if enum_conds:
         lines = ["以下是已確認的精確值條件（直接用於 WHERE）："]
         for c in enum_conds:
-            lines.append(f"  {c['table']}.{c['column']} = '{c['value']}'")
-        parts.append("\n".join(lines))
+            t = c.get('table')
+            col = c.get('column')
+            val = c.get('value')
+            if t and col and val:
+                lines.append(f"  {t}.{col} = '{val}'")
+        if len(lines) > 1:
+            parts.append("\n".join(lines))
 
     # keyword 檢索結果
     retrieved = state.get("retrieved_docs", [])
@@ -104,9 +124,9 @@ def build_conditions_context(state: RetrievalState) -> str:
         tokens = state.get("tokens", [])
 
         # 判斷是否有精確匹配（檢索結果中有值完全包含關鍵字）
-        exact_match = next((v for v in retrieved if kw.lower() == v.lower()), None)
+        exact_match = next((v for v in retrieved if kw.lower() == str(v).lower()), None)
         if not exact_match:
-            exact_match = next((v for v in retrieved if kw.lower() in v.lower() and len(v) < len(kw) + 10), None)
+            exact_match = next((v for v in retrieved if kw.lower() in str(v).lower() and len(str(v)) < len(kw) + 10), None)
 
         if exact_match:
             # 精確匹配 → 用 = 
@@ -200,7 +220,10 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
 
         try:
             parsed = _clean_llm_json(res.content)
-            conditions = parsed.get("conditions", [])
+            if isinstance(parsed, list):
+                conditions = parsed
+            else:
+                conditions = parsed.get("conditions", [])
         except (json.JSONDecodeError, KeyError) as e:
             _debug_log("analyze_conditions", parse_error=str(e))
             conditions = [
@@ -212,12 +235,56 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
                 }
             ]
 
+        # === Enum pre-match: fix LLM misclassification ===
+        # If LLM classified a value as "keyword" but it exists in enum_values,
+        # auto-correct to "enum" with the right table/column.
+        # Also scan the question text for any enum values LLM missed entirely.
+        question_lower = state["question"].lower()
+        # 1) Fix keyword → enum when value exists in enum_values
+        fixed_conditions = []
+        for c in conditions:
+            if c.get("type") == "keyword":
+                kw = c.get("keyword", "").lower()
+                matched = False
+                for col_key, vals in enum_values.items():
+                    for v in vals:
+                        v_str = str(v) if not isinstance(v, str) else v
+                        if v_str.lower() == kw or kw in v_str.lower():
+                            table, column = col_key.split(".", 1)
+                            fixed_conditions.append({
+                                "type": "enum",
+                                "table": table,
+                                "column": column,
+                                "value": v_str,
+                            })
+                            _debug_log("analyze_conditions", enum_fix=f"keyword '{kw}' → enum {col_key}='{v_str}'")
+                            matched = True
+                            break
+                    if matched:
+                        break
+                if not matched:
+                    fixed_conditions.append(c)
+            else:
+                fixed_conditions.append(c)
+
+        # 2) Scan question for enum values — DISABLED
+        # Too many false matches with short common words like "gold", "OWNER", etc.
+        # The keyword→enum fix in step 1 is sufficient.
+
+        conditions = fixed_conditions
+
+        # Sanitize: ensure all string fields in conditions are actually strings
+        for c in conditions:
+            for key in ("value", "keyword", "table", "column", "description"):
+                if key in c and not isinstance(c[key], str):
+                    c[key] = str(c[key])
+
         keyword_cond = next((c for c in conditions if c.get("type") == "keyword"), None)
         result = {"conditions": conditions}
         if keyword_cond:
-            result["keyword"] = keyword_cond.get("keyword", "")
-            result["search_table"] = keyword_cond.get("table", "")
-            result["search_column"] = keyword_cond.get("column", "")
+            result["keyword"] = str(keyword_cond.get("keyword", ""))
+            result["search_table"] = str(keyword_cond.get("table", ""))
+            result["search_column"] = str(keyword_cond.get("column", ""))
 
         _debug_log("analyze_conditions", output=result)
         return result
@@ -245,6 +312,41 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
         except Exception as e:
             _debug_log("retrieve_phrase", error=str(e))
             docs = []
+
+        # Broad search fallback: if not found in LLM-specified column,
+        # search ALL text columns across all tables
+        if not docs:
+            _debug_log("retrieve_phrase", fallback="broad search across all text columns")
+            try:
+                col_sql = """
+                SELECT table_name, column_name
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND data_type IN ('character varying', 'text')
+                ORDER BY table_name, ordinal_position
+                """
+                with engine.connect() as conn:
+                    all_cols = conn.execute(sa_text(col_sql)).fetchall()
+                    for tbl, col in all_cols:
+                        if tbl == table and col == column:
+                            continue  # already tried
+                        try:
+                            search_sql = f'SELECT "{col}" FROM "{tbl}" WHERE "{col}" ILIKE \'%{keyword}%\' LIMIT 3'
+                            found = conn.execute(sa_text(search_sql)).fetchall()
+                            if found:
+                                docs = [r[0] for r in found]
+                                # Update conditions: fix the table/column
+                                _debug_log("retrieve_phrase", broad_found=f"{tbl}.{col}", docs=docs)
+                                return {
+                                    "retrieved_docs": docs,
+                                    "strategy": "PHRASE",
+                                    "search_table": tbl,
+                                    "search_column": col,
+                                }
+                        except Exception:
+                            continue
+            except Exception as e:
+                _debug_log("retrieve_phrase", broad_error=str(e))
 
         _debug_log("retrieve_phrase", docs=docs)
         return {"retrieved_docs": docs, "strategy": "PHRASE"}

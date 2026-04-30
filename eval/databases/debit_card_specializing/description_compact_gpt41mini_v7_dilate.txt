@@ -1,0 +1,5 @@
+-- SECTION 1 — JOIN KEYS (required):
+-- transactions_1k.customerid = customers.customerid
+-- transactions_1k.gasstationid = gasstations.gasstationid
+-- transactions_1k.productid = products.productid
+-- yearmonth.customerid = customers.customerid

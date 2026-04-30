@@ -1,0 +1,26 @@
+-- frpm.cdscode = schools.cdscode  
+-- satscores.cds = schools.cdscode  
+
+-- frpm: free/reduced price meal data by school/year  
+-- satscores: SAT scores and test taker counts by school  
+-- schools: school and district directory with admin/contact info  
+
+-- frpm.charter school (y/n): 0=N, 1=Y  
+-- frpm.charter funding type: Directly funded, Locally funded, Not in CS funding model  
+-- frpm.district type: County Office of Education (COE), Elementary School District, High School District, Non-School Locations, State Board of Education, State Special Schools, Statewide Benefit Charter, Unified School District  
+-- frpm.educational option type: Alternative School of Choice, Community Day School, Continuation School, County Community School, District Special Education Consortia School, Home and Hospital, Juvenile Court School, Opportunity School, Special Education School, State Special School, Traditional, Youth Authority School  
+-- frpm.nslp provision status: Breakfast Provision 2, CEP, Lunch Provision 2, Multiple Provision Types, Provision 1, Provision 2, Provision 3  
+-- frpm.school type: Alternative Schools of Choice, Continuation High Schools, County Community, District Community Day Schools, Elemen Schools In 1 School Dist. (Public), Elementary Schools (Public), High Schools (Public), High Schools In 1 School Dist. (Public), Intermediate/Middle Schools (Public), Junior High Schools (Public), Juvenile Court Schools, K-12 Schools (Public), Opportunity Schools, Preschool, Special Education Schools (Public), State Special Schools, Youth Authority Facilities  
+-- frpm.high grade / low grade: 1-13, K=Kindergarten, P=Preschool, Adult, Post Secondary  
+
+-- satscores.rtype: D=District, S=School  
+
+-- schools.charter: 0=No, 1=Yes  
+-- schools.fundingtype: Directly funded, Locally funded, Not in CS funding model  
+-- schools.doc: 00, 02, 03, 31, 34, 42, 52, 54, 56, 58, 98, 99 (district ownership codes)  
+-- schools.doctype: Administration Only, Community College District, County Office of Education (COE), Elementary School District, High School District, Joint Powers Authority (JPA), Non-School Locations, Regional Occupation Center/Program (ROC/P), State Board of Education, State Special Schools, Statewide Benefit Charter, Unified School District  
+-- schools.edopscode / edopsname: ALTSOC=Alternative School of Choice, COMM=Community Day School, CON=Continuation School, HOMHOS=Home and Hospital, JUV=Juvenile Court School, OPP=Opportunity School, ROP=Regional Occupation Program, SPEC=Special Education School, SPECON=District Special Education Consortia School, SSS=State Special School, TRAD=Traditional, YTH=Youth Authority School  
+-- schools.eilcode / eilname: A=Adult, ELEM=Elementary, ELEMHIGH=Elementary-High Combination, HS=High School, INTMIDJR=Intermediate/Middle/Junior High, PS=Preschool, UG=Ungraded  
+-- schools.soc / soctype: 08=Adult Education Centers, 09=Alternative Schools of Choice, 10=Continuation High Schools, 11=County Community, 13=District Community Day Schools, 14=Elemen Schools In 1 School Dist. (Public), 15=Elementary Schools (Public), 31=High Schools (Public), 60=High Schools In 1 School Dist. (Public), 61=Intermediate/Middle Schools (Public), 62=Junior High Schools (Public), 63=Juvenile Court Schools, 64=K-12 Schools (Public), 65=Opportunity Schools, 66=Other County Or District Programs, 67=Preschool, 68=ROC/ROP, 69=Special Education Schools (Public), 70=State Special Schools, 98=Youth Authority Facilities  
+-- schools.virtual: F=Full virtual, N=None, P=Partial virtual  
+-- schools.statustype: Active, Closed, Merged, Pending

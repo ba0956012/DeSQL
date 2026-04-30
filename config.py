@@ -27,3 +27,6 @@ PRICE_OUTPUT = float(os.getenv("PRICE_OUTPUT", "0.60"))
 
 # Debug
 DEBUG = os.getenv("DEBUG", "true").lower() in ("true", "1", "yes")
+
+# Prompt profile (default | qwen3_en | ...)
+PROMPT_PROFILE = os.getenv("PROMPT_PROFILE", "default")

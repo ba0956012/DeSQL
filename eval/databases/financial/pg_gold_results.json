@@ -1,0 +1,4346 @@
+{
+  "89": {
+    "question_id": 89,
+    "gold_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE T1.A3 = 'east Bohemia' AND T2.frequency = 'POPLATEK PO OBRATU'",
+    "pg_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE T1.A3 = 'east Bohemia' AND T2.frequency = 'POPLATEK PO OBRATU'",
+    "result": [
+      {
+        "count": 13
+      }
+    ],
+    "row_count": 1
+  },
+  "90": {
+    "question_id": 90,
+    "gold_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T1.district_id = T3.district_id WHERE T3.A3 = 'Prague'",
+    "pg_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T1.district_id = T3.district_id WHERE T3.A3 = 'Prague'",
+    "result": [
+      {
+        "count": 84
+      }
+    ],
+    "row_count": 1
+  },
+  "91": {
+    "question_id": 91,
+    "gold_sql": "SELECT DISTINCT IIF(AVG(A13) > AVG(A12), '1996', '1995') FROM district",
+    "pg_sql": "SELECT DISTINCT CASE WHEN AVG(A13) > AVG(A12) THEN '1996' ELSE '1995' END FROM district",
+    "result": [
+      {
+        "case": "1996"
+      }
+    ],
+    "row_count": 1
+  },
+  "92": {
+    "question_id": 92,
+    "gold_sql": "SELECT COUNT(DISTINCT T2.district_id)  FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' AND T2.A11 BETWEEN 6000 AND 10000",
+    "pg_sql": "SELECT COUNT(DISTINCT T2.district_id)  FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' AND T2.A11 BETWEEN 6000 AND 10000",
+    "result": [
+      {
+        "count": 69
+      }
+    ],
+    "row_count": 1
+  },
+  "93": {
+    "question_id": 93,
+    "gold_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'M' AND T2.A3 = 'north Bohemia' AND T2.A11 > 8000",
+    "pg_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'M' AND T2.A3 = 'north Bohemia' AND T2.A11 > 8000",
+    "result": [
+      {
+        "count": 280
+      }
+    ],
+    "row_count": 1
+  },
+  "94": {
+    "question_id": 94,
+    "gold_sql": "SELECT T1.account_id , ( SELECT MAX(A11) - MIN(A11) FROM district ) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T1.account_id = T3.account_id INNER JOIN client AS T4 ON T3.client_id = T4.client_id WHERE T2.district_id = ( SELECT district_id FROM client WHERE gender = 'F' ORDER BY birth_date ASC LIMIT 1 ) ORDER BY T2.A11 DESC LIMIT 1",
+    "pg_sql": "SELECT T1.account_id , ( SELECT MAX(A11) - MIN(A11) FROM district ) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T1.account_id = T3.account_id INNER JOIN client AS T4 ON T3.client_id = T4.client_id WHERE T2.district_id = ( SELECT district_id FROM client WHERE gender = 'F' ORDER BY birth_date ASC LIMIT 1 ) ORDER BY T2.A11 DESC LIMIT 1",
+    "result": [
+      {
+        "account_id": 6,
+        "?column?": 4431
+      }
+    ],
+    "row_count": 1
+  },
+  "95": {
+    "question_id": 95,
+    "gold_sql": "SELECT T1.account_id  FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id INNER JOIN client AS T3 ON T2.client_id = T3.client_id INNER JOIN district AS T4 on T4.district_id = T1.district_id WHERE T2.client_id = ( SELECT client_id FROM client ORDER BY birth_date DESC LIMIT 1) GROUP BY T4.A11, T1.account_id",
+    "pg_sql": "SELECT T1.account_id  FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id INNER JOIN client AS T3 ON T2.client_id = T3.client_id INNER JOIN district AS T4 on T4.district_id = T1.district_id WHERE T2.client_id = ( SELECT client_id FROM client ORDER BY birth_date DESC LIMIT 1) GROUP BY T4.A11, T1.account_id",
+    "result": [
+      {
+        "account_id": 2836
+      }
+    ],
+    "row_count": 1
+  },
+  "96": {
+    "question_id": 96,
+    "gold_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T2.type = 'OWNER' AND T1.frequency = 'POPLATEK TYDNE'",
+    "pg_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T2.type = 'OWNER' AND T1.frequency = 'POPLATEK TYDNE'",
+    "result": [
+      {
+        "count": 240
+      }
+    ],
+    "row_count": 1
+  },
+  "97": {
+    "question_id": 97,
+    "gold_sql": "SELECT T2.client_id FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T1.frequency = 'POPLATEK PO OBRATU' AND T2.type = 'DISPONENT'",
+    "pg_sql": "SELECT T2.client_id FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T1.frequency = 'POPLATEK PO OBRATU' AND T2.type = 'DISPONENT'",
+    "result": [
+      {
+        "client_id": 159
+      },
+      {
+        "client_id": 384
+      },
+      {
+        "client_id": 1261
+      },
+      {
+        "client_id": 1706
+      },
+      {
+        "client_id": 2304
+      },
+      {
+        "client_id": 3526
+      },
+      {
+        "client_id": 3609
+      },
+      {
+        "client_id": 4035
+      },
+      {
+        "client_id": 4133
+      },
+      {
+        "client_id": 4334
+      },
+      {
+        "client_id": 4625
+      },
+      {
+        "client_id": 5580
+      },
+      {
+        "client_id": 6318
+      },
+      {
+        "client_id": 11979
+      }
+    ],
+    "row_count": 14
+  },
+  "98": {
+    "question_id": 98,
+    "gold_sql": "SELECT T2.account_id FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T1.date) = '1997' AND T2.frequency = 'POPLATEK TYDNE' ORDER BY T1.amount LIMIT 1",
+    "pg_sql": "SELECT T2.account_id FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE EXTRACT(YEAR FROM T1.date)::INTEGER = '1997' AND T2.frequency = 'POPLATEK TYDNE' ORDER BY T1.amount LIMIT 1",
+    "result": [
+      {
+        "account_id": 176
+      }
+    ],
+    "row_count": 1
+  },
+  "99": {
+    "question_id": 99,
+    "gold_sql": "SELECT T1.account_id FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T2.date) = '1993' AND T1.duration > 12 ORDER BY T1.amount DESC LIMIT 1",
+    "pg_sql": "SELECT T1.account_id FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE EXTRACT(YEAR FROM T2.date)::INTEGER = '1993' AND T1.duration > 12 ORDER BY T1.amount DESC LIMIT 1",
+    "result": [
+      {
+        "account_id": 10451
+      }
+    ],
+    "row_count": 1
+  },
+  "100": {
+    "question_id": 100,
+    "gold_sql": "SELECT COUNT(T2.client_id) FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T2.gender = 'F' AND STRFTIME('%Y', T2.birth_date) < '1950' AND T1.A2 = 'Sokolov'",
+    "pg_sql": "SELECT COUNT(T2.client_id) FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T2.gender = 'F' AND EXTRACT(YEAR FROM T2.birth_date)::INTEGER < '1950' AND T1.A2 = 'Sokolov'",
+    "result": [
+      {
+        "count": 8
+      }
+    ],
+    "row_count": 1
+  },
+  "101": {
+    "question_id": 101,
+    "gold_sql": "SELECT account_id FROM trans WHERE STRFTIME('%Y', date) = '1995' ORDER BY date ASC LIMIT 1",
+    "pg_sql": "SELECT account_id FROM trans WHERE EXTRACT(YEAR FROM date)::INTEGER = '1995' ORDER BY date ASC LIMIT 1",
+    "result": [
+      {
+        "account_id": 8566
+      }
+    ],
+    "row_count": 1
+  },
+  "102": {
+    "question_id": 102,
+    "gold_sql": "SELECT DISTINCT T2.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T2.date) < '1997' AND T1.amount > 3000",
+    "pg_sql": "SELECT DISTINCT T2.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE EXTRACT(YEAR FROM T2.date)::INTEGER < '1997' AND T1.amount > 3000",
+    "result": [
+      {
+        "account_id": 1
+      },
+      {
+        "account_id": 2
+      },
+      {
+        "account_id": 4
+      },
+      {
+        "account_id": 6
+      },
+      {
+        "account_id": 7
+      },
+      {
+        "account_id": 8
+      },
+      {
+        "account_id": 9
+      },
+      {
+        "account_id": 10
+      },
+      {
+        "account_id": 11
+      },
+      {
+        "account_id": 14
+      },
+      {
+        "account_id": 15
+      },
+      {
+        "account_id": 18
+      },
+      {
+        "account_id": 19
+      },
+      {
+        "account_id": 20
+      },
+      {
+        "account_id": 22
+      },
+      {
+        "account_id": 23
+      },
+      {
+        "account_id": 24
+      },
+      {
+        "account_id": 25
+      },
+      {
+        "account_id": 26
+      },
+      {
+        "account_id": 27
+      },
+      {
+        "account_id": 29
+      },
+      {
+        "account_id": 30
+      },
+      {
+        "account_id": 31
+      },
+      {
+        "account_id": 32
+      },
+      {
+        "account_id": 33
+      },
+      {
+        "account_id": 34
+      },
+      {
+        "account_id": 35
+      },
+      {
+        "account_id": 36
+      },
+      {
+        "account_id": 39
+      },
+      {
+        "account_id": 40
+      },
+      {
+        "account_id": 42
+      },
+      {
+        "account_id": 43
+      },
+      {
+        "account_id": 44
+      },
+      {
+        "account_id": 47
+      },
+      {
+        "account_id": 48
+      },
+      {
+        "account_id": 50
+      },
+      {
+        "account_id": 51
+      },
+      {
+        "account_id": 53
+      },
+      {
+        "account_id": 54
+      },
+      {
+        "account_id": 55
+      },
+      {
+        "account_id": 56
+      },
+      {
+        "account_id": 57
+      },
+      {
+        "account_id": 58
+      },
+      {
+        "account_id": 59
+      },
+      {
+        "account_id": 61
+      },
+      {
+        "account_id": 62
+      },
+      {
+        "account_id": 63
+      },
+      {
+        "account_id": 65
+      },
+      {
+        "account_id": 66
+      },
+      {
+        "account_id": 67
+      }
+    ],
+    "row_count": 3591
+  },
+  "103": {
+    "question_id": 103,
+    "gold_sql": "SELECT T2.client_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T2.disp_id = T3.disp_id WHERE T3.issued = '1994-03-03'",
+    "pg_sql": "SELECT T2.client_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T2.disp_id = T3.disp_id WHERE T3.issued = '1994-03-03'",
+    "result": [
+      {
+        "client_id": 2429
+      }
+    ],
+    "row_count": 1
+  },
+  "104": {
+    "question_id": 104,
+    "gold_sql": "SELECT T1.date FROM account AS T1 INNER JOIN trans AS T2 ON T1.account_id = T2.account_id WHERE T2.amount = 840 AND T2.date = '1998-10-14'",
+    "pg_sql": "SELECT T1.date FROM account AS T1 INNER JOIN trans AS T2 ON T1.account_id = T2.account_id WHERE T2.amount = 840 AND T2.date = '1998-10-14'",
+    "result": [
+      {
+        "date": "1993-02-26"
+      }
+    ],
+    "row_count": 1
+  },
+  "105": {
+    "question_id": 105,
+    "gold_sql": "SELECT T1.district_id FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.date = '1994-08-25'",
+    "pg_sql": "SELECT T1.district_id FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.date = '1994-08-25'",
+    "result": [
+      {
+        "district_id": 31
+      }
+    ],
+    "row_count": 1
+  },
+  "106": {
+    "question_id": 106,
+    "gold_sql": "SELECT T4.amount FROM card AS T1 JOIN disp AS T2 ON T1.disp_id = T2.disp_id JOIN account AS T3 on T2.account_id = T3.account_id JOIN trans AS T4 on T3.account_id = T4.account_id WHERE T1.issued = '1996-10-21' ORDER BY T4.amount DESC LIMIT 1",
+    "pg_sql": "SELECT T4.amount FROM card AS T1 JOIN disp AS T2 ON T1.disp_id = T2.disp_id JOIN account AS T3 on T2.account_id = T3.account_id JOIN trans AS T4 on T3.account_id = T4.account_id WHERE T1.issued = '1996-10-21' ORDER BY T4.amount DESC LIMIT 1",
+    "result": [
+      {
+        "amount": 87400
+      }
+    ],
+    "row_count": 1
+  },
+  "107": {
+    "question_id": 107,
+    "gold_sql": "SELECT T2.gender FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id ORDER BY T1.A11 DESC, T2.birth_date ASC LIMIT 1",
+    "pg_sql": "SELECT T2.gender FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id ORDER BY T1.A11 DESC, T2.birth_date ASC LIMIT 1",
+    "result": [
+      {
+        "gender": "M"
+      }
+    ],
+    "row_count": 1
+  },
+  "108": {
+    "question_id": 108,
+    "gold_sql": "SELECT T3.amount FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id ORDER BY T1.amount DESC, T3.date ASC LIMIT 1",
+    "pg_sql": "SELECT T3.amount FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id ORDER BY T1.amount DESC, T3.date ASC LIMIT 1",
+    "result": [
+      {
+        "amount": 300
+      }
+    ],
+    "row_count": 1
+  },
+  "109": {
+    "question_id": 109,
+    "gold_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' AND T2.A2 = 'Jesenik'",
+    "pg_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' AND T2.A2 = 'Jesenik'",
+    "result": [
+      {
+        "count": 26
+      }
+    ],
+    "row_count": 1
+  },
+  "110": {
+    "question_id": 110,
+    "gold_sql": "SELECT T1.disp_id FROM disp AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.date='1997-08-20' AND T3.amount = 5100",
+    "pg_sql": "SELECT T1.disp_id FROM disp AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.date='1997-08-20' AND T3.amount = 5100",
+    "result": [
+      {
+        "disp_id": 2231
+      }
+    ],
+    "row_count": 1
+  },
+  "111": {
+    "question_id": 111,
+    "gold_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE STRFTIME('%Y', T2.date) = '1996' AND T1.A2 = 'Litomerice'",
+    "pg_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE EXTRACT(YEAR FROM T2.date)::INTEGER = '1996' AND T1.A2 = 'Litomerice'",
+    "result": [
+      {
+        "count": 9
+      }
+    ],
+    "row_count": 1
+  },
+  "112": {
+    "question_id": 112,
+    "gold_sql": "SELECT T1.A2 FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T2.birth_date = '1976-01-29' AND T2.gender = 'F'",
+    "pg_sql": "SELECT T1.A2 FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T2.birth_date = '1976-01-29' AND T2.gender = 'F'",
+    "result": [
+      {
+        "a2": "Tachov"
+      }
+    ],
+    "row_count": 1
+  },
+  "113": {
+    "question_id": 113,
+    "gold_sql": "SELECT T4.birth_date FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id INNER JOIN client AS T4 ON T3.client_id = T4.client_id WHERE T1.date = '1996-01-03' AND T1.amount = 98832",
+    "pg_sql": "SELECT T4.birth_date FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id INNER JOIN client AS T4 ON T3.client_id = T4.client_id WHERE T1.date = '1996-01-03' AND T1.amount = 98832",
+    "result": [
+      {
+        "birth_date": "1970-09-10"
+      }
+    ],
+    "row_count": 1
+  },
+  "114": {
+    "question_id": 114,
+    "gold_sql": "SELECT T1.account_id FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A3 = 'Prague' ORDER BY T1.date ASC LIMIT 1",
+    "pg_sql": "SELECT T1.account_id FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A3 = 'Prague' ORDER BY T1.date ASC LIMIT 1",
+    "result": [
+      {
+        "account_id": 1539
+      }
+    ],
+    "row_count": 1
+  },
+  "115": {
+    "question_id": 115,
+    "gold_sql": "SELECT CAST(SUM(T1.gender = 'M') AS REAL) * 100 / COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A3 = 'south Bohemia' GROUP BY T2.A4 ORDER BY T2.A4 DESC LIMIT 1",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN T1.gender = 'M' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A3 = 'south Bohemia' GROUP BY T2.A4 ORDER BY T2.A4 DESC LIMIT 1",
+    "result": [
+      {
+        "?column?": 44.26229508196721
+      }
+    ],
+    "row_count": 1
+  },
+  "116": {
+    "question_id": 116,
+    "gold_sql": "SELECT CAST((SUM(IIF(T3.date = '1998-12-27', T3.balance, 0)) - SUM(IIF(T3.date = '1993-03-22', T3.balance, 0))) AS REAL) * 100 / SUM(IIF(T3.date = '1993-03-22', T3.balance, 0)) FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T3.account_id = T2.account_id WHERE T1.date = '1993-07-05'",
+    "pg_sql": "SELECT CAST((SUM(CASE WHEN T3.date = '1998-12-27' THEN T3.balance ELSE 0 END) - SUM(CASE WHEN T3.date = '1993-03-22' THEN T3.balance ELSE 0 END)) AS REAL) * 100 / SUM(CASE WHEN T3.date = '1993-03-22' THEN T3.balance ELSE 0 END) FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T3.account_id = T2.account_id WHERE T1.date = '1993-07-05'",
+    "result": [
+      {
+        "?column?": 430.45454545454544
+      }
+    ],
+    "row_count": 1
+  },
+  "117": {
+    "question_id": 117,
+    "gold_sql": "SELECT (CAST(SUM(CASE WHEN status = 'A' THEN amount ELSE 0 END) AS REAL) * 100) / SUM(amount) FROM loan",
+    "pg_sql": "SELECT (CAST(SUM(CASE WHEN status = 'A' THEN amount ELSE 0 END) AS REAL) * 100) / SUM(amount) FROM loan",
+    "result": [
+      {
+        "?column?": 18.01559415907576
+      }
+    ],
+    "row_count": 1
+  },
+  "118": {
+    "question_id": 118,
+    "gold_sql": "SELECT CAST(SUM(status = 'C') AS REAL) * 100 / COUNT(account_id) FROM loan WHERE amount < 100000",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN status = 'C' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(account_id) FROM loan WHERE amount < 100000",
+    "result": [
+      {
+        "?column?": 46.885245901639344
+      }
+    ],
+    "row_count": 1
+  },
+  "119": {
+    "question_id": 119,
+    "gold_sql": "SELECT T1.account_id, T2.A2, T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.frequency = 'POPLATEK PO OBRATU' AND STRFTIME('%Y', T1.date)= '1993'",
+    "pg_sql": "SELECT T1.account_id, T2.A2, T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.frequency = 'POPLATEK PO OBRATU' AND EXTRACT(YEAR FROM T1.date)::INTEGER= '1993'",
+    "result": [
+      {
+        "account_id": 66,
+        "a2": "Rychnov nad Kneznou",
+        "a3": "east Bohemia"
+      },
+      {
+        "account_id": 273,
+        "a2": "Karlovy Vary",
+        "a3": "west Bohemia"
+      },
+      {
+        "account_id": 485,
+        "a2": "Kutna Hora",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 539,
+        "a2": "Rakovnik",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 1050,
+        "a2": "Hodonin",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 1286,
+        "a2": "Zdar nad Sazavou",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 1527,
+        "a2": "Tachov",
+        "a3": "west Bohemia"
+      },
+      {
+        "account_id": 1539,
+        "a2": "Hl.m. Praha",
+        "a3": "Prague"
+      },
+      {
+        "account_id": 1965,
+        "a2": "Hodonin",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 2137,
+        "a2": "Kladno",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 2464,
+        "a2": "Decin",
+        "a3": "north Bohemia"
+      },
+      {
+        "account_id": 2705,
+        "a2": "Vyskov",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 3837,
+        "a2": "Rychnov nad Kneznou",
+        "a3": "east Bohemia"
+      },
+      {
+        "account_id": 4013,
+        "a2": "Opava",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 5228,
+        "a2": "Vsetin",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 5256,
+        "a2": "Olomouc",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 7123,
+        "a2": "Zlin",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 7774,
+        "a2": "Ostrava - mesto",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 8073,
+        "a2": "Karlovy Vary",
+        "a3": "west Bohemia"
+      },
+      {
+        "account_id": 8212,
+        "a2": "Usti nad Orlici",
+        "a3": "east Bohemia"
+      },
+      {
+        "account_id": 10227,
+        "a2": "Uherske Hradiste",
+        "a3": "south Moravia"
+      }
+    ],
+    "row_count": 21
+  },
+  "120": {
+    "question_id": 120,
+    "gold_sql": "SELECT T1.account_id, T1.frequency FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A3 = 'east Bohemia' AND STRFTIME('%Y', T1.date) BETWEEN '1995' AND '2000'",
+    "pg_sql": "SELECT T1.account_id, T1.frequency FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A3 = 'east Bohemia' AND EXTRACT(YEAR FROM T1.date)::INTEGER BETWEEN '1995' AND '2000'",
+    "result": [
+      {
+        "account_id": 14,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 76,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 80,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 84,
+        "frequency": "POPLATEK PO OBRATU"
+      },
+      {
+        "account_id": 103,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 131,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 149,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 171,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 174,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 182,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 194,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 210,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 232,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 253,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 283,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 292,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 296,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 311,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 315,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 319,
+        "frequency": "POPLATEK TYDNE"
+      },
+      {
+        "account_id": 320,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 323,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 330,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 338,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 339,
+        "frequency": "POPLATEK TYDNE"
+      },
+      {
+        "account_id": 350,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 351,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 390,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 393,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 410,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 463,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 464,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 468,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 471,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 490,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 491,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 507,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 590,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 593,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 600,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 602,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 611,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 621,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 637,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 646,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 674,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 684,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 706,
+        "frequency": "POPLATEK MESICNE"
+      },
+      {
+        "account_id": 733,
+        "frequency": "POPLATEK TYDNE"
+      },
+      {
+        "account_id": 745,
+        "frequency": "POPLATEK MESICNE"
+      }
+    ],
+    "row_count": 364
+  },
+  "121": {
+    "question_id": 121,
+    "gold_sql": "SELECT T1.account_id, T1.date FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A2 = 'Prachatice'",
+    "pg_sql": "SELECT T1.account_id, T1.date FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A2 = 'Prachatice'",
+    "result": [
+      {
+        "account_id": 38,
+        "date": "1997-08-08"
+      },
+      {
+        "account_id": 221,
+        "date": "1996-10-30"
+      },
+      {
+        "account_id": 252,
+        "date": "1996-12-26"
+      },
+      {
+        "account_id": 265,
+        "date": "1996-07-05"
+      },
+      {
+        "account_id": 449,
+        "date": "1994-11-22"
+      },
+      {
+        "account_id": 587,
+        "date": "1996-06-21"
+      },
+      {
+        "account_id": 709,
+        "date": "1994-07-25"
+      },
+      {
+        "account_id": 803,
+        "date": "1995-09-09"
+      },
+      {
+        "account_id": 825,
+        "date": "1996-03-06"
+      },
+      {
+        "account_id": 969,
+        "date": "1994-01-08"
+      },
+      {
+        "account_id": 989,
+        "date": "1994-03-14"
+      },
+      {
+        "account_id": 1024,
+        "date": "1997-05-02"
+      },
+      {
+        "account_id": 1040,
+        "date": "1996-05-18"
+      },
+      {
+        "account_id": 1176,
+        "date": "1996-10-24"
+      },
+      {
+        "account_id": 1236,
+        "date": "1993-05-05"
+      },
+      {
+        "account_id": 1375,
+        "date": "1994-04-27"
+      },
+      {
+        "account_id": 1407,
+        "date": "1997-04-11"
+      },
+      {
+        "account_id": 1470,
+        "date": "1994-02-10"
+      },
+      {
+        "account_id": 1622,
+        "date": "1996-04-12"
+      },
+      {
+        "account_id": 1635,
+        "date": "1993-12-29"
+      },
+      {
+        "account_id": 1862,
+        "date": "1995-04-15"
+      },
+      {
+        "account_id": 1975,
+        "date": "1994-09-07"
+      },
+      {
+        "account_id": 2025,
+        "date": "1994-10-02"
+      },
+      {
+        "account_id": 2027,
+        "date": "1994-11-28"
+      },
+      {
+        "account_id": 2218,
+        "date": "1994-11-21"
+      },
+      {
+        "account_id": 2327,
+        "date": "1993-06-08"
+      },
+      {
+        "account_id": 2357,
+        "date": "1993-01-04"
+      },
+      {
+        "account_id": 2440,
+        "date": "1997-12-18"
+      },
+      {
+        "account_id": 2594,
+        "date": "1997-05-03"
+      },
+      {
+        "account_id": 2608,
+        "date": "1995-08-09"
+      },
+      {
+        "account_id": 2762,
+        "date": "1993-03-20"
+      },
+      {
+        "account_id": 2857,
+        "date": "1997-04-28"
+      },
+      {
+        "account_id": 2875,
+        "date": "1996-12-24"
+      },
+      {
+        "account_id": 2888,
+        "date": "1996-05-23"
+      },
+      {
+        "account_id": 2895,
+        "date": "1993-03-09"
+      },
+      {
+        "account_id": 2960,
+        "date": "1994-09-20"
+      },
+      {
+        "account_id": 2982,
+        "date": "1996-06-04"
+      },
+      {
+        "account_id": 2991,
+        "date": "1993-05-22"
+      },
+      {
+        "account_id": 3015,
+        "date": "1996-06-15"
+      },
+      {
+        "account_id": 3169,
+        "date": "1997-12-19"
+      },
+      {
+        "account_id": 3290,
+        "date": "1996-12-09"
+      },
+      {
+        "account_id": 3411,
+        "date": "1996-12-17"
+      },
+      {
+        "account_id": 3582,
+        "date": "1995-08-26"
+      },
+      {
+        "account_id": 3614,
+        "date": "1996-08-07"
+      },
+      {
+        "account_id": 3775,
+        "date": "1993-06-27"
+      },
+      {
+        "account_id": 3986,
+        "date": "1997-06-20"
+      },
+      {
+        "account_id": 3989,
+        "date": "1995-03-11"
+      },
+      {
+        "account_id": 5602,
+        "date": "1996-07-10"
+      },
+      {
+        "account_id": 6075,
+        "date": "1996-09-15"
+      },
+      {
+        "account_id": 7437,
+        "date": "1997-08-08"
+      }
+    ],
+    "row_count": 55
+  },
+  "122": {
+    "question_id": 122,
+    "gold_sql": "SELECT T2.A2, T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.loan_id = 4990",
+    "pg_sql": "SELECT T2.A2, T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.loan_id = 4990",
+    "result": [
+      {
+        "a2": "Liberec",
+        "a3": "north Bohemia"
+      }
+    ],
+    "row_count": 1
+  },
+  "123": {
+    "question_id": 123,
+    "gold_sql": "SELECT T1.account_id, T2.A2, T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.amount > 300000",
+    "pg_sql": "SELECT T1.account_id, T2.A2, T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.amount > 300000",
+    "result": [
+      {
+        "account_id": 37,
+        "a2": "Strakonice",
+        "a3": "south Bohemia"
+      },
+      {
+        "account_id": 105,
+        "a2": "Tabor",
+        "a3": "south Bohemia"
+      },
+      {
+        "account_id": 319,
+        "a2": "Pardubice",
+        "a3": "east Bohemia"
+      },
+      {
+        "account_id": 330,
+        "a2": "Havlickuv Brod",
+        "a3": "east Bohemia"
+      },
+      {
+        "account_id": 339,
+        "a2": "Nachod",
+        "a3": "east Bohemia"
+      },
+      {
+        "account_id": 442,
+        "a2": "Brno - mesto",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 817,
+        "a2": "Kolin",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 915,
+        "a2": "Olomouc",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 1093,
+        "a2": "Brno - mesto",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 1374,
+        "a2": "Blansko",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 1583,
+        "a2": "Jesenik",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 1808,
+        "a2": "Plzen - sever",
+        "a3": "west Bohemia"
+      },
+      {
+        "account_id": 1862,
+        "a2": "Prachatice",
+        "a3": "south Bohemia"
+      },
+      {
+        "account_id": 2245,
+        "a2": "Rokycany",
+        "a3": "west Bohemia"
+      },
+      {
+        "account_id": 2246,
+        "a2": "Hl.m. Praha",
+        "a3": "Prague"
+      },
+      {
+        "account_id": 2279,
+        "a2": "Benesov",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 2335,
+        "a2": "Karvina",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 2516,
+        "a2": "Kutna Hora",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 2545,
+        "a2": "Hl.m. Praha",
+        "a3": "Prague"
+      },
+      {
+        "account_id": 2572,
+        "a2": "Zlin",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 2754,
+        "a2": "Hodonin",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 2910,
+        "a2": "Frydek - Mistek",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 2912,
+        "a2": "Ostrava - mesto",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 2936,
+        "a2": "Beroun",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 3005,
+        "a2": "Havlickuv Brod",
+        "a3": "east Bohemia"
+      },
+      {
+        "account_id": 3115,
+        "a2": "Ceske Budejovice",
+        "a3": "south Bohemia"
+      },
+      {
+        "account_id": 3678,
+        "a2": "Hl.m. Praha",
+        "a3": "Prague"
+      },
+      {
+        "account_id": 3679,
+        "a2": "Zlin",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 3711,
+        "a2": "Beroun",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 3859,
+        "a2": "Blansko",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 3906,
+        "a2": "Usti nad Orlici",
+        "a3": "east Bohemia"
+      },
+      {
+        "account_id": 4190,
+        "a2": "Uherske Hradiste",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 4354,
+        "a2": "Louny",
+        "a3": "north Bohemia"
+      },
+      {
+        "account_id": 4456,
+        "a2": "Ceske Budejovice",
+        "a3": "south Bohemia"
+      },
+      {
+        "account_id": 4576,
+        "a2": "Plzen - jih",
+        "a3": "west Bohemia"
+      },
+      {
+        "account_id": 4650,
+        "a2": "Kladno",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 4774,
+        "a2": "Zdar nad Sazavou",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 4794,
+        "a2": "Olomouc",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 4858,
+        "a2": "Bruntal",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 4948,
+        "a2": "Hradec Kralove",
+        "a3": "east Bohemia"
+      },
+      {
+        "account_id": 5072,
+        "a2": "Kutna Hora",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 5120,
+        "a2": "Hl.m. Praha",
+        "a3": "Prague"
+      },
+      {
+        "account_id": 5181,
+        "a2": "Prerov",
+        "a3": "north Moravia"
+      },
+      {
+        "account_id": 5213,
+        "a2": "Hl.m. Praha",
+        "a3": "Prague"
+      },
+      {
+        "account_id": 5313,
+        "a2": "Teplice",
+        "a3": "north Bohemia"
+      },
+      {
+        "account_id": 5422,
+        "a2": "Zdar nad Sazavou",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 5477,
+        "a2": "Hodonin",
+        "a3": "south Moravia"
+      },
+      {
+        "account_id": 6034,
+        "a2": "Kutna Hora",
+        "a3": "central Bohemia"
+      },
+      {
+        "account_id": 6062,
+        "a2": "Karlovy Vary",
+        "a3": "west Bohemia"
+      },
+      {
+        "account_id": 6075,
+        "a2": "Prachatice",
+        "a3": "south Bohemia"
+      }
+    ],
+    "row_count": 82
+  },
+  "124": {
+    "question_id": 124,
+    "gold_sql": "SELECT T3.loan_id, T2.A2, T2.A11 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.duration = 60",
+    "pg_sql": "SELECT T3.loan_id, T2.A2, T2.A11 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.duration = 60",
+    "result": [
+      {
+        "loan_id": 4967,
+        "a2": "Strakonice",
+        "a11": 8547
+      },
+      {
+        "loan_id": 5041,
+        "a2": "Pardubice",
+        "a11": 9538
+      },
+      {
+        "loan_id": 5043,
+        "a2": "Nachod",
+        "a11": 8369
+      },
+      {
+        "loan_id": 5044,
+        "a2": "Brno - mesto",
+        "a11": 9897
+      },
+      {
+        "loan_id": 5051,
+        "a2": "Frydek - Mistek",
+        "a11": 9893
+      },
+      {
+        "loan_id": 5060,
+        "a2": "Hl.m. Praha",
+        "a11": 12541
+      },
+      {
+        "loan_id": 5082,
+        "a2": "Rakovnik",
+        "a11": 8598
+      },
+      {
+        "loan_id": 5110,
+        "a2": "Jihlava",
+        "a11": 8757
+      },
+      {
+        "loan_id": 5132,
+        "a2": "Kolin",
+        "a11": 9307
+      },
+      {
+        "loan_id": 5140,
+        "a2": "Opava",
+        "a11": 8746
+      },
+      {
+        "loan_id": 5147,
+        "a2": "Karvina",
+        "a11": 10177
+      },
+      {
+        "loan_id": 5148,
+        "a2": "Litomerice",
+        "a11": 9065
+      },
+      {
+        "loan_id": 5151,
+        "a2": "Kladno",
+        "a11": 9753
+      },
+      {
+        "loan_id": 5154,
+        "a2": "Kutna Hora",
+        "a11": 8546
+      },
+      {
+        "loan_id": 5160,
+        "a2": "Jicin",
+        "a11": 8390
+      },
+      {
+        "loan_id": 5169,
+        "a2": "Usti nad Orlici",
+        "a11": 8363
+      },
+      {
+        "loan_id": 5170,
+        "a2": "Frydek - Mistek",
+        "a11": 9893
+      },
+      {
+        "loan_id": 5265,
+        "a2": "Uherske Hradiste",
+        "a11": 8544
+      },
+      {
+        "loan_id": 5311,
+        "a2": "Plzen - sever",
+        "a11": 8594
+      },
+      {
+        "loan_id": 5319,
+        "a2": "Teplice",
+        "a11": 9317
+      },
+      {
+        "loan_id": 5329,
+        "a2": "Prachatice",
+        "a11": 8402
+      },
+      {
+        "loan_id": 5354,
+        "a2": "Kolin",
+        "a11": 9307
+      },
+      {
+        "loan_id": 5363,
+        "a2": "Zlin",
+        "a11": 9624
+      },
+      {
+        "loan_id": 5365,
+        "a2": "Litomerice",
+        "a11": 9065
+      },
+      {
+        "loan_id": 5409,
+        "a2": "Prachatice",
+        "a11": 8402
+      },
+      {
+        "loan_id": 5419,
+        "a2": "Hl.m. Praha",
+        "a11": 12541
+      },
+      {
+        "loan_id": 5447,
+        "a2": "Karvina",
+        "a11": 10177
+      },
+      {
+        "loan_id": 5450,
+        "a2": "Kolin",
+        "a11": 9307
+      },
+      {
+        "loan_id": 5452,
+        "a2": "Karvina",
+        "a11": 10177
+      },
+      {
+        "loan_id": 5469,
+        "a2": "Usti nad Orlici",
+        "a11": 8363
+      },
+      {
+        "loan_id": 5482,
+        "a2": "Trutnov",
+        "a11": 8541
+      },
+      {
+        "loan_id": 5495,
+        "a2": "Prostejov",
+        "a11": 8441
+      },
+      {
+        "loan_id": 5527,
+        "a2": "Usti nad Orlici",
+        "a11": 8363
+      },
+      {
+        "loan_id": 5549,
+        "a2": "Praha - zapad",
+        "a11": 9622
+      },
+      {
+        "loan_id": 5556,
+        "a2": "Hl.m. Praha",
+        "a11": 12541
+      },
+      {
+        "loan_id": 5561,
+        "a2": "Frydek - Mistek",
+        "a11": 9893
+      },
+      {
+        "loan_id": 5563,
+        "a2": "Ostrava - mesto",
+        "a11": 10673
+      },
+      {
+        "loan_id": 5568,
+        "a2": "Praha - vychod",
+        "a11": 10124
+      },
+      {
+        "loan_id": 5569,
+        "a2": "Beroun",
+        "a11": 8980
+      },
+      {
+        "loan_id": 5611,
+        "a2": "Ceske Budejovice",
+        "a11": 10045
+      },
+      {
+        "loan_id": 5614,
+        "a2": "Most",
+        "a11": 10446
+      },
+      {
+        "loan_id": 5625,
+        "a2": "Rokycany",
+        "a11": 8843
+      },
+      {
+        "loan_id": 5698,
+        "a2": "Jihlava",
+        "a11": 8757
+      },
+      {
+        "loan_id": 5713,
+        "a2": "Rychnov nad Kneznou",
+        "a11": 9060
+      },
+      {
+        "loan_id": 5724,
+        "a2": "Hl.m. Praha",
+        "a11": 12541
+      },
+      {
+        "loan_id": 5731,
+        "a2": "Beroun",
+        "a11": 8980
+      },
+      {
+        "loan_id": 5758,
+        "a2": "Blansko",
+        "a11": 8240
+      },
+      {
+        "loan_id": 5772,
+        "a2": "Usti nad Orlici",
+        "a11": 8363
+      },
+      {
+        "loan_id": 5830,
+        "a2": "Uherske Hradiste",
+        "a11": 8544
+      },
+      {
+        "loan_id": 5837,
+        "a2": "Breclav",
+        "a11": 8772
+      }
+    ],
+    "row_count": 145
+  },
+  "125": {
+    "question_id": 125,
+    "gold_sql": "SELECT CAST((T3.A13 - T3.A12) AS REAL) * 100 / T3.A12 FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.status = 'D'",
+    "pg_sql": "SELECT CAST((T3.A13 - T3.A12) AS REAL) * 100 / T3.A12 FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.status = 'D'",
+    "result": [
+      {
+        "?column?": 39.999998532808746
+      },
+      {
+        "?column?": 39.259257139983
+      },
+      {
+        "?column?": 115.00000208616257
+      },
+      {
+        "?column?": 22.50000089406967
+      },
+      {
+        "?column?": 19.999999552965164
+      },
+      {
+        "?column?": null
+      },
+      {
+        "?column?": 11.666666716337204
+      },
+      {
+        "?column?": null
+      },
+      {
+        "?column?": 44.37499865889549
+      },
+      {
+        "?column?": 13.33333326108528
+      },
+      {
+        "?column?": 17.424242063002154
+      },
+      {
+        "?column?": 39.259257139983
+      },
+      {
+        "?column?": 8.437500335276127
+      },
+      {
+        "?column?": -5.593220561237658
+      },
+      {
+        "?column?": 28.571428997176035
+      },
+      {
+        "?column?": 115.00000208616257
+      },
+      {
+        "?column?": 16.315789599167672
+      },
+      {
+        "?column?": 42.39999771118164
+      },
+      {
+        "?column?": 22.50000089406967
+      },
+      {
+        "?column?": 13.541666169961294
+      },
+      {
+        "?column?": 16.315789599167672
+      },
+      {
+        "?column?": 26.052631829914294
+      },
+      {
+        "?column?": 14.912281120032594
+      },
+      {
+        "?column?": 39.999998532808746
+      },
+      {
+        "?column?": 115.00000208616257
+      },
+      {
+        "?column?": 9.782608436501546
+      },
+      {
+        "?column?": 22.50000089406967
+      },
+      {
+        "?column?": 39.60000038146973
+      },
+      {
+        "?column?": 28.38709662037511
+      },
+      {
+        "?column?": 38.62068981959902
+      },
+      {
+        "?column?": 14.912281120032594
+      },
+      {
+        "?column?": 43.52941232569078
+      },
+      {
+        "?column?": 34.99999973509047
+      },
+      {
+        "?column?": 22.50000089406967
+      },
+      {
+        "?column?": 13.33333326108528
+      },
+      {
+        "?column?": 13.541666169961294
+      },
+      {
+        "?column?": 22.142857313156128
+      },
+      {
+        "?column?": 17.424242063002154
+      },
+      {
+        "?column?": 47.058824230642884
+      },
+      {
+        "?column?": 18.84615421295166
+      },
+      {
+        "?column?": 17.424242063002154
+      },
+      {
+        "?column?": 15.744681053973258
+      },
+      {
+        "?column?": 13.636364178224042
+      },
+      {
+        "?column?": 115.00000208616257
+      },
+      {
+        "?column?": 13.541666169961294
+      }
+    ],
+    "row_count": 45
+  },
+  "126": {
+    "question_id": 126,
+    "gold_sql": "SELECT CAST(SUM(T1.A2 = 'Decin') AS REAL) * 100 / COUNT(account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE STRFTIME('%Y', T2.date) = '1993'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN T1.A2 = 'Decin' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE EXTRACT(YEAR FROM T2.date)::INTEGER = '1993'",
+    "result": [
+      {
+        "?column?": 1.3169446883230904
+      }
+    ],
+    "row_count": 1
+  },
+  "127": {
+    "question_id": 127,
+    "gold_sql": "SELECT account_id FROM account WHERE Frequency = 'POPLATEK MESICNE'",
+    "pg_sql": "SELECT account_id FROM account WHERE Frequency = 'POPLATEK MESICNE'",
+    "result": [
+      {
+        "account_id": 1
+      },
+      {
+        "account_id": 2
+      },
+      {
+        "account_id": 3
+      },
+      {
+        "account_id": 4
+      },
+      {
+        "account_id": 5
+      },
+      {
+        "account_id": 6
+      },
+      {
+        "account_id": 7
+      },
+      {
+        "account_id": 8
+      },
+      {
+        "account_id": 9
+      },
+      {
+        "account_id": 10
+      },
+      {
+        "account_id": 11
+      },
+      {
+        "account_id": 12
+      },
+      {
+        "account_id": 13
+      },
+      {
+        "account_id": 14
+      },
+      {
+        "account_id": 15
+      },
+      {
+        "account_id": 16
+      },
+      {
+        "account_id": 17
+      },
+      {
+        "account_id": 19
+      },
+      {
+        "account_id": 20
+      },
+      {
+        "account_id": 21
+      },
+      {
+        "account_id": 22
+      },
+      {
+        "account_id": 23
+      },
+      {
+        "account_id": 24
+      },
+      {
+        "account_id": 25
+      },
+      {
+        "account_id": 26
+      },
+      {
+        "account_id": 27
+      },
+      {
+        "account_id": 29
+      },
+      {
+        "account_id": 30
+      },
+      {
+        "account_id": 31
+      },
+      {
+        "account_id": 32
+      },
+      {
+        "account_id": 33
+      },
+      {
+        "account_id": 35
+      },
+      {
+        "account_id": 36
+      },
+      {
+        "account_id": 37
+      },
+      {
+        "account_id": 39
+      },
+      {
+        "account_id": 40
+      },
+      {
+        "account_id": 41
+      },
+      {
+        "account_id": 42
+      },
+      {
+        "account_id": 43
+      },
+      {
+        "account_id": 44
+      },
+      {
+        "account_id": 45
+      },
+      {
+        "account_id": 47
+      },
+      {
+        "account_id": 48
+      },
+      {
+        "account_id": 49
+      },
+      {
+        "account_id": 50
+      },
+      {
+        "account_id": 51
+      },
+      {
+        "account_id": 52
+      },
+      {
+        "account_id": 53
+      },
+      {
+        "account_id": 54
+      },
+      {
+        "account_id": 55
+      }
+    ],
+    "row_count": 4167
+  },
+  "128": {
+    "question_id": 128,
+    "gold_sql": "SELECT T2.A2, COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' GROUP BY T2.district_id, T2.A2 ORDER BY COUNT(T1.client_id) DESC LIMIT 9",
+    "pg_sql": "SELECT T2.A2, COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' GROUP BY T2.district_id, T2.A2 ORDER BY COUNT(T1.client_id) DESC LIMIT 9",
+    "result": [
+      {
+        "a2": "Hl.m. Praha",
+        "count": 324
+      },
+      {
+        "a2": "Karvina",
+        "count": 88
+      },
+      {
+        "a2": "Ostrava - mesto",
+        "count": 84
+      },
+      {
+        "a2": "Brno - mesto",
+        "count": 75
+      },
+      {
+        "a2": "Zlin",
+        "count": 57
+      },
+      {
+        "a2": "Olomouc",
+        "count": 50
+      },
+      {
+        "a2": "Frydek - Mistek",
+        "count": 42
+      },
+      {
+        "a2": "Kolin",
+        "count": 39
+      },
+      {
+        "a2": "Nachod",
+        "count": 37
+      }
+    ],
+    "row_count": 9
+  },
+  "129": {
+    "question_id": 129,
+    "gold_sql": "SELECT DISTINCT T1.A2 FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.type = 'VYDAJ' AND T3.date LIKE '1996-01%' ORDER BY A2 ASC LIMIT 10",
+    "pg_sql": "SELECT DISTINCT T1.A2 FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.type = 'VYDAJ' AND T3.date::TEXT LIKE '1996-01%' ORDER BY A2 ASC LIMIT 10",
+    "result": [
+      {
+        "a2": "Benesov"
+      },
+      {
+        "a2": "Beroun"
+      },
+      {
+        "a2": "Blansko"
+      },
+      {
+        "a2": "Breclav"
+      },
+      {
+        "a2": "Brno - mesto"
+      },
+      {
+        "a2": "Brno - venkov"
+      },
+      {
+        "a2": "Bruntal"
+      },
+      {
+        "a2": "Ceska Lipa"
+      },
+      {
+        "a2": "Ceske Budejovice"
+      },
+      {
+        "a2": "Cesky Krumlov"
+      }
+    ],
+    "row_count": 10
+  },
+  "130": {
+    "question_id": 130,
+    "gold_sql": "SELECT COUNT(T3.account_id) FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.client_id = T3.client_id WHERE T1.A3 = 'south Bohemia' AND T3.type != 'OWNER'",
+    "pg_sql": "SELECT COUNT(T3.account_id) FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.client_id = T3.client_id WHERE T1.A3 = 'south Bohemia' AND T3.type != 'OWNER'",
+    "result": [
+      {
+        "count": 74
+      }
+    ],
+    "row_count": 1
+  },
+  "131": {
+    "question_id": 131,
+    "gold_sql": "SELECT T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.status IN ('C', 'D') GROUP BY T2.A3 ORDER BY SUM(T3.amount) DESC LIMIT 1",
+    "pg_sql": "SELECT T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.status IN ('C', 'D') GROUP BY T2.A3 ORDER BY SUM(T3.amount) DESC LIMIT 1",
+    "result": [
+      {
+        "a3": "south Moravia"
+      }
+    ],
+    "row_count": 1
+  },
+  "132": {
+    "question_id": 132,
+    "gold_sql": "SELECT AVG(T4.amount) FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN loan AS T4 ON T3.account_id = T4.account_id WHERE T1.gender = 'M'",
+    "pg_sql": "SELECT AVG(T4.amount) FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN loan AS T4 ON T3.account_id = T4.account_id WHERE T1.gender = 'M'",
+    "result": [
+      {
+        "avg": "149609.180487804878"
+      }
+    ],
+    "row_count": 1
+  },
+  "133": {
+    "question_id": 133,
+    "gold_sql": "SELECT district_id, A2 FROM district ORDER BY A13 DESC LIMIT 1",
+    "pg_sql": "SELECT district_id, A2 FROM district ORDER BY A13 DESC LIMIT 1",
+    "result": [
+      {
+        "district_id": 39,
+        "a2": "Most"
+      }
+    ],
+    "row_count": 1
+  },
+  "134": {
+    "question_id": 134,
+    "gold_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id GROUP BY T1.A16 ORDER BY T1.A16 DESC LIMIT 1",
+    "pg_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id GROUP BY T1.A16 ORDER BY T1.A16 DESC LIMIT 1",
+    "result": [
+      {
+        "count": 554
+      }
+    ],
+    "row_count": 1
+  },
+  "135": {
+    "question_id": 135,
+    "gold_sql": "SELECT COUNT(T1.account_id) FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE T1.balance < 0 AND T1.operation = 'VYBER KARTOU' AND T2.frequency = 'POPLATEK MESICNE'",
+    "pg_sql": "SELECT COUNT(T1.account_id) FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE T1.balance < 0 AND T1.operation = 'VYBER KARTOU' AND T2.frequency = 'POPLATEK MESICNE'",
+    "result": [
+      {
+        "count": 6
+      }
+    ],
+    "row_count": 1
+  },
+  "136": {
+    "question_id": 136,
+    "gold_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.date BETWEEN '1995-01-01' AND '1997-12-31' AND T1.frequency = 'POPLATEK MESICNE' AND T2.amount >= 250000",
+    "pg_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.date BETWEEN '1995-01-01' AND '1997-12-31' AND T1.frequency = 'POPLATEK MESICNE' AND T2.amount >= 250000",
+    "result": [
+      {
+        "count": 65
+      }
+    ],
+    "row_count": 1
+  },
+  "137": {
+    "question_id": 137,
+    "gold_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T1.district_id = 1 AND (T3.status = 'C' OR T3.status = 'D')",
+    "pg_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T1.district_id = 1 AND (T3.status = 'C' OR T3.status = 'D')",
+    "result": [
+      {
+        "count": 47
+      }
+    ],
+    "row_count": 1
+  },
+  "138": {
+    "question_id": 138,
+    "gold_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'M' AND T2.A15 = (SELECT T3.A15 FROM district AS T3 ORDER BY T3.A15 DESC LIMIT 1, 1)",
+    "pg_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'M' AND T2.A15 = (SELECT T3.A15 FROM district AS T3 ORDER BY T3.A15 DESC LIMIT 1 OFFSET 1)",
+    "result": [
+      {
+        "count": 339
+      }
+    ],
+    "row_count": 1
+  },
+  "139": {
+    "question_id": 139,
+    "gold_sql": "SELECT COUNT(T1.card_id) FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id WHERE T1.type = 'gold' AND T2.type = 'OWNER'",
+    "pg_sql": "SELECT COUNT(T1.card_id) FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id WHERE T1.type = 'gold' AND T2.type = 'OWNER'",
+    "result": [
+      {
+        "count": 88
+      }
+    ],
+    "row_count": 1
+  },
+  "140": {
+    "question_id": 140,
+    "gold_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A2 = 'Pisek'",
+    "pg_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A2 = 'Pisek'",
+    "result": [
+      {
+        "count": 46
+      }
+    ],
+    "row_count": 1
+  },
+  "141": {
+    "question_id": 141,
+    "gold_sql": "SELECT T1.district_id FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T1.account_id = T3.account_id WHERE STRFTIME('%Y', T3.date) = '1997' GROUP BY T1.district_id HAVING SUM(T3.amount) > 10000",
+    "pg_sql": "SELECT T1.district_id FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T1.account_id = T3.account_id WHERE EXTRACT(YEAR FROM T3.date)::INTEGER = '1997' GROUP BY T1.district_id HAVING SUM(T3.amount) > 10000",
+    "result": [
+      {
+        "district_id": 1
+      },
+      {
+        "district_id": 2
+      },
+      {
+        "district_id": 3
+      },
+      {
+        "district_id": 4
+      },
+      {
+        "district_id": 5
+      },
+      {
+        "district_id": 6
+      },
+      {
+        "district_id": 7
+      },
+      {
+        "district_id": 8
+      },
+      {
+        "district_id": 9
+      },
+      {
+        "district_id": 10
+      },
+      {
+        "district_id": 11
+      },
+      {
+        "district_id": 12
+      },
+      {
+        "district_id": 13
+      },
+      {
+        "district_id": 14
+      },
+      {
+        "district_id": 15
+      },
+      {
+        "district_id": 16
+      },
+      {
+        "district_id": 17
+      },
+      {
+        "district_id": 18
+      },
+      {
+        "district_id": 19
+      },
+      {
+        "district_id": 20
+      },
+      {
+        "district_id": 21
+      },
+      {
+        "district_id": 22
+      },
+      {
+        "district_id": 23
+      },
+      {
+        "district_id": 24
+      },
+      {
+        "district_id": 25
+      },
+      {
+        "district_id": 26
+      },
+      {
+        "district_id": 27
+      },
+      {
+        "district_id": 28
+      },
+      {
+        "district_id": 29
+      },
+      {
+        "district_id": 30
+      },
+      {
+        "district_id": 31
+      },
+      {
+        "district_id": 32
+      },
+      {
+        "district_id": 33
+      },
+      {
+        "district_id": 34
+      },
+      {
+        "district_id": 35
+      },
+      {
+        "district_id": 36
+      },
+      {
+        "district_id": 37
+      },
+      {
+        "district_id": 38
+      },
+      {
+        "district_id": 39
+      },
+      {
+        "district_id": 40
+      },
+      {
+        "district_id": 41
+      },
+      {
+        "district_id": 42
+      },
+      {
+        "district_id": 43
+      },
+      {
+        "district_id": 44
+      },
+      {
+        "district_id": 45
+      },
+      {
+        "district_id": 46
+      },
+      {
+        "district_id": 47
+      },
+      {
+        "district_id": 48
+      },
+      {
+        "district_id": 49
+      },
+      {
+        "district_id": 50
+      }
+    ],
+    "row_count": 77
+  },
+  "142": {
+    "question_id": 142,
+    "gold_sql": "SELECT DISTINCT T2.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.k_symbol = 'SIPO' AND T3.A2 = 'Pisek'",
+    "pg_sql": "SELECT DISTINCT T2.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.k_symbol = 'SIPO' AND T3.A2 = 'Pisek'",
+    "result": [
+      {
+        "account_id": 1
+      },
+      {
+        "account_id": 343
+      },
+      {
+        "account_id": 413
+      },
+      {
+        "account_id": 431
+      },
+      {
+        "account_id": 945
+      },
+      {
+        "account_id": 970
+      },
+      {
+        "account_id": 1049
+      },
+      {
+        "account_id": 1171
+      },
+      {
+        "account_id": 1552
+      },
+      {
+        "account_id": 1733
+      },
+      {
+        "account_id": 1765
+      },
+      {
+        "account_id": 1796
+      },
+      {
+        "account_id": 1919
+      },
+      {
+        "account_id": 2076
+      },
+      {
+        "account_id": 2174
+      },
+      {
+        "account_id": 2309
+      },
+      {
+        "account_id": 2350
+      },
+      {
+        "account_id": 2402
+      },
+      {
+        "account_id": 2421
+      },
+      {
+        "account_id": 2479
+      },
+      {
+        "account_id": 2520
+      },
+      {
+        "account_id": 2636
+      },
+      {
+        "account_id": 2726
+      },
+      {
+        "account_id": 2812
+      },
+      {
+        "account_id": 2987
+      },
+      {
+        "account_id": 3088
+      },
+      {
+        "account_id": 3192
+      },
+      {
+        "account_id": 3287
+      },
+      {
+        "account_id": 3540
+      },
+      {
+        "account_id": 3559
+      },
+      {
+        "account_id": 3633
+      },
+      {
+        "account_id": 3904
+      }
+    ],
+    "row_count": 32
+  },
+  "143": {
+    "question_id": 143,
+    "gold_sql": "SELECT T2.account_id FROM disp AS T2  INNER JOIN card AS T1 ON T1.disp_id = T2.disp_id  WHERE T1.type = 'gold'",
+    "pg_sql": "SELECT T2.account_id FROM disp AS T2  INNER JOIN card AS T1 ON T1.disp_id = T2.disp_id  WHERE T1.type = 'gold'",
+    "result": [
+      {
+        "account_id": 7
+      },
+      {
+        "account_id": 33
+      },
+      {
+        "account_id": 68
+      },
+      {
+        "account_id": 270
+      },
+      {
+        "account_id": 456
+      },
+      {
+        "account_id": 468
+      },
+      {
+        "account_id": 577
+      },
+      {
+        "account_id": 738
+      },
+      {
+        "account_id": 776
+      },
+      {
+        "account_id": 886
+      },
+      {
+        "account_id": 904
+      },
+      {
+        "account_id": 940
+      },
+      {
+        "account_id": 978
+      },
+      {
+        "account_id": 1016
+      },
+      {
+        "account_id": 1039
+      },
+      {
+        "account_id": 1074
+      },
+      {
+        "account_id": 1154
+      },
+      {
+        "account_id": 1203
+      },
+      {
+        "account_id": 1204
+      },
+      {
+        "account_id": 1273
+      },
+      {
+        "account_id": 1305
+      },
+      {
+        "account_id": 1345
+      },
+      {
+        "account_id": 1378
+      },
+      {
+        "account_id": 1408
+      },
+      {
+        "account_id": 1417
+      },
+      {
+        "account_id": 1466
+      },
+      {
+        "account_id": 1485
+      },
+      {
+        "account_id": 1494
+      },
+      {
+        "account_id": 1495
+      },
+      {
+        "account_id": 1519
+      },
+      {
+        "account_id": 1547
+      },
+      {
+        "account_id": 1592
+      },
+      {
+        "account_id": 1695
+      },
+      {
+        "account_id": 1750
+      },
+      {
+        "account_id": 1753
+      },
+      {
+        "account_id": 1779
+      },
+      {
+        "account_id": 1867
+      },
+      {
+        "account_id": 1910
+      },
+      {
+        "account_id": 1963
+      },
+      {
+        "account_id": 2013
+      },
+      {
+        "account_id": 2051
+      },
+      {
+        "account_id": 2219
+      },
+      {
+        "account_id": 2242
+      },
+      {
+        "account_id": 2328
+      },
+      {
+        "account_id": 2332
+      },
+      {
+        "account_id": 2410
+      },
+      {
+        "account_id": 2444
+      },
+      {
+        "account_id": 2450
+      },
+      {
+        "account_id": 2466
+      },
+      {
+        "account_id": 2547
+      }
+    ],
+    "row_count": 88
+  },
+  "144": {
+    "question_id": 144,
+    "gold_sql": "SELECT AVG(T4.amount) FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN trans AS T4 ON T3.account_id = T4.account_id WHERE STRFTIME('%Y', T4.date) = '1998' AND T4.operation = 'VYBER KARTOU'",
+    "pg_sql": "SELECT AVG(T4.amount) FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN trans AS T4 ON T3.account_id = T4.account_id WHERE EXTRACT(YEAR FROM T4.date)::INTEGER = '1998' AND T4.operation = 'VYBER KARTOU'",
+    "result": [
+      {
+        "avg": "2270.9429824561403509"
+      }
+    ],
+    "row_count": 1
+  },
+  "145": {
+    "question_id": 145,
+    "gold_sql": "SELECT T1.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T1.date) = '1998' AND T1.operation = 'VYBER KARTOU' AND T1.amount < (SELECT AVG(amount) FROM trans WHERE STRFTIME('%Y', date) = '1998')",
+    "pg_sql": "(manually corrected)",
+    "result": [
+      {
+        "account_id": 1634
+      },
+      {
+        "account_id": 1634
+      },
+      {
+        "account_id": 1634
+      },
+      {
+        "account_id": 1634
+      },
+      {
+        "account_id": 1634
+      },
+      {
+        "account_id": 1634
+      },
+      {
+        "account_id": 1634
+      },
+      {
+        "account_id": 1634
+      },
+      {
+        "account_id": 1634
+      },
+      {
+        "account_id": 1649
+      }
+    ],
+    "row_count": 10
+  },
+  "146": {
+    "question_id": 146,
+    "gold_sql": "SELECT T1.client_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T5 ON T2.account_id = T5.account_id INNER JOIN loan AS T3 ON T5.account_id = T3.account_id INNER JOIN card AS T4 ON T2.disp_id = T4.disp_id WHERE T1.gender = 'F'",
+    "pg_sql": "SELECT T1.client_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T5 ON T2.account_id = T5.account_id INNER JOIN loan AS T3 ON T5.account_id = T3.account_id INNER JOIN card AS T4 ON T2.disp_id = T4.disp_id WHERE T1.gender = 'F'",
+    "result": [
+      {
+        "client_id": 127
+      },
+      {
+        "client_id": 158
+      },
+      {
+        "client_id": 272
+      },
+      {
+        "client_id": 370
+      },
+      {
+        "client_id": 414
+      },
+      {
+        "client_id": 798
+      },
+      {
+        "client_id": 810
+      },
+      {
+        "client_id": 861
+      },
+      {
+        "client_id": 1020
+      },
+      {
+        "client_id": 1133
+      },
+      {
+        "client_id": 1157
+      },
+      {
+        "client_id": 1197
+      },
+      {
+        "client_id": 1793
+      },
+      {
+        "client_id": 2063
+      },
+      {
+        "client_id": 2235
+      },
+      {
+        "client_id": 2259
+      },
+      {
+        "client_id": 2267
+      },
+      {
+        "client_id": 2489
+      },
+      {
+        "client_id": 2501
+      },
+      {
+        "client_id": 2560
+      },
+      {
+        "client_id": 2592
+      },
+      {
+        "client_id": 2623
+      },
+      {
+        "client_id": 2686
+      },
+      {
+        "client_id": 2698
+      },
+      {
+        "client_id": 2841
+      },
+      {
+        "client_id": 3257
+      },
+      {
+        "client_id": 3414
+      },
+      {
+        "client_id": 3517
+      },
+      {
+        "client_id": 3616
+      },
+      {
+        "client_id": 3763
+      },
+      {
+        "client_id": 3984
+      },
+      {
+        "client_id": 4937
+      },
+      {
+        "client_id": 5232
+      },
+      {
+        "client_id": 5245
+      },
+      {
+        "client_id": 5253
+      },
+      {
+        "client_id": 5333
+      },
+      {
+        "client_id": 5366
+      },
+      {
+        "client_id": 5468
+      },
+      {
+        "client_id": 5521
+      },
+      {
+        "client_id": 5684
+      },
+      {
+        "client_id": 5873
+      },
+      {
+        "client_id": 5978
+      },
+      {
+        "client_id": 6039
+      },
+      {
+        "client_id": 6178
+      },
+      {
+        "client_id": 6255
+      },
+      {
+        "client_id": 6301
+      },
+      {
+        "client_id": 6567
+      },
+      {
+        "client_id": 7186
+      },
+      {
+        "client_id": 7286
+      },
+      {
+        "client_id": 7434
+      }
+    ],
+    "row_count": 85
+  },
+  "147": {
+    "question_id": 147,
+    "gold_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' AND T2.A3 = 'south Bohemia'",
+    "pg_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' AND T2.A3 = 'south Bohemia'",
+    "result": [
+      {
+        "count": 231
+      }
+    ],
+    "row_count": 1
+  },
+  "148": {
+    "question_id": 148,
+    "gold_sql": "SELECT T2.account_id FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id WHERE T3.type = 'OWNER' AND T1.A2 = 'Tabor'",
+    "pg_sql": "SELECT T2.account_id FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id WHERE T3.type = 'OWNER' AND T1.A2 = 'Tabor'",
+    "result": [
+      {
+        "account_id": 12
+      },
+      {
+        "account_id": 19
+      },
+      {
+        "account_id": 48
+      },
+      {
+        "account_id": 105
+      },
+      {
+        "account_id": 123
+      },
+      {
+        "account_id": 143
+      },
+      {
+        "account_id": 181
+      },
+      {
+        "account_id": 396
+      },
+      {
+        "account_id": 635
+      },
+      {
+        "account_id": 652
+      },
+      {
+        "account_id": 662
+      },
+      {
+        "account_id": 785
+      },
+      {
+        "account_id": 933
+      },
+      {
+        "account_id": 946
+      },
+      {
+        "account_id": 979
+      },
+      {
+        "account_id": 1023
+      },
+      {
+        "account_id": 1333
+      },
+      {
+        "account_id": 1350
+      },
+      {
+        "account_id": 1549
+      },
+      {
+        "account_id": 1741
+      },
+      {
+        "account_id": 1758
+      },
+      {
+        "account_id": 1767
+      },
+      {
+        "account_id": 1807
+      },
+      {
+        "account_id": 1840
+      },
+      {
+        "account_id": 2068
+      },
+      {
+        "account_id": 2141
+      },
+      {
+        "account_id": 2542
+      },
+      {
+        "account_id": 2605
+      },
+      {
+        "account_id": 2668
+      },
+      {
+        "account_id": 2998
+      },
+      {
+        "account_id": 3131
+      },
+      {
+        "account_id": 3268
+      },
+      {
+        "account_id": 3302
+      },
+      {
+        "account_id": 3364
+      },
+      {
+        "account_id": 3374
+      },
+      {
+        "account_id": 3422
+      },
+      {
+        "account_id": 3566
+      },
+      {
+        "account_id": 3634
+      },
+      {
+        "account_id": 3636
+      },
+      {
+        "account_id": 3671
+      },
+      {
+        "account_id": 3732
+      },
+      {
+        "account_id": 3786
+      },
+      {
+        "account_id": 3881
+      },
+      {
+        "account_id": 4204
+      },
+      {
+        "account_id": 7418
+      },
+      {
+        "account_id": 7606
+      },
+      {
+        "account_id": 9494
+      },
+      {
+        "account_id": 10361
+      }
+    ],
+    "row_count": 48
+  },
+  "149": {
+    "question_id": 149,
+    "gold_sql": "SELECT T3.type FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id WHERE T3.type != 'OWNER' AND T1.A11 BETWEEN 8000 AND 9000",
+    "pg_sql": "SELECT T3.type FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id WHERE T3.type != 'OWNER' AND T1.A11 BETWEEN 8000 AND 9000",
+    "result": [
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      },
+      {
+        "type": "DISPONENT"
+      }
+    ],
+    "row_count": 461
+  },
+  "150": {
+    "question_id": 150,
+    "gold_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.bank = 'AB' AND T1.A3 = 'north Bohemia'",
+    "pg_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.bank = 'AB' AND T1.A3 = 'north Bohemia'",
+    "result": [
+      {
+        "count": 2260
+      }
+    ],
+    "row_count": 1
+  },
+  "151": {
+    "question_id": 151,
+    "gold_sql": "SELECT DISTINCT T1.A2 FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.type = 'VYDAJ'",
+    "pg_sql": "(manually corrected)",
+    "result": [
+      {
+        "a2": "Benesov"
+      },
+      {
+        "a2": "Beroun"
+      },
+      {
+        "a2": "Blansko"
+      },
+      {
+        "a2": "Breclav"
+      },
+      {
+        "a2": "Brno - mesto"
+      },
+      {
+        "a2": "Brno - venkov"
+      },
+      {
+        "a2": "Bruntal"
+      },
+      {
+        "a2": "Ceska Lipa"
+      },
+      {
+        "a2": "Ceske Budejovice"
+      },
+      {
+        "a2": "Cesky Krumlov"
+      }
+    ],
+    "row_count": 10
+  },
+  "152": {
+    "question_id": 152,
+    "gold_sql": "SELECT AVG(T1.A15) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE STRFTIME('%Y', T2.date) >= '1997' AND T1.A15 > 4000",
+    "pg_sql": "SELECT AVG(T1.A15) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE EXTRACT(YEAR FROM T2.date)::INTEGER >= '1997' AND T1.A15 > 4000",
+    "result": [
+      {
+        "avg": "29670.449519230769"
+      }
+    ],
+    "row_count": 1
+  },
+  "153": {
+    "question_id": 153,
+    "gold_sql": "SELECT COUNT(T1.card_id) FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id WHERE T1.type = 'classic' AND T2.type = 'OWNER'",
+    "pg_sql": "SELECT COUNT(T1.card_id) FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id WHERE T1.type = 'classic' AND T2.type = 'OWNER'",
+    "result": [
+      {
+        "count": 659
+      }
+    ],
+    "row_count": 1
+  },
+  "154": {
+    "question_id": 154,
+    "gold_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'M' AND T2.A2 = 'Hl.m. Praha'",
+    "pg_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'M' AND T2.A2 = 'Hl.m. Praha'",
+    "result": [
+      {
+        "count": 339
+      }
+    ],
+    "row_count": 1
+  },
+  "155": {
+    "question_id": 155,
+    "gold_sql": "SELECT CAST(SUM(type = 'gold' AND STRFTIME('%Y', issued) < '1998') AS REAL) * 100 / COUNT(card_id) FROM card",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN type = 'gold' AND EXTRACT(YEAR FROM issued)::INTEGER < '1998' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(card_id) FROM card",
+    "result": [
+      {
+        "?column?": 3.9237668161434978
+      }
+    ],
+    "row_count": 1
+  },
+  "156": {
+    "question_id": 156,
+    "gold_sql": "SELECT T1.client_id FROM disp AS T1 INNER JOIN account AS T3 ON T1.account_id = T3.account_id INNER JOIN loan AS T2 ON T3.account_id = T2.account_id WHERE T1.type = 'OWNER' ORDER BY T2.amount DESC LIMIT 1",
+    "pg_sql": "SELECT T1.client_id FROM disp AS T1 INNER JOIN account AS T3 ON T1.account_id = T3.account_id INNER JOIN loan AS T2 ON T3.account_id = T2.account_id WHERE T1.type = 'OWNER' ORDER BY T2.amount DESC LIMIT 1",
+    "result": [
+      {
+        "client_id": 9340
+      }
+    ],
+    "row_count": 1
+  },
+  "157": {
+    "question_id": 157,
+    "gold_sql": "SELECT T1.A15 FROM district AS T1 INNER JOIN `account` AS T2 ON T1.district_id = T2.district_id WHERE T2.account_id = 532",
+    "pg_sql": "SELECT T1.A15 FROM district AS T1 INNER JOIN \"account\" AS T2 ON T1.district_id = T2.district_id WHERE T2.account_id = 532",
+    "result": [
+      {
+        "a15": 6041
+      }
+    ],
+    "row_count": 1
+  },
+  "158": {
+    "question_id": 158,
+    "gold_sql": "SELECT T3.district_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333",
+    "pg_sql": "SELECT T3.district_id FROM \"order\" AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333",
+    "result": [
+      {
+        "district_id": 64
+      }
+    ],
+    "row_count": 1
+  },
+  "159": {
+    "question_id": 159,
+    "gold_sql": "SELECT T4.trans_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN trans AS T4 ON T3.account_id = T4.account_id WHERE T1.client_id = 3356 AND T4.operation = 'VYBER'",
+    "pg_sql": "SELECT T4.trans_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN trans AS T4 ON T3.account_id = T4.account_id WHERE T1.client_id = 3356 AND T4.operation = 'VYBER'",
+    "result": [
+      {
+        "trans_id": 816173
+      },
+      {
+        "trans_id": 816174
+      },
+      {
+        "trans_id": 816175
+      },
+      {
+        "trans_id": 816181
+      },
+      {
+        "trans_id": 816185
+      },
+      {
+        "trans_id": 816186
+      },
+      {
+        "trans_id": 816187
+      },
+      {
+        "trans_id": 816188
+      },
+      {
+        "trans_id": 816189
+      },
+      {
+        "trans_id": 816190
+      },
+      {
+        "trans_id": 816191
+      },
+      {
+        "trans_id": 816192
+      },
+      {
+        "trans_id": 816193
+      },
+      {
+        "trans_id": 816194
+      },
+      {
+        "trans_id": 816195
+      },
+      {
+        "trans_id": 816196
+      },
+      {
+        "trans_id": 816203
+      },
+      {
+        "trans_id": 816216
+      },
+      {
+        "trans_id": 816217
+      },
+      {
+        "trans_id": 816218
+      },
+      {
+        "trans_id": 816219
+      },
+      {
+        "trans_id": 816220
+      },
+      {
+        "trans_id": 816221
+      },
+      {
+        "trans_id": 816222
+      },
+      {
+        "trans_id": 816223
+      },
+      {
+        "trans_id": 816224
+      },
+      {
+        "trans_id": 816225
+      },
+      {
+        "trans_id": 816226
+      },
+      {
+        "trans_id": 816227
+      },
+      {
+        "trans_id": 816228
+      },
+      {
+        "trans_id": 816229
+      },
+      {
+        "trans_id": 816230
+      },
+      {
+        "trans_id": 816231
+      },
+      {
+        "trans_id": 816232
+      },
+      {
+        "trans_id": 816233
+      },
+      {
+        "trans_id": 816234
+      },
+      {
+        "trans_id": 816235
+      },
+      {
+        "trans_id": 816236
+      },
+      {
+        "trans_id": 816237
+      },
+      {
+        "trans_id": 816238
+      },
+      {
+        "trans_id": 816239
+      },
+      {
+        "trans_id": 816240
+      },
+      {
+        "trans_id": 816241
+      },
+      {
+        "trans_id": 816242
+      },
+      {
+        "trans_id": 816243
+      },
+      {
+        "trans_id": 816244
+      },
+      {
+        "trans_id": 816245
+      },
+      {
+        "trans_id": 816246
+      },
+      {
+        "trans_id": 816247
+      },
+      {
+        "trans_id": 816248
+      }
+    ],
+    "row_count": 140
+  },
+  "160": {
+    "question_id": 160,
+    "gold_sql": "SELECT COUNT(T1.account_id) FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE T2.frequency = 'POPLATEK TYDNE' AND T1.amount < 200000",
+    "pg_sql": "SELECT COUNT(T1.account_id) FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE T2.frequency = 'POPLATEK TYDNE' AND T1.amount < 200000",
+    "result": [
+      {
+        "count": 58
+      }
+    ],
+    "row_count": 1
+  },
+  "161": {
+    "question_id": 161,
+    "gold_sql": "SELECT T3.type FROM disp AS T1 INNER JOIN client AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T1.disp_id = T3.disp_id WHERE T2.client_id = 13539",
+    "pg_sql": "SELECT T3.type FROM disp AS T1 INNER JOIN client AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T1.disp_id = T3.disp_id WHERE T2.client_id = 13539",
+    "result": [
+      {
+        "type": "junior"
+      }
+    ],
+    "row_count": 1
+  },
+  "162": {
+    "question_id": 162,
+    "gold_sql": "SELECT T1.A3 FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T2.client_id = 3541",
+    "pg_sql": "SELECT T1.A3 FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T2.client_id = 3541",
+    "result": [
+      {
+        "a3": "east Bohemia"
+      }
+    ],
+    "row_count": 1
+  },
+  "163": {
+    "question_id": 163,
+    "gold_sql": "SELECT T1.A2 FROM District AS T1 INNER JOIN Account AS T2 ON T1.District_id = T2.District_id INNER JOIN Loan AS T3 ON T2.Account_id = T3.Account_id WHERE T3.status = 'A' GROUP BY T1.District_id ORDER BY COUNT(T2.Account_id) DESC LIMIT 1",
+    "pg_sql": "SELECT T1.A2 FROM District AS T1 INNER JOIN Account AS T2 ON T1.District_id = T2.District_id INNER JOIN Loan AS T3 ON T2.Account_id = T3.Account_id WHERE T3.status = 'A' GROUP BY T1.District_id ORDER BY COUNT(T2.Account_id) DESC LIMIT 1",
+    "result": [
+      {
+        "a2": "Hl.m. Praha"
+      }
+    ],
+    "row_count": 1
+  },
+  "164": {
+    "question_id": 164,
+    "gold_sql": "SELECT T3.client_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN disp AS T4 ON T4.account_id = T2.account_id  INNER JOIN client AS T3 ON T4.client_id = T3.client_id WHERE T1.order_id = 32423",
+    "pg_sql": "SELECT T3.client_id FROM \"order\" AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN disp AS T4 ON T4.account_id = T2.account_id  INNER JOIN client AS T3 ON T4.client_id = T3.client_id WHERE T1.order_id = 32423",
+    "result": [
+      {
+        "client_id": 2497
+      }
+    ],
+    "row_count": 1
+  },
+  "165": {
+    "question_id": 165,
+    "gold_sql": "SELECT T3.trans_id FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T1.district_id = 5",
+    "pg_sql": "(manually corrected)",
+    "result": [
+      {
+        "trans_id": 489900
+      },
+      {
+        "trans_id": 489905
+      },
+      {
+        "trans_id": 489906
+      },
+      {
+        "trans_id": 489907
+      },
+      {
+        "trans_id": 489908
+      },
+      {
+        "trans_id": 489909
+      },
+      {
+        "trans_id": 489910
+      },
+      {
+        "trans_id": 489911
+      },
+      {
+        "trans_id": 489912
+      },
+      {
+        "trans_id": 489913
+      }
+    ],
+    "row_count": 10
+  },
+  "166": {
+    "question_id": 166,
+    "gold_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE T1.A2 = 'Jesenik'",
+    "pg_sql": "SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE T1.A2 = 'Jesenik'",
+    "result": [
+      {
+        "count": 48
+      }
+    ],
+    "row_count": 1
+  },
+  "167": {
+    "question_id": 167,
+    "gold_sql": "SELECT T2.client_id FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id WHERE T1.type = 'junior' AND T1.issued >= '1997-01-01'",
+    "pg_sql": "SELECT T2.client_id FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id WHERE T1.type = 'junior' AND T1.issued >= '1997-01-01'",
+    "result": [
+      {
+        "client_id": 60
+      },
+      {
+        "client_id": 167
+      },
+      {
+        "client_id": 174
+      },
+      {
+        "client_id": 221
+      },
+      {
+        "client_id": 264
+      },
+      {
+        "client_id": 378
+      },
+      {
+        "client_id": 429
+      },
+      {
+        "client_id": 451
+      },
+      {
+        "client_id": 504
+      },
+      {
+        "client_id": 519
+      },
+      {
+        "client_id": 626
+      },
+      {
+        "client_id": 667
+      },
+      {
+        "client_id": 731
+      },
+      {
+        "client_id": 786
+      },
+      {
+        "client_id": 826
+      },
+      {
+        "client_id": 900
+      },
+      {
+        "client_id": 906
+      },
+      {
+        "client_id": 996
+      },
+      {
+        "client_id": 1168
+      },
+      {
+        "client_id": 1211
+      },
+      {
+        "client_id": 1382
+      },
+      {
+        "client_id": 1390
+      },
+      {
+        "client_id": 1440
+      },
+      {
+        "client_id": 1500
+      },
+      {
+        "client_id": 1736
+      },
+      {
+        "client_id": 1819
+      },
+      {
+        "client_id": 1947
+      },
+      {
+        "client_id": 2005
+      },
+      {
+        "client_id": 2038
+      },
+      {
+        "client_id": 2065
+      },
+      {
+        "client_id": 2121
+      },
+      {
+        "client_id": 2138
+      },
+      {
+        "client_id": 2277
+      },
+      {
+        "client_id": 2287
+      },
+      {
+        "client_id": 2425
+      },
+      {
+        "client_id": 2488
+      },
+      {
+        "client_id": 2538
+      },
+      {
+        "client_id": 2540
+      },
+      {
+        "client_id": 2592
+      },
+      {
+        "client_id": 2662
+      },
+      {
+        "client_id": 2888
+      },
+      {
+        "client_id": 2948
+      },
+      {
+        "client_id": 3066
+      },
+      {
+        "client_id": 3102
+      },
+      {
+        "client_id": 3104
+      },
+      {
+        "client_id": 3183
+      },
+      {
+        "client_id": 3233
+      },
+      {
+        "client_id": 3257
+      },
+      {
+        "client_id": 3319
+      },
+      {
+        "client_id": 3348
+      }
+    ],
+    "row_count": 96
+  },
+  "168": {
+    "question_id": 168,
+    "gold_sql": "SELECT CAST(SUM(T2.gender = 'F') AS REAL) * 100 / COUNT(T2.client_id) FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T1.A11 > 10000",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN T2.gender = 'F' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T2.client_id) FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T1.A11 > 10000",
+    "result": [
+      {
+        "?column?": 49.609984399375975
+      }
+    ],
+    "row_count": 1
+  },
+  "169": {
+    "question_id": 169,
+    "gold_sql": "SELECT CAST((SUM(CASE WHEN STRFTIME('%Y', T1.date) = '1997' THEN T1.amount ELSE 0 END) - SUM(CASE WHEN STRFTIME('%Y', T1.date) = '1996' THEN T1.amount ELSE 0 END)) AS REAL) * 100 / SUM(CASE WHEN STRFTIME('%Y', T1.date) = '1996' THEN T1.amount ELSE 0 END) FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN disp AS T3 ON T3.account_id = T2.account_id INNER JOIN client AS T4 ON T4.client_id = T3.client_id WHERE T4.gender = 'M' AND T3.type = 'OWNER'",
+    "pg_sql": "SELECT CAST((SUM(CASE WHEN EXTRACT(YEAR FROM T1.date)::INTEGER = '1997' THEN T1.amount ELSE 0 END) - SUM(CASE WHEN EXTRACT(YEAR FROM T1.date)::INTEGER = '1996' THEN T1.amount ELSE 0 END)) AS REAL) * 100 / SUM(CASE WHEN EXTRACT(YEAR FROM T1.date)::INTEGER = '1996' THEN T1.amount ELSE 0 END) FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN disp AS T3 ON T3.account_id = T2.account_id INNER JOIN client AS T4 ON T4.client_id = T3.client_id WHERE T4.gender = 'M' AND T3.type = 'OWNER'",
+    "result": [
+      {
+        "?column?": 25.300191222790616
+      }
+    ],
+    "row_count": 1
+  },
+  "170": {
+    "question_id": 170,
+    "gold_sql": "SELECT COUNT(account_id) FROM trans WHERE STRFTIME('%Y', date) > '1995' AND operation = 'VYBER KARTOU'",
+    "pg_sql": "SELECT COUNT(account_id) FROM trans WHERE EXTRACT(YEAR FROM date)::INTEGER > '1995' AND operation = 'VYBER KARTOU'",
+    "result": [
+      {
+        "count": 7652
+      }
+    ],
+    "row_count": 1
+  },
+  "171": {
+    "question_id": 171,
+    "gold_sql": "SELECT SUM(IIF(A3 = 'east Bohemia', A16, 0)) - SUM(IIF(A3 = 'north Bohemia', A16, 0)) FROM district",
+    "pg_sql": "SELECT SUM(CASE WHEN A3 = 'east Bohemia' THEN A16 ELSE 0 END) - SUM(CASE WHEN A3 = 'north Bohemia' THEN A16 ELSE 0 END) FROM district",
+    "result": [
+      {
+        "?column?": "-17734"
+      }
+    ],
+    "row_count": 1
+  },
+  "172": {
+    "question_id": 172,
+    "gold_sql": "SELECT SUM(type = 'OWNER') , SUM(type = 'DISPONENT') FROM disp WHERE account_id BETWEEN 1 AND 10",
+    "pg_sql": "(manually corrected)",
+    "result": [
+      {
+        "owner_count": 10,
+        "disponent_count": 3
+      }
+    ],
+    "row_count": 1
+  },
+  "173": {
+    "question_id": 173,
+    "gold_sql": "SELECT T1.frequency, T2.k_symbol FROM account AS T1 INNER JOIN (SELECT account_id, k_symbol, SUM(amount) AS total_amount FROM `order` GROUP BY account_id, k_symbol) AS T2 ON T1.account_id = T2.account_id WHERE T1.account_id = 3 AND T2.total_amount = 3539",
+    "pg_sql": "SELECT T1.frequency, T2.k_symbol FROM account AS T1 INNER JOIN (SELECT account_id, k_symbol, SUM(amount) AS total_amount FROM \"order\" GROUP BY account_id, k_symbol) AS T2 ON T1.account_id = T2.account_id WHERE T1.account_id = 3 AND T2.total_amount = 3539",
+    "result": [
+      {
+        "frequency": "POPLATEK MESICNE",
+        "k_symbol": "POJISTNE"
+      }
+    ],
+    "row_count": 1
+  },
+  "174": {
+    "question_id": 174,
+    "gold_sql": "SELECT STRFTIME('%Y', T1.birth_date) FROM client AS T1 INNER JOIN disp AS T3 ON T1.client_id = T3.client_id INNER JOIN account AS T2 ON T3.account_id = T2.account_id WHERE T2.account_id = 130",
+    "pg_sql": "SELECT EXTRACT(YEAR FROM T1.birth_date)::INTEGER FROM client AS T1 INNER JOIN disp AS T3 ON T1.client_id = T3.client_id INNER JOIN account AS T2 ON T3.account_id = T2.account_id WHERE T2.account_id = 130",
+    "result": [
+      {
+        "extract": 1930
+      }
+    ],
+    "row_count": 1
+  },
+  "175": {
+    "question_id": 175,
+    "gold_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T2.type = 'OWNER' AND T1.frequency = 'POPLATEK PO OBRATU'",
+    "pg_sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T2.type = 'OWNER' AND T1.frequency = 'POPLATEK PO OBRATU'",
+    "result": [
+      {
+        "count": 93
+      }
+    ],
+    "row_count": 1
+  },
+  "176": {
+    "question_id": 176,
+    "gold_sql": "SELECT T4.amount, T4.status FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 on T2.account_id = T3.account_id INNER JOIN loan AS T4 ON T3.account_id = T4.account_id WHERE T1.client_id = 992",
+    "pg_sql": "SELECT T4.amount, T4.status FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 on T2.account_id = T3.account_id INNER JOIN loan AS T4 ON T3.account_id = T4.account_id WHERE T1.client_id = 992",
+    "result": [
+      {
+        "amount": 53076,
+        "status": "A"
+      }
+    ],
+    "row_count": 1
+  },
+  "177": {
+    "question_id": 177,
+    "gold_sql": "SELECT T4.balance, T1.gender FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 ON T2.account_id =T3.account_id INNER JOIN trans AS T4 ON T3.account_id = T4.account_id WHERE T1.client_id = 4 AND T4.trans_id = 851",
+    "pg_sql": "SELECT T4.balance, T1.gender FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 ON T2.account_id =T3.account_id INNER JOIN trans AS T4 ON T3.account_id = T4.account_id WHERE T1.client_id = 4 AND T4.trans_id = 851",
+    "result": [
+      {
+        "balance": 15096,
+        "gender": "M"
+      }
+    ],
+    "row_count": 1
+  },
+  "178": {
+    "question_id": 178,
+    "gold_sql": "SELECT T3.type FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T2.disp_id = T3.disp_id WHERE T1.client_id = 9",
+    "pg_sql": "SELECT T3.type FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T2.disp_id = T3.disp_id WHERE T1.client_id = 9",
+    "result": [
+      {
+        "type": "gold"
+      }
+    ],
+    "row_count": 1
+  },
+  "179": {
+    "question_id": 179,
+    "gold_sql": "SELECT SUM(T3.amount) FROM client AS T1 INNER JOIN disp AS T4 ON T1.client_id = T4.client_id INNER JOIN account AS T2 ON T4.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE STRFTIME('%Y', T3.date)= '1998' AND T1.client_id = 617",
+    "pg_sql": "SELECT SUM(T3.amount) FROM client AS T1 INNER JOIN disp AS T4 ON T1.client_id = T4.client_id INNER JOIN account AS T2 ON T4.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE EXTRACT(YEAR FROM T3.date)::INTEGER= '1998' AND T1.client_id = 617",
+    "result": [
+      {
+        "sum": "303276"
+      }
+    ],
+    "row_count": 1
+  },
+  "180": {
+    "question_id": 180,
+    "gold_sql": "SELECT T1.client_id, T3.account_id FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T4 ON T1.client_id = T4.client_id INNER JOIN account AS T3 ON T2.district_id = T3.district_id and T4.account_id = T3.account_id WHERE T2.A3 = 'east Bohemia' AND STRFTIME('%Y', T1.birth_date) BETWEEN '1983' AND '1987'",
+    "pg_sql": "SELECT T1.client_id, T3.account_id FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T4 ON T1.client_id = T4.client_id INNER JOIN account AS T3 ON T2.district_id = T3.district_id and T4.account_id = T3.account_id WHERE T2.A3 = 'east Bohemia' AND EXTRACT(YEAR FROM T1.birth_date)::INTEGER BETWEEN '1983' AND '1987'",
+    "result": [
+      {
+        "client_id": 379,
+        "account_id": 311
+      },
+      {
+        "client_id": 734,
+        "account_id": 611
+      },
+      {
+        "client_id": 3428,
+        "account_id": 2836
+      }
+    ],
+    "row_count": 3
+  },
+  "181": {
+    "question_id": 181,
+    "gold_sql": "SELECT T1.client_id FROM client AS T1 INNER JOIN disp AS T4 on T1.client_id= T4.client_id INNER JOIN account AS T2 ON T4.account_id = T2.account_id  INNER JOIN loan AS T3 ON T2.account_id = T3.account_id and T4.account_id = T3.account_id WHERE T1.gender = 'F' ORDER BY T3.amount DESC LIMIT 3",
+    "pg_sql": "SELECT T1.client_id FROM client AS T1 INNER JOIN disp AS T4 on T1.client_id= T4.client_id INNER JOIN account AS T2 ON T4.account_id = T2.account_id  INNER JOIN loan AS T3 ON T2.account_id = T3.account_id and T4.account_id = T3.account_id WHERE T1.gender = 'F' ORDER BY T3.amount DESC LIMIT 3",
+    "result": [
+      {
+        "client_id": 10997
+      },
+      {
+        "client_id": 2823
+      },
+      {
+        "client_id": 8506
+      }
+    ],
+    "row_count": 3
+  },
+  "182": {
+    "question_id": 182,
+    "gold_sql": "SELECT COUNT(T1.account_id) FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN disp AS T4 ON T2.account_id = T4.account_id INNER JOIN client AS T3 ON T4.client_id = T3.client_id WHERE STRFTIME('%Y', T3.birth_date) BETWEEN '1974' AND '1976' AND T3.gender = 'M' AND T1.amount > 4000 AND T1.k_symbol = 'SIPO'",
+    "pg_sql": "SELECT COUNT(T1.account_id) FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN disp AS T4 ON T2.account_id = T4.account_id INNER JOIN client AS T3 ON T4.client_id = T3.client_id WHERE EXTRACT(YEAR FROM T3.birth_date)::INTEGER BETWEEN '1974' AND '1976' AND T3.gender = 'M' AND T1.amount > 4000 AND T1.k_symbol = 'SIPO'",
+    "result": [
+      {
+        "count": 1556
+      }
+    ],
+    "row_count": 1
+  },
+  "183": {
+    "question_id": 183,
+    "gold_sql": "SELECT COUNT(account_id) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE STRFTIME('%Y', T1.date) > '1996' AND T2.A2 = 'Beroun'",
+    "pg_sql": "SELECT COUNT(account_id) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE EXTRACT(YEAR FROM T1.date)::INTEGER > '1996' AND T2.A2 = 'Beroun'",
+    "result": [
+      {
+        "count": 8
+      }
+    ],
+    "row_count": 1
+  },
+  "184": {
+    "question_id": 184,
+    "gold_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T2.disp_id = T3.disp_id WHERE T1.gender = 'F' AND T3.type = 'junior'",
+    "pg_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T2.disp_id = T3.disp_id WHERE T1.gender = 'F' AND T3.type = 'junior'",
+    "result": [
+      {
+        "count": 71
+      }
+    ],
+    "row_count": 1
+  },
+  "185": {
+    "question_id": 185,
+    "gold_sql": "SELECT CAST(SUM(T2.gender = 'F') AS REAL) / COUNT(T2.client_id) * 100 FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T1.A3 = 'Prague'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN T2.gender = 'F' THEN 1 ELSE 0 END) AS REAL) / COUNT(T2.client_id) * 100 FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T1.A3 = 'Prague'",
+    "result": [
+      {
+        "?column?": 48.86877828054298
+      }
+    ],
+    "row_count": 1
+  },
+  "186": {
+    "question_id": 186,
+    "gold_sql": "SELECT CAST(SUM(T1.gender = 'M') AS REAL) * 100 / COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T3 ON T1.district_id = T3.district_id INNER JOIN account AS T2 ON T2.district_id = T3.district_id INNER JOIN disp as T4 on T1.client_id = T4.client_id AND T2.account_id = T4.account_id WHERE T2.frequency = 'POPLATEK TYDNE'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN T1.gender = 'M' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T3 ON T1.district_id = T3.district_id INNER JOIN account AS T2 ON T2.district_id = T3.district_id INNER JOIN disp as T4 on T1.client_id = T4.client_id AND T2.account_id = T4.account_id WHERE T2.frequency = 'POPLATEK TYDNE'",
+    "result": [
+      {
+        "?column?": 52.63157894736842
+      }
+    ],
+    "row_count": 1
+  },
+  "187": {
+    "question_id": 187,
+    "gold_sql": "SELECT COUNT(T2.account_id) FROM account AS T1 INNER JOIN disp AS T2 ON T2.account_id = T1.account_id WHERE T1.frequency = 'POPLATEK TYDNE' AND T2.type = 'OWNER'",
+    "pg_sql": "SELECT COUNT(T2.account_id) FROM account AS T1 INNER JOIN disp AS T2 ON T2.account_id = T1.account_id WHERE T1.frequency = 'POPLATEK TYDNE' AND T2.type = 'OWNER'",
+    "result": [
+      {
+        "count": 240
+      }
+    ],
+    "row_count": 1
+  },
+  "188": {
+    "question_id": 188,
+    "gold_sql": "SELECT T1.account_id FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE T1.duration > 24 AND STRFTIME('%Y', T2.date) < '1997' ORDER BY T1.amount ASC LIMIT 1",
+    "pg_sql": "SELECT T1.account_id FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE T1.duration > 24 AND EXTRACT(YEAR FROM T2.date)::INTEGER < '1997' ORDER BY T1.amount ASC LIMIT 1",
+    "result": [
+      {
+        "account_id": 6453
+      }
+    ],
+    "row_count": 1
+  },
+  "189": {
+    "question_id": 189,
+    "gold_sql": "SELECT T3.account_id FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN account AS T3 ON T2.district_id = T3.district_id INNER JOIN disp AS T4 ON T1.client_id = T4.client_id AND T4.account_id = T3.account_id  WHERE T1.gender = 'F' ORDER BY T1.birth_date ASC, T2.A11 ASC LIMIT 1",
+    "pg_sql": "SELECT T3.account_id FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN account AS T3 ON T2.district_id = T3.district_id INNER JOIN disp AS T4 ON T1.client_id = T4.client_id AND T4.account_id = T3.account_id  WHERE T1.gender = 'F' ORDER BY T1.birth_date ASC, T2.A11 ASC LIMIT 1",
+    "result": [
+      {
+        "account_id": 1743
+      }
+    ],
+    "row_count": 1
+  },
+  "190": {
+    "question_id": 190,
+    "gold_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE STRFTIME('%Y', T1.birth_date) = '1920' AND T2.A3 = 'east Bohemia'",
+    "pg_sql": "SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE EXTRACT(YEAR FROM T1.birth_date)::INTEGER = '1920' AND T2.A3 = 'east Bohemia'",
+    "result": [
+      {
+        "count": 6
+      }
+    ],
+    "row_count": 1
+  },
+  "191": {
+    "question_id": 191,
+    "gold_sql": "SELECT COUNT(T2.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.duration = 24 AND T1.frequency = 'POPLATEK TYDNE'",
+    "pg_sql": "SELECT COUNT(T2.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.duration = 24 AND T1.frequency = 'POPLATEK TYDNE'",
+    "result": [
+      {
+        "count": 15
+      }
+    ],
+    "row_count": 1
+  },
+  "192": {
+    "question_id": 192,
+    "gold_sql": "SELECT AVG(T2.amount) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.status IN ('C', 'D') AND T1.frequency = 'POPLATEK PO OBRATU'",
+    "pg_sql": "SELECT AVG(T2.amount) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.status IN ('C', 'D') AND T1.frequency = 'POPLATEK PO OBRATU'",
+    "result": [
+      {
+        "avg": "192836.571428571429"
+      }
+    ],
+    "row_count": 1
+  },
+  "193": {
+    "question_id": 193,
+    "gold_sql": "SELECT T3.client_id, T2.district_id, T2.A2 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T1.account_id = T3.account_id WHERE T3.type = 'OWNER'",
+    "pg_sql": "SELECT T3.client_id, T2.district_id, T2.A2 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T1.account_id = T3.account_id WHERE T3.type = 'OWNER'",
+    "result": [
+      {
+        "client_id": 1,
+        "district_id": 18,
+        "a2": "Pisek"
+      },
+      {
+        "client_id": 2,
+        "district_id": 1,
+        "a2": "Hl.m. Praha"
+      },
+      {
+        "client_id": 4,
+        "district_id": 5,
+        "a2": "Kolin"
+      },
+      {
+        "client_id": 6,
+        "district_id": 12,
+        "a2": "Pribram"
+      },
+      {
+        "client_id": 7,
+        "district_id": 15,
+        "a2": "Cesky Krumlov"
+      },
+      {
+        "client_id": 8,
+        "district_id": 51,
+        "a2": "Trutnov"
+      },
+      {
+        "client_id": 9,
+        "district_id": 60,
+        "a2": "Prostejov"
+      },
+      {
+        "client_id": 10,
+        "district_id": 57,
+        "a2": "Hodonin"
+      },
+      {
+        "client_id": 12,
+        "district_id": 70,
+        "a2": "Karvina"
+      },
+      {
+        "client_id": 13,
+        "district_id": 54,
+        "a2": "Brno - mesto"
+      },
+      {
+        "client_id": 14,
+        "district_id": 76,
+        "a2": "Sumperk"
+      },
+      {
+        "client_id": 15,
+        "district_id": 21,
+        "a2": "Tabor"
+      },
+      {
+        "client_id": 17,
+        "district_id": 76,
+        "a2": "Sumperk"
+      },
+      {
+        "client_id": 19,
+        "district_id": 47,
+        "a2": "Pardubice"
+      },
+      {
+        "client_id": 20,
+        "district_id": 70,
+        "a2": "Karvina"
+      },
+      {
+        "client_id": 21,
+        "district_id": 12,
+        "a2": "Pribram"
+      },
+      {
+        "client_id": 22,
+        "district_id": 1,
+        "a2": "Hl.m. Praha"
+      },
+      {
+        "client_id": 24,
+        "district_id": 43,
+        "a2": "Hradec Kralove"
+      },
+      {
+        "client_id": 25,
+        "district_id": 21,
+        "a2": "Tabor"
+      },
+      {
+        "client_id": 26,
+        "district_id": 74,
+        "a2": "Ostrava - mesto"
+      },
+      {
+        "client_id": 27,
+        "district_id": 54,
+        "a2": "Brno - mesto"
+      },
+      {
+        "client_id": 28,
+        "district_id": 1,
+        "a2": "Hl.m. Praha"
+      },
+      {
+        "client_id": 29,
+        "district_id": 30,
+        "a2": "Sokolov"
+      },
+      {
+        "client_id": 30,
+        "district_id": 74,
+        "a2": "Ostrava - mesto"
+      },
+      {
+        "client_id": 31,
+        "district_id": 68,
+        "a2": "Frydek - Mistek"
+      },
+      {
+        "client_id": 32,
+        "district_id": 52,
+        "a2": "Usti nad Orlici"
+      },
+      {
+        "client_id": 33,
+        "district_id": 73,
+        "a2": "Opava"
+      },
+      {
+        "client_id": 36,
+        "district_id": 7,
+        "a2": "Melnik"
+      },
+      {
+        "client_id": 38,
+        "district_id": 36,
+        "a2": "Liberec"
+      },
+      {
+        "client_id": 39,
+        "district_id": 68,
+        "a2": "Frydek - Mistek"
+      },
+      {
+        "client_id": 40,
+        "district_id": 5,
+        "a2": "Kolin"
+      },
+      {
+        "client_id": 41,
+        "district_id": 22,
+        "a2": "Domazlice"
+      },
+      {
+        "client_id": 42,
+        "district_id": 67,
+        "a2": "Bruntal"
+      },
+      {
+        "client_id": 43,
+        "district_id": 75,
+        "a2": "Prerov"
+      },
+      {
+        "client_id": 44,
+        "district_id": 1,
+        "a2": "Hl.m. Praha"
+      },
+      {
+        "client_id": 45,
+        "district_id": 20,
+        "a2": "Strakonice"
+      },
+      {
+        "client_id": 46,
+        "district_id": 19,
+        "a2": "Prachatice"
+      },
+      {
+        "client_id": 47,
+        "district_id": 36,
+        "a2": "Liberec"
+      },
+      {
+        "client_id": 48,
+        "district_id": 64,
+        "a2": "Zlin"
+      },
+      {
+        "client_id": 49,
+        "district_id": 72,
+        "a2": "Olomouc"
+      },
+      {
+        "client_id": 50,
+        "district_id": 39,
+        "a2": "Most"
+      },
+      {
+        "client_id": 51,
+        "district_id": 36,
+        "a2": "Liberec"
+      },
+      {
+        "client_id": 52,
+        "district_id": 32,
+        "a2": "Ceska Lipa"
+      },
+      {
+        "client_id": 53,
+        "district_id": 64,
+        "a2": "Zlin"
+      },
+      {
+        "client_id": 55,
+        "district_id": 45,
+        "a2": "Jicin"
+      },
+      {
+        "client_id": 56,
+        "district_id": 21,
+        "a2": "Tabor"
+      },
+      {
+        "client_id": 58,
+        "district_id": 1,
+        "a2": "Hl.m. Praha"
+      },
+      {
+        "client_id": 59,
+        "district_id": 1,
+        "a2": "Hl.m. Praha"
+      },
+      {
+        "client_id": 60,
+        "district_id": 67,
+        "a2": "Bruntal"
+      },
+      {
+        "client_id": 61,
+        "district_id": 16,
+        "a2": "Jindrichuv Hradec"
+      }
+    ],
+    "row_count": 4500
+  },
+  "194": {
+    "question_id": 194,
+    "gold_sql": "SELECT T1.client_id, STRFTIME('%Y', CURRENT_TIMESTAMP) - STRFTIME('%Y', T3.birth_date) FROM disp AS T1 INNER JOIN card AS T2 ON T2.disp_id = T1.disp_id INNER JOIN client AS T3 ON T1.client_id = T3.client_id WHERE T2.type = 'gold' AND T1.type = 'OWNER'",
+    "pg_sql": "SELECT T1.client_id, EXTRACT(YEAR FROM CURRENT_TIMESTAMP)::INTEGER - EXTRACT(YEAR FROM T3.birth_date)::INTEGER FROM disp AS T1 INNER JOIN card AS T2 ON T2.disp_id = T1.disp_id INNER JOIN client AS T3 ON T1.client_id = T3.client_id WHERE T2.type = 'gold' AND T1.type = 'OWNER'",
+    "result": [
+      {
+        "client_id": 9,
+        "?column?": 91
+      },
+      {
+        "client_id": 41,
+        "?column?": 58
+      },
+      {
+        "client_id": 79,
+        "?column?": 57
+      },
+      {
+        "client_id": 326,
+        "?column?": 59
+      },
+      {
+        "client_id": 548,
+        "?column?": 89
+      },
+      {
+        "client_id": 562,
+        "?column?": 51
+      },
+      {
+        "client_id": 694,
+        "?column?": 90
+      },
+      {
+        "client_id": 886,
+        "?column?": 78
+      },
+      {
+        "client_id": 928,
+        "?column?": 75
+      },
+      {
+        "client_id": 1067,
+        "?column?": 74
+      },
+      {
+        "client_id": 1089,
+        "?column?": 87
+      },
+      {
+        "client_id": 1133,
+        "?column?": 68
+      },
+      {
+        "client_id": 1179,
+        "?column?": 96
+      },
+      {
+        "client_id": 1220,
+        "?column?": 73
+      },
+      {
+        "client_id": 1246,
+        "?column?": 64
+      },
+      {
+        "client_id": 1289,
+        "?column?": 80
+      },
+      {
+        "client_id": 1388,
+        "?column?": 64
+      },
+      {
+        "client_id": 1452,
+        "?column?": 86
+      },
+      {
+        "client_id": 1453,
+        "?column?": 60
+      },
+      {
+        "client_id": 1536,
+        "?column?": 59
+      },
+      {
+        "client_id": 1579,
+        "?column?": 63
+      },
+      {
+        "client_id": 1629,
+        "?column?": 60
+      },
+      {
+        "client_id": 1668,
+        "?column?": 77
+      },
+      {
+        "client_id": 1707,
+        "?column?": 75
+      },
+      {
+        "client_id": 1718,
+        "?column?": 88
+      },
+      {
+        "client_id": 1777,
+        "?column?": 63
+      },
+      {
+        "client_id": 1799,
+        "?column?": 67
+      },
+      {
+        "client_id": 1811,
+        "?column?": 87
+      },
+      {
+        "client_id": 1812,
+        "?column?": 79
+      },
+      {
+        "client_id": 1842,
+        "?column?": 83
+      },
+      {
+        "client_id": 1876,
+        "?column?": 75
+      },
+      {
+        "client_id": 1930,
+        "?column?": 92
+      },
+      {
+        "client_id": 2058,
+        "?column?": 55
+      },
+      {
+        "client_id": 2122,
+        "?column?": 56
+      },
+      {
+        "client_id": 2125,
+        "?column?": 51
+      },
+      {
+        "client_id": 2156,
+        "?column?": 60
+      },
+      {
+        "client_id": 2265,
+        "?column?": 49
+      },
+      {
+        "client_id": 2320,
+        "?column?": 75
+      },
+      {
+        "client_id": 2388,
+        "?column?": 55
+      },
+      {
+        "client_id": 2445,
+        "?column?": 57
+      },
+      {
+        "client_id": 2489,
+        "?column?": 51
+      },
+      {
+        "client_id": 2688,
+        "?column?": 59
+      },
+      {
+        "client_id": 2715,
+        "?column?": 69
+      },
+      {
+        "client_id": 2815,
+        "?column?": 96
+      },
+      {
+        "client_id": 2820,
+        "?column?": 60
+      },
+      {
+        "client_id": 2911,
+        "?column?": 94
+      },
+      {
+        "client_id": 2951,
+        "?column?": 76
+      },
+      {
+        "client_id": 2958,
+        "?column?": 51
+      },
+      {
+        "client_id": 2977,
+        "?column?": 63
+      },
+      {
+        "client_id": 3075,
+        "?column?": 85
+      }
+    ],
+    "row_count": 88
+  }
+}

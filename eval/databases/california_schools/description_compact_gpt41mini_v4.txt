@@ -1,0 +1,22 @@
+-- JOIN keys: frpm.cdscode = schools.cdscode  
+-- JOIN keys: satscores.cds = schools.cdscode  
+
+-- frpm: Free/Reduced Price Meal Program stats by school/year  
+-- satscores: SAT test results by school  
+-- schools: School directory and admin info  
+
+-- frpm.charter school (y/n): 0=No, 1=Yes  
+-- frpm.nslp provision status: NSLP meal provision program type  
+-- frpm.high grade/low grade: grade levels (K=Kindergarten, P=Preschool, Adult)  
+-- satscores.numge1500: count of SAT takers scoring ≥1500 (excellence rate numerator)  
+-- schools.charter: 1=charter school, 0=not  
+-- schools.charternum: 4-digit charter school number  
+-- schools.doc/doctype: district ownership code and description  
+-- schools.edopscode/edopsname: education option code and name (e.g. TRAD=Traditional)  
+-- schools.eilcode/eilname: education instruction level code and name (e.g. HS=High School)  
+-- schools.fundingtype: charter funding type (Directly funded, Locally funded, Not in CS funding model)  
+-- schools.magnet: 1=magnet school/program, 0=not  
+-- schools.statustype: school status (Active, Closed, etc.)  
+-- schools.virtual: virtual instruction type (F, N, P)  
+-- schools.admfname1/admlname1/admemail1: primary administrator contact info (superintendent/principal)  
+-- schools.lastupdate: record last updated date

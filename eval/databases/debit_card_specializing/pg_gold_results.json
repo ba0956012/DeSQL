@@ -1,0 +1,1024 @@
+{
+  "1470": {
+    "question_id": 1470,
+    "gold_sql": "SELECT COUNT(GasStationID) FROM gasstations WHERE Country = 'CZE' AND Segment = 'Premium'",
+    "pg_sql": "SELECT COUNT(GasStationID) FROM gasstations WHERE Country = 'CZE' AND Segment = 'Premium'",
+    "result": [
+      {
+        "count": 1114
+      }
+    ],
+    "row_count": 1
+  },
+  "1471": {
+    "question_id": 1471,
+    "gold_sql": "SELECT CAST(SUM(IIF(Currency = 'EUR', 1, 0)) AS FLOAT) / SUM(IIF(Currency = 'CZK', 1, 0)) AS ratio FROM customers",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN Currency = 'EUR' THEN 1 ELSE 0 END) AS FLOAT) / SUM(CASE WHEN Currency = 'CZK' THEN 1 ELSE 0 END) AS ratio FROM customers",
+    "result": [
+      {
+        "ratio": 0.06572769953051644
+      }
+    ],
+    "row_count": 1
+  },
+  "1472": {
+    "question_id": 1472,
+    "gold_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'LAM' AND SUBSTR(T2.Date, 1, 4) = '2012' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) ASC LIMIT 1",
+    "pg_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'LAM' AND SUBSTR(T2.Date, 1, 4) = '2012' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) ASC LIMIT 1",
+    "result": [
+      {
+        "customerid": 47273
+      }
+    ],
+    "row_count": 1
+  },
+  "1473": {
+    "question_id": 1473,
+    "gold_sql": "SELECT AVG(T2.Consumption) / 12 FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE SUBSTR(T2.Date, 1, 4) = '2013' AND T1.Segment = 'SME'",
+    "pg_sql": "SELECT AVG(T2.Consumption) / 12 FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE SUBSTR(T2.Date, 1, 4) = '2013' AND T1.Segment = 'SME'",
+    "result": [
+      {
+        "?column?": 459.95626428710256
+      }
+    ],
+    "row_count": 1
+  },
+  "1474": {
+    "question_id": 1474,
+    "gold_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND T2.Date BETWEEN 201101 AND 201112 GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "pg_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND T2.Date::TEXT BETWEEN '201101' AND '201112' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "result": [
+      {
+        "customerid": 603
+      }
+    ],
+    "row_count": 1
+  },
+  "1475": {
+    "question_id": 1475,
+    "gold_sql": "SELECT COUNT(*) FROM ( SELECT T2.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'KAM' AND SUBSTRING(T2.Date, 1, 4) = '2012' GROUP BY T2.CustomerID HAVING SUM(T2.Consumption) < 30000 ) AS t1",
+    "pg_sql": "SELECT COUNT(*) FROM ( SELECT T2.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'KAM' AND SUBSTRING(T2.Date, 1, 4) = '2012' GROUP BY T2.CustomerID HAVING SUM(T2.Consumption) < 30000 ) AS t1",
+    "result": [
+      {
+        "count": 1123
+      }
+    ],
+    "row_count": 1
+  },
+  "1476": {
+    "question_id": 1476,
+    "gold_sql": "SELECT SUM(IIF(T1.Currency = 'CZK', T2.Consumption, 0)) - SUM(IIF(T1.Currency = 'EUR', T2.Consumption, 0)) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE SUBSTR(T2.Date, 1, 4) = '2012'",
+    "pg_sql": "SELECT SUM(CASE WHEN T1.Currency = 'CZK' THEN T2.Consumption ELSE 0 END) - SUM(CASE WHEN T1.Currency = 'EUR' THEN T2.Consumption ELSE 0 END) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE SUBSTR(T2.Date, 1, 4) = '2012'",
+    "result": [
+      {
+        "?column?": 402524570.1699986
+      }
+    ],
+    "row_count": 1
+  },
+  "1477": {
+    "question_id": 1477,
+    "gold_sql": "SELECT SUBSTRING(T2.Date, 1, 4) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'EUR' GROUP BY SUBSTRING(T2.Date, 1, 4) ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "pg_sql": "SELECT SUBSTRING(T2.Date, 1, 4) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'EUR' GROUP BY SUBSTRING(T2.Date, 1, 4) ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "result": [
+      {
+        "substring": "2013"
+      }
+    ],
+    "row_count": 1
+  },
+  "1478": {
+    "question_id": 1478,
+    "gold_sql": "SELECT T1.Segment FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID GROUP BY T1.Segment ORDER BY SUM(T2.Consumption) ASC LIMIT 1",
+    "pg_sql": "SELECT T1.Segment FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID GROUP BY T1.Segment ORDER BY SUM(T2.Consumption) ASC LIMIT 1",
+    "result": [
+      {
+        "segment": "LAM"
+      }
+    ],
+    "row_count": 1
+  },
+  "1479": {
+    "question_id": 1479,
+    "gold_sql": "SELECT SUBSTR(T2.Date, 1, 4) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' GROUP BY SUBSTR(T2.Date, 1, 4) ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "pg_sql": "SELECT SUBSTR(T2.Date, 1, 4) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' GROUP BY SUBSTR(T2.Date, 1, 4) ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "result": [
+      {
+        "substr": "2013"
+      }
+    ],
+    "row_count": 1
+  },
+  "1480": {
+    "question_id": 1480,
+    "gold_sql": "SELECT SUBSTR(T2.Date, 5, 2) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE SUBSTR(T2.Date, 1, 4) = '2013' AND T1.Segment = 'SME' GROUP BY SUBSTR(T2.Date, 5, 2) ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "pg_sql": "SELECT SUBSTR(T2.Date, 5, 2) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE SUBSTR(T2.Date, 1, 4) = '2013' AND T1.Segment = 'SME' GROUP BY SUBSTR(T2.Date, 5, 2) ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "result": [
+      {
+        "substr": "04"
+      }
+    ],
+    "row_count": 1
+  },
+  "1481": {
+    "question_id": 1481,
+    "gold_sql": "SELECT CAST(SUM(IIF(T1.Segment = 'SME', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) - CAST(SUM(IIF(T1.Segment = 'LAM', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) , CAST(SUM(IIF(T1.Segment = 'LAM', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) - CAST(SUM(IIF(T1.Segment = 'KAM', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) , CAST(SUM(IIF(T1.Segment = 'KAM', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) - CAST(SUM(IIF(T1.Segment = 'SME', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND T2.Consumption = ( SELECT MIN(Consumption) FROM yearmonth ) AND T2.Date BETWEEN 201301 AND 201312",
+    "pg_sql": "(manually corrected)",
+    "result": [
+      {
+        "?column?": -582092.875
+      }
+    ],
+    "row_count": 1
+  },
+  "1482": {
+    "question_id": 1482,
+    "gold_sql": "SELECT CAST((SUM(IIF(T1.Segment = 'SME' AND T2.Date LIKE '2013%', T2.Consumption, 0)) - SUM(IIF(T1.Segment = 'SME' AND T2.Date LIKE '2012%', T2.Consumption, 0))) AS FLOAT) * 100 / SUM(IIF(T1.Segment = 'SME' AND T2.Date LIKE '2012%', T2.Consumption, 0)), CAST(SUM(IIF(T1.Segment = 'LAM' AND T2.Date LIKE '2013%', T2.Consumption, 0)) - SUM(IIF(T1.Segment = 'LAM' AND T2.Date LIKE '2012%', T2.Consumption, 0)) AS FLOAT) * 100 / SUM(IIF(T1.Segment = 'LAM' AND T2.Date LIKE '2012%', T2.Consumption, 0)) , CAST(SUM(IIF(T1.Segment = 'KAM' AND T2.Date LIKE '2013%', T2.Consumption, 0)) - SUM(IIF(T1.Segment = 'KAM' AND T2.Date LIKE '2012%', T2.Consumption, 0)) AS FLOAT) * 100 / SUM(IIF(T1.Segment = 'KAM' AND T2.Date LIKE '2012%', T2.Consumption, 0)) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID",
+    "pg_sql": "(manually corrected)",
+    "result": [
+      {
+        "?column?": 708.8556474335013
+      }
+    ],
+    "row_count": 1
+  },
+  "1483": {
+    "question_id": 1483,
+    "gold_sql": "SELECT SUM(Consumption) FROM yearmonth WHERE CustomerID = 6 AND Date BETWEEN '201308' AND '201311'",
+    "pg_sql": "SELECT SUM(Consumption) FROM yearmonth WHERE CustomerID = 6 AND Date BETWEEN '201308' AND '201311'",
+    "result": [
+      {
+        "sum": 1224.96
+      }
+    ],
+    "row_count": 1
+  },
+  "1484": {
+    "question_id": 1484,
+    "gold_sql": "SELECT SUM(IIF(Country = 'CZE', 1, 0)) - SUM(IIF(Country = 'SVK', 1, 0)) FROM gasstations WHERE Segment = 'Discount'",
+    "pg_sql": "SELECT SUM(CASE WHEN Country = 'CZE' THEN 1 ELSE 0 END) - SUM(CASE WHEN Country = 'SVK' THEN 1 ELSE 0 END) FROM gasstations WHERE Segment = 'Discount'",
+    "result": [
+      {
+        "?column?": 176
+      }
+    ],
+    "row_count": 1
+  },
+  "1485": {
+    "question_id": 1485,
+    "gold_sql": "SELECT SUM(IIF(CustomerID = 7, Consumption, 0)) - SUM(IIF(CustomerID = 5, Consumption, 0)) FROM yearmonth WHERE Date = '201304'",
+    "pg_sql": "SELECT SUM(CASE WHEN CustomerID = 7 THEN Consumption ELSE 0 END) - SUM(CASE WHEN CustomerID = 5 THEN Consumption ELSE 0 END) FROM yearmonth WHERE Date = '201304'",
+    "result": [
+      {
+        "?column?": 540.51
+      }
+    ],
+    "row_count": 1
+  },
+  "1486": {
+    "question_id": 1486,
+    "gold_sql": "SELECT SUM(Currency = 'CZK') - SUM(Currency = 'EUR') FROM customers WHERE Segment = 'SME'",
+    "pg_sql": "SELECT SUM(CASE WHEN Currency = 'CZK' THEN 1 ELSE 0 END) - SUM(CASE WHEN Currency = 'EUR' THEN 1 ELSE 0 END) FROM customers WHERE Segment = 'SME'",
+    "result": [
+      {
+        "?column?": 23505
+      }
+    ],
+    "row_count": 1
+  },
+  "1487": {
+    "question_id": 1487,
+    "gold_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'LAM' AND T2.Date = '201310' AND T1.Currency = 'EUR' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "pg_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'LAM' AND T2.Date = '201310' AND T1.Currency = 'EUR' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "result": [
+      {
+        "customerid": 3154
+      }
+    ],
+    "row_count": 1
+  },
+  "1488": {
+    "question_id": 1488,
+    "gold_sql": "SELECT T2.CustomerID, SUM(T2.Consumption) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'KAM' GROUP BY T2.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "pg_sql": "SELECT T2.CustomerID, SUM(T2.Consumption) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'KAM' GROUP BY T2.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "result": [
+      {
+        "customerid": 12459,
+        "sum": 16130041.819999998
+      }
+    ],
+    "row_count": 1
+  },
+  "1489": {
+    "question_id": 1489,
+    "gold_sql": "SELECT SUM(T2.Consumption) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201305' AND T1.Segment = 'KAM'",
+    "pg_sql": "SELECT SUM(T2.Consumption) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201305' AND T1.Segment = 'KAM'",
+    "result": [
+      {
+        "sum": 136224462.01
+      }
+    ],
+    "row_count": 1
+  },
+  "1490": {
+    "question_id": 1490,
+    "gold_sql": "SELECT CAST(SUM(IIF(T2.Consumption > 46.73, 1, 0)) AS FLOAT) * 100 / COUNT(T1.CustomerID) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'LAM'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN T2.Consumption > 46.73 THEN 1 ELSE 0 END) AS FLOAT) * 100 / COUNT(T1.CustomerID) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'LAM'",
+    "result": [
+      {
+        "?column?": 98.5267932135058
+      }
+    ],
+    "row_count": 1
+  },
+  "1491": {
+    "question_id": 1491,
+    "gold_sql": "SELECT Country , ( SELECT COUNT(GasStationID) FROM gasstations WHERE Segment = 'Value for money' ) FROM gasstations WHERE Segment = 'Value for money' GROUP BY Country ORDER BY COUNT(GasStationID) DESC LIMIT 1",
+    "pg_sql": "SELECT Country , ( SELECT COUNT(GasStationID) FROM gasstations WHERE Segment = 'Value for money' ) FROM gasstations WHERE Segment = 'Value for money' GROUP BY Country ORDER BY COUNT(GasStationID) DESC LIMIT 1",
+    "result": [
+      {
+        "country": "CZE",
+        "count": 597
+      }
+    ],
+    "row_count": 1
+  },
+  "1492": {
+    "question_id": 1492,
+    "gold_sql": "SELECT CAST(SUM(Currency = 'EUR') AS FLOAT) * 100 / COUNT(CustomerID) FROM customers WHERE Segment = 'KAM'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN Currency = 'EUR' THEN 1 ELSE 0 END) AS FLOAT) * 100 / COUNT(CustomerID) FROM customers WHERE Segment = 'KAM'",
+    "result": [
+      {
+        "?column?": 3.480392156862745
+      }
+    ],
+    "row_count": 1
+  },
+  "1493": {
+    "question_id": 1493,
+    "gold_sql": "SELECT CAST(SUM(IIF(Consumption > 528.3, 1, 0)) AS FLOAT) * 100 / COUNT(CustomerID) FROM yearmonth WHERE Date = '201202'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN Consumption > 528.3 THEN 1 ELSE 0 END) AS FLOAT) * 100 / COUNT(CustomerID) FROM yearmonth WHERE Date = '201202'",
+    "result": [
+      {
+        "?column?": 66.62300807683911
+      }
+    ],
+    "row_count": 1
+  },
+  "1494": {
+    "question_id": 1494,
+    "gold_sql": "SELECT CAST(SUM(IIF(Segment = 'Premium', 1, 0)) AS FLOAT) * 100 / COUNT(GasStationID) FROM gasstations WHERE Country = 'SVK'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN Segment = 'Premium' THEN 1 ELSE 0 END) AS FLOAT) * 100 / COUNT(GasStationID) FROM gasstations WHERE Country = 'SVK'",
+    "result": [
+      {
+        "?column?": 35.68181818181818
+      }
+    ],
+    "row_count": 1
+  },
+  "1495": {
+    "question_id": 1495,
+    "gold_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201309' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "pg_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201309' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "result": [
+      {
+        "customerid": 12459
+      }
+    ],
+    "row_count": 1
+  },
+  "1496": {
+    "question_id": 1496,
+    "gold_sql": "SELECT T1.Segment FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201309' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) ASC LIMIT 1",
+    "pg_sql": "SELECT T1.Segment FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201309' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) ASC LIMIT 1",
+    "result": [
+      {
+        "segment": "KAM"
+      }
+    ],
+    "row_count": 1
+  },
+  "1497": {
+    "question_id": 1497,
+    "gold_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201206' AND T1.Segment = 'SME' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) ASC LIMIT 1",
+    "pg_sql": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201206' AND T1.Segment = 'SME' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) ASC LIMIT 1",
+    "result": [
+      {
+        "customerid": 27338
+      }
+    ],
+    "row_count": 1
+  },
+  "1498": {
+    "question_id": 1498,
+    "gold_sql": "SELECT SUM(Consumption) FROM yearmonth WHERE SUBSTR(Date, 1, 4) = '2012' GROUP BY SUBSTR(Date, 5, 2) ORDER BY SUM(Consumption) DESC LIMIT 1",
+    "pg_sql": "SELECT SUM(Consumption) FROM yearmonth WHERE SUBSTR(Date, 1, 4) = '2012' GROUP BY SUBSTR(Date, 5, 2) ORDER BY SUM(Consumption) DESC LIMIT 1",
+    "result": [
+      {
+        "sum": 51787161.73999986
+      }
+    ],
+    "row_count": 1
+  },
+  "1499": {
+    "question_id": 1499,
+    "gold_sql": "SELECT SUM(T2.Consumption) / 12 AS MonthlyConsumption FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'EUR' GROUP BY T1.CustomerID ORDER BY MonthlyConsumption DESC LIMIT 1",
+    "pg_sql": "SELECT SUM(T2.Consumption) / 12 AS MonthlyConsumption FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'EUR' GROUP BY T1.CustomerID ORDER BY MonthlyConsumption DESC LIMIT 1",
+    "result": [
+      {
+        "monthlyconsumption": 85002.47333333334
+      }
+    ],
+    "row_count": 1
+  },
+  "1500": {
+    "question_id": 1500,
+    "gold_sql": "SELECT T3.Description FROM transactions_1k AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID INNER JOIN products AS T3 ON T1.ProductID = T3.ProductID WHERE T2.Date = '201309'",
+    "pg_sql": "SELECT T3.Description FROM transactions_1k AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID INNER JOIN products AS T3 ON T1.ProductID = T3.ProductID WHERE T2.Date = '201309'",
+    "result": [
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Provoz.nápl."
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Nemrz.kapal."
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Oleje,tuky"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Provoz.nápl."
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Diesel +"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "LPG"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Mytí vozidel"
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      }
+    ],
+    "row_count": 976
+  },
+  "1501": {
+    "question_id": 1501,
+    "gold_sql": "SELECT DISTINCT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID INNER JOIN yearmonth AS T3 ON T1.CustomerID = T3.CustomerID WHERE T3.Date = '201306'",
+    "pg_sql": "SELECT DISTINCT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID INNER JOIN yearmonth AS T3 ON T1.CustomerID = T3.CustomerID WHERE T3.Date = '201306'",
+    "result": [
+      {
+        "country": "SVK"
+      },
+      {
+        "country": "CZE"
+      }
+    ],
+    "row_count": 2
+  },
+  "1502": {
+    "question_id": 1502,
+    "gold_sql": "SELECT DISTINCT T3.ChainID FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID INNER JOIN gasstations AS T3 ON T1.GasStationID = T3.GasStationID WHERE T2.Currency = 'EUR'",
+    "pg_sql": "SELECT DISTINCT T3.ChainID FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID INNER JOIN gasstations AS T3 ON T1.GasStationID = T3.GasStationID WHERE T2.Currency = 'EUR'",
+    "result": [
+      {
+        "chainid": 4
+      },
+      {
+        "chainid": 35
+      },
+      {
+        "chainid": 61
+      },
+      {
+        "chainid": 70
+      },
+      {
+        "chainid": 76
+      },
+      {
+        "chainid": 77
+      },
+      {
+        "chainid": 98
+      },
+      {
+        "chainid": 130
+      },
+      {
+        "chainid": 219
+      },
+      {
+        "chainid": 246
+      }
+    ],
+    "row_count": 10
+  },
+  "1503": {
+    "question_id": 1503,
+    "gold_sql": "SELECT DISTINCT T1.ProductID, T3.Description FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID INNER JOIN products AS T3 ON T1.ProductID = T3.ProductID WHERE T2.Currency = 'EUR'",
+    "pg_sql": "SELECT DISTINCT T1.ProductID, T3.Description FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID INNER JOIN products AS T3 ON T1.ProductID = T3.ProductID WHERE T2.Currency = 'EUR'",
+    "result": [
+      {
+        "productid": 2,
+        "description": "Nafta"
+      },
+      {
+        "productid": 317,
+        "description": "Diesel"
+      },
+      {
+        "productid": 322,
+        "description": "Nat.Super"
+      },
+      {
+        "productid": 332,
+        "description": "Diesel aditiv"
+      },
+      {
+        "productid": 336,
+        "description": "Prev.náplne"
+      },
+      {
+        "productid": 341,
+        "description": "Umývanie voz"
+      },
+      {
+        "productid": 352,
+        "description": "Autokozmetik"
+      }
+    ],
+    "row_count": 7
+  },
+  "1504": {
+    "question_id": 1504,
+    "gold_sql": "SELECT AVG(Amount) FROM transactions_1k WHERE Date LIKE '2012-01%'",
+    "pg_sql": "SELECT AVG(Amount) FROM transactions_1k WHERE Date::TEXT LIKE '2012-01%'",
+    "result": [
+      {
+        "avg": null
+      }
+    ],
+    "row_count": 1
+  },
+  "1505": {
+    "question_id": 1505,
+    "gold_sql": "SELECT COUNT(*) FROM yearmonth AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND T1.Consumption > 1000.00",
+    "pg_sql": "SELECT COUNT(*) FROM yearmonth AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND T1.Consumption > 1000.00",
+    "result": [
+      {
+        "count": 2730
+      }
+    ],
+    "row_count": 1
+  },
+  "1506": {
+    "question_id": 1506,
+    "gold_sql": "SELECT DISTINCT T3.Description FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID INNER JOIN products AS T3 ON T1.ProductID = T3.ProductID WHERE T2.Country = 'CZE'",
+    "pg_sql": "SELECT DISTINCT T3.Description FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID INNER JOIN products AS T3 ON T1.ProductID = T3.ProductID WHERE T2.Country = 'CZE'",
+    "result": [
+      {
+        "description": "Dalnic.popl."
+      },
+      {
+        "description": "Zpr.nakupu"
+      },
+      {
+        "description": "Autoprísluš."
+      },
+      {
+        "description": "Zboží nesp."
+      },
+      {
+        "description": "Diesel +"
+      },
+      {
+        "description": "Obcerstvení"
+      },
+      {
+        "description": "Nemrz.kapal."
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Natural Plus"
+      },
+      {
+        "description": "Autokosmet."
+      },
+      {
+        "description": "Natural"
+      },
+      {
+        "description": "Natural +"
+      },
+      {
+        "description": "Knihy,nov."
+      },
+      {
+        "description": "Provoz.nápl."
+      },
+      {
+        "description": "Oleje,tuky"
+      },
+      {
+        "description": "Potraviny"
+      },
+      {
+        "description": "Mytí vozidel"
+      },
+      {
+        "description": "LPG"
+      },
+      {
+        "description": "Additivum"
+      },
+      {
+        "description": "Natural Spec"
+      },
+      {
+        "description": "Nafta Plus"
+      }
+    ],
+    "row_count": 21
+  },
+  "1507": {
+    "question_id": 1507,
+    "gold_sql": "SELECT DISTINCT T1.Time FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T2.ChainID = 11",
+    "pg_sql": "SELECT DISTINCT T1.Time FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T2.ChainID = 11",
+    "result": [
+      {
+        "time": "11:55:00"
+      },
+      {
+        "time": "14:29:00"
+      }
+    ],
+    "row_count": 2
+  },
+  "1508": {
+    "question_id": 1508,
+    "gold_sql": "SELECT COUNT(T1.TransactionID) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T2.Country = 'CZE' AND T1.Price > 1000",
+    "pg_sql": "SELECT COUNT(T1.TransactionID) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T2.Country = 'CZE' AND T1.Price > 1000",
+    "result": [
+      {
+        "count": 56
+      }
+    ],
+    "row_count": 1
+  },
+  "1509": {
+    "question_id": 1509,
+    "gold_sql": "SELECT COUNT(T1.TransactionID) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T2.Country = 'CZE' AND STRFTIME('%Y', T1.Date) >= '2012'",
+    "pg_sql": "SELECT COUNT(T1.TransactionID) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T2.Country = 'CZE' AND EXTRACT(YEAR FROM T1.Date)::INTEGER >= '2012'",
+    "result": [
+      {
+        "count": 933
+      }
+    ],
+    "row_count": 1
+  },
+  "1510": {
+    "question_id": 1510,
+    "gold_sql": "SELECT AVG(T1.Price) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T2.Country = 'CZE'",
+    "pg_sql": "SELECT AVG(T1.Price) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T2.Country = 'CZE'",
+    "result": [
+      {
+        "avg": 453.15031082529475
+      }
+    ],
+    "row_count": 1
+  },
+  "1511": {
+    "question_id": 1511,
+    "gold_sql": "SELECT AVG(T1.Price) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID INNER JOIN customers AS T3 ON T1.CustomerID = T3.CustomerID WHERE T3.Currency = 'EUR'",
+    "pg_sql": "SELECT AVG(T1.Price) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID INNER JOIN customers AS T3 ON T1.CustomerID = T3.CustomerID WHERE T3.Currency = 'EUR'",
+    "result": [
+      {
+        "avg": 23.189848484848486
+      }
+    ],
+    "row_count": 1
+  },
+  "1512": {
+    "question_id": 1512,
+    "gold_sql": "SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' GROUP BY CustomerID ORDER BY SUM(Price) DESC LIMIT 1",
+    "pg_sql": "SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' GROUP BY CustomerID ORDER BY SUM(Price) DESC LIMIT 1",
+    "result": [
+      {
+        "customerid": 19182
+      }
+    ],
+    "row_count": 1
+  },
+  "1513": {
+    "question_id": 1513,
+    "gold_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-25' ORDER BY T1.Time DESC LIMIT 1",
+    "pg_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-25' ORDER BY T1.Time DESC LIMIT 1",
+    "result": [
+      {
+        "country": "CZE"
+      }
+    ],
+    "row_count": 1
+  },
+  "1514": {
+    "question_id": 1514,
+    "gold_sql": "SELECT DISTINCT T3.Currency FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID INNER JOIN customers AS T3 ON T1.CustomerID = T3.CustomerID WHERE T1.Date = '2012-08-24' AND T1.Time = '16:25:00'",
+    "pg_sql": "SELECT DISTINCT T3.Currency FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID INNER JOIN customers AS T3 ON T1.CustomerID = T3.CustomerID WHERE T1.Date = '2012-08-24' AND T1.Time = '16:25:00'",
+    "result": [
+      {
+        "currency": "CZK"
+      }
+    ],
+    "row_count": 1
+  },
+  "1515": {
+    "question_id": 1515,
+    "gold_sql": "SELECT T2.Segment FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.date = '2012-08-23' AND T1.time = '21:20:00'",
+    "pg_sql": "SELECT T2.Segment FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.date = '2012-08-23' AND T1.time = '21:20:00'",
+    "result": [
+      {
+        "segment": "KAM"
+      }
+    ],
+    "row_count": 1
+  },
+  "1516": {
+    "question_id": 1516,
+    "gold_sql": "SELECT COUNT(T1.TransactionID) FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date = '2012-08-26' AND T1.Time < '13:00:00' AND T2.Currency = 'CZK'",
+    "pg_sql": "SELECT COUNT(T1.TransactionID) FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date = '2012-08-26' AND T1.Time < '13:00:00' AND T2.Currency = 'CZK'",
+    "result": [
+      {
+        "count": 68
+      }
+    ],
+    "row_count": 1
+  },
+  "1517": {
+    "question_id": 1517,
+    "gold_sql": "SELECT T2.Segment FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID ORDER BY Date ASC LIMIT 1",
+    "pg_sql": "SELECT T2.Segment FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID ORDER BY Date ASC LIMIT 1",
+    "result": [
+      {
+        "segment": "KAM"
+      }
+    ],
+    "row_count": 1
+  },
+  "1518": {
+    "question_id": 1518,
+    "gold_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-24' AND T1.Time = '12:42:00'",
+    "pg_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-24' AND T1.Time = '12:42:00'",
+    "result": [
+      {
+        "country": "CZE"
+      },
+      {
+        "country": "CZE"
+      }
+    ],
+    "row_count": 2
+  },
+  "1519": {
+    "question_id": 1519,
+    "gold_sql": "SELECT T1.ProductID FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-23' AND T1.Time = '21:20:00'",
+    "pg_sql": "SELECT T1.ProductID FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-23' AND T1.Time = '21:20:00'",
+    "result": [
+      {
+        "productid": 2
+      }
+    ],
+    "row_count": 1
+  },
+  "1520": {
+    "question_id": 1520,
+    "gold_sql": "SELECT T1.CustomerID, T2.Date, T2.Consumption FROM transactions_1k AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date = '2012-08-24' AND T1.Price = 124.05 AND T2.Date = '201201'",
+    "pg_sql": "SELECT T1.CustomerID, T2.Date, T2.Consumption FROM transactions_1k AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date = '2012-08-24' AND T1.Price = 124.05 AND T2.Date = '201201'",
+    "result": [
+      {
+        "customerid": 40333,
+        "date": "201201",
+        "consumption": 4084.9
+      },
+      {
+        "customerid": 7630,
+        "date": "201201",
+        "consumption": 24953.81
+      }
+    ],
+    "row_count": 2
+  },
+  "1521": {
+    "question_id": 1521,
+    "gold_sql": "SELECT COUNT(T1.TransactionID) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-26' AND T1.Time BETWEEN '08:00:00' AND '09:00:00' AND T2.Country = 'CZE'",
+    "pg_sql": "SELECT COUNT(T1.TransactionID) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-26' AND T1.Time BETWEEN '08:00:00' AND '09:00:00' AND T2.Country = 'CZE'",
+    "result": [
+      {
+        "count": 14
+      }
+    ],
+    "row_count": 1
+  },
+  "1522": {
+    "question_id": 1522,
+    "gold_sql": "SELECT T2.Currency FROM yearmonth AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date = '201306' AND T1.Consumption = 214582.17",
+    "pg_sql": "SELECT T2.Currency FROM yearmonth AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date = '201306' AND T1.Consumption = 214582.17",
+    "result": [
+      {
+        "currency": "CZK"
+      }
+    ],
+    "row_count": 1
+  },
+  "1523": {
+    "question_id": 1523,
+    "gold_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.CardID = '667467'",
+    "pg_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.CardID = '667467'",
+    "result": [
+      {
+        "country": "CZE"
+      }
+    ],
+    "row_count": 1
+  },
+  "1524": {
+    "question_id": 1524,
+    "gold_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-24' AND T1.Price = 548.4",
+    "pg_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-24' AND T1.Price = 548.4",
+    "result": [
+      {
+        "country": "CZE"
+      }
+    ],
+    "row_count": 1
+  },
+  "1525": {
+    "question_id": 1525,
+    "gold_sql": "SELECT CAST(SUM(IIF(T2.Currency = 'EUR', 1, 0)) AS FLOAT) * 100 / COUNT(T1.CustomerID) FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date = '2012-08-25'",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN T2.Currency = 'EUR' THEN 1 ELSE 0 END) AS FLOAT) * 100 / COUNT(T1.CustomerID) FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date = '2012-08-25'",
+    "result": [
+      {
+        "?column?": 1.6470588235294117
+      }
+    ],
+    "row_count": 1
+  },
+  "1526": {
+    "question_id": 1526,
+    "gold_sql": "SELECT CAST(SUM(IIF(SUBSTR(Date, 1, 4) = '2012', Consumption, 0)) - SUM(IIF(SUBSTR(Date, 1, 4) = '2013', Consumption, 0)) AS FLOAT) / SUM(IIF(SUBSTR(Date, 1, 4) = '2012', Consumption, 0)) FROM yearmonth WHERE CustomerID = ( SELECT T1.CustomerID FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-25' AND T1.Price = 634.8 )",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN SUBSTR(Date, 1, 4) = '2012' THEN Consumption ELSE 0 END) - SUM(CASE WHEN SUBSTR(Date, 1, 4) = '2013' THEN Consumption ELSE 0 END) AS FLOAT) / SUM(CASE WHEN SUBSTR(Date, 1, 4) = '2012' THEN Consumption ELSE 0 END) FROM yearmonth WHERE CustomerID = ( SELECT T1.CustomerID FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-25' AND T1.Price = 634.8 )",
+    "result": [
+      {
+        "?column?": -5.815242674672345
+      }
+    ],
+    "row_count": 1
+  },
+  "1527": {
+    "question_id": 1527,
+    "gold_sql": "SELECT GasStationID FROM transactions_1k GROUP BY GasStationID ORDER BY SUM(Price) DESC LIMIT 1",
+    "pg_sql": "SELECT GasStationID FROM transactions_1k GROUP BY GasStationID ORDER BY SUM(Price) DESC LIMIT 1",
+    "result": [
+      {
+        "gasstationid": 4347
+      }
+    ],
+    "row_count": 1
+  },
+  "1528": {
+    "question_id": 1528,
+    "gold_sql": "SELECT CAST(SUM(IIF(Country = 'SVK' AND Segment = 'Premium', 1, 0)) AS FLOAT) * 100 / SUM(IIF(Country = 'SVK', 1, 0)) FROM gasstations",
+    "pg_sql": "SELECT CAST(SUM(CASE WHEN Country = 'SVK' AND Segment = 'Premium' THEN 1 ELSE 0 END) AS FLOAT) * 100 / SUM(CASE WHEN Country = 'SVK' THEN 1 ELSE 0 END) FROM gasstations",
+    "result": [
+      {
+        "?column?": 35.68181818181818
+      }
+    ],
+    "row_count": 1
+  },
+  "1529": {
+    "question_id": 1529,
+    "gold_sql": "SELECT SUM(T1.Price) , SUM(IIF(T3.Date = '201201', T1.Price, 0)) FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID INNER JOIN yearmonth AS T3 ON T1.CustomerID = T3.CustomerID WHERE T1.CustomerID = '38508'",
+    "pg_sql": "(manually corrected)",
+    "result": [
+      {
+        "sum": 3437.0099999999998
+      }
+    ],
+    "row_count": 1
+  },
+  "1530": {
+    "question_id": 1530,
+    "gold_sql": "SELECT T2.Description FROM transactions_1k AS T1 INNER JOIN products AS T2 ON T1.ProductID = T2.ProductID ORDER BY T1.Amount DESC LIMIT 5",
+    "pg_sql": "SELECT T2.Description FROM transactions_1k AS T1 INNER JOIN products AS T2 ON T1.ProductID = T2.ProductID ORDER BY T1.Amount DESC LIMIT 5",
+    "result": [
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Diesel +"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      },
+      {
+        "description": "Nafta"
+      }
+    ],
+    "row_count": 5
+  },
+  "1531": {
+    "question_id": 1531,
+    "gold_sql": "SELECT T2.CustomerID, SUM(T2.Price / T2.Amount), T1.Currency FROM customers AS T1 INNER JOIN transactions_1k AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.CustomerID = ( SELECT CustomerID FROM yearmonth ORDER BY Consumption DESC LIMIT 1 ) GROUP BY T2.CustomerID, T1.Currency",
+    "pg_sql": "SELECT T2.CustomerID, SUM(T2.Price / NULLIF(T2.Amount, 0)), T1.Currency FROM customers AS T1 INNER JOIN transactions_1k AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.CustomerID = ( SELECT CustomerID FROM yearmonth ORDER BY Consumption DESC LIMIT 1 ) GROUP BY T2.CustomerID, T1.Currency",
+    "result": [
+      {
+        "customerid": 12459,
+        "sum": 203.85607873542577,
+        "currency": "CZK"
+      }
+    ],
+    "row_count": 1
+  },
+  "1532": {
+    "question_id": 1532,
+    "gold_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.ProductID = 2 ORDER BY T1.Price DESC LIMIT 1",
+    "pg_sql": "SELECT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.ProductID = 2 ORDER BY T1.Price DESC LIMIT 1",
+    "result": [
+      {
+        "country": "CZE"
+      }
+    ],
+    "row_count": 1
+  },
+  "1533": {
+    "question_id": 1533,
+    "gold_sql": "SELECT T2.Consumption FROM transactions_1k AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Price / T1.Amount > 29.00 AND T1.ProductID = 5 AND T2.Date = '201208'",
+    "pg_sql": "SELECT T2.Consumption FROM transactions_1k AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Price / NULLIF(T1.Amount, 0) > 29.00 AND T1.ProductID = 5 AND T2.Date = '201208'",
+    "result": [
+      {
+        "consumption": 1903.2
+      },
+      {
+        "consumption": 88265.39
+      },
+      {
+        "consumption": 1129.2
+      },
+      {
+        "consumption": 126157.7
+      },
+      {
+        "consumption": 126157.7
+      },
+      {
+        "consumption": 58.19
+      },
+      {
+        "consumption": 1142.95
+      },
+      {
+        "consumption": 8878.07
+      },
+      {
+        "consumption": 69331.72
+      },
+      {
+        "consumption": 45937.22
+      }
+    ],
+    "row_count": 10
+  }
+}

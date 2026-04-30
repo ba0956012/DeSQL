@@ -1,0 +1,14 @@
+-- transactions_1k.customerid = customers.customerid  
+-- transactions_1k.gasstationid = gasstations.gasstationid  
+-- transactions_1k.productid = products.productid  
+-- yearmonth.customerid = customers.customerid  
+
+-- customers.segment: SME=Small and Medium Enterprise, LAM=Large Account Manager, KAM=Key Account Manager  
+-- gasstations.country: CZE=Czech Republic, SVK=Slovakia  
+-- gasstations.segment: Value for money=budget segment, Premium=high-end segment, Discount=low price segment, Noname=no brand segment  
+-- products.description: Rucní zadání=Manual entry, Nafta=Diesel fuel  
+
+-- gasstations.segment: actual meaning is gas station's market segment (NOT chain segment)  
+-- transactions_1k.amount: actual meaning is quantity/volume purchased (NOT monetary amount)  
+
+-- transactions_1k.cardid: payment or loyalty card identifier (NOT just a random ID)

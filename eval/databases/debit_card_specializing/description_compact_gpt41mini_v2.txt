@@ -1,0 +1,28 @@
+-- transactions_1k.customerid = customers.customerid  
+-- transactions_1k.gasstationid = gasstations.gasstationid  
+-- transactions_1k.productid = products.productid  
+-- yearmonth.customerid = customers.customerid  
+
+-- customers: bank customers  
+-- gasstations: fuel stations  
+-- products: fuel and service products  
+-- transactions_1k: individual fuel/service transactions  
+-- yearmonth: monthly fuel consumption per customer  
+
+-- customers.segment: client segment (KAM=Key Account, LAM=Large Account, SME=Small/Medium Enterprise)  
+-- customers.currency: ['CZK', 'EUR']  
+-- gasstations.segment: ['Discount', 'Noname', 'Other', 'Premium', 'Value for money']  
+-- gasstations.country: ['CZE', 'SVK']  
+-- yearmonth.date: YYYYMM format (e.g., 201207 = July 2012)  
+
+-- transactions_1k.price: unit price per amount (total price = amount * price)  
+-- transactions_1k.time: stored as text, format HH:MM:SS  
+-- yearmonth.consumption: monthly fuel consumption volume  
+
+-- gasstations.segment vs customers.segment: unrelated enums, gasstations.segment describes station type, customers.segment describes client type  
+
+-- transactions_1k.amount: quantity of product sold (units depend on product)  
+-- transactions_1k.cardid: payment card identifier, not linked to customers table  
+
+-- yearmonth.date is a string YYYYMM, not a date type  
+-- yearmonth.consumption aggregates transactions_1k amounts per month per customer

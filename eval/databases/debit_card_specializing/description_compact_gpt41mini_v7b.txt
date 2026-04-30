@@ -1,0 +1,8 @@
+-- customers.customerid = transactions_1k.customerid  
+-- customers.customerid = yearmonth.customerid  
+-- gasstations.gasstationid = transactions_1k.gasstationid  
+-- products.productid = transactions_1k.productid  
+
+-- products.description: Rucní zadání=Manual input, Nafta=Diesel fuel  
+
+-- transactions_1k.price: total price (amount * unit price), NOT unit price as name/description suggests
