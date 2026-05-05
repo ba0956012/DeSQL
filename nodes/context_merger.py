@@ -24,32 +24,33 @@ from db import ENUM_VALUES
 def context_merger(state):
     """整合所有上下文，產生精簡的 qa_context"""
     question = state["question"]
-    
+
     # 收集所有可用資訊
     conditions_context = build_conditions_context(state)
-    
+
     # schema（優先用 filtered，否則原始）
     base_schema = state.get("filtered_schema") or SCHEMA_INFO
-    
+
     # column descs 嵌入 schema
     column_descs = state.get("column_descs")
     if column_descs:
         from nodes.question_analysis import _embed_descs
+
         schema_text = _embed_descs(base_schema, column_descs)
     else:
         schema_text = base_schema
-    
+
     semantic_notes = state.get("semantic_notes", "")
-    
+
     # 組合所有資訊讓 LLM 整合
     parts = [f"Database Schema:\n{schema_text}"]
     if conditions_context:
         parts.append(f"Retrieved Values:\n{conditions_context}")
     if semantic_notes:
         parts.append(f"Column Facts:\n{semantic_notes}")
-    
+
     all_context = "\n\n".join(parts)
-    
+
     if PROMPT_LANG == "en":
         prompt = f"""You are preparing context for a data analyst who will create a query plan.
 

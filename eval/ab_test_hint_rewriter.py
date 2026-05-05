@@ -26,6 +26,7 @@ PROJECT_DIR = EVAL_DIR.parent
 sys.path.insert(0, str(PROJECT_DIR))
 
 from dotenv import load_dotenv
+
 load_dotenv(EVAL_DIR / ".env.eval", override=True)
 
 from openai import AzureOpenAI
@@ -83,7 +84,8 @@ def rewrite_hint(question, hint, schema, compact_desc):
 改寫後的 Hint："""
 
     resp = _client.chat.completions.create(
-        model=_MODEL, temperature=0,
+        model=_MODEL,
+        temperature=0,
         messages=[{"role": "user", "content": prompt}],
     )
     return resp.choices[0].message.content.strip()
@@ -103,10 +105,16 @@ def run_gold_sql(db_id, gold_sql):
 def run_pipeline(question, db_id):
     os.environ["DATABASE_URL"] = f"{PG_BASE_URL}/{DB_PREFIX}{db_id}"
     for mod_name in list(sys.modules.keys()):
-        if mod_name in ("db", "config", "pipeline", "retrieval_subgraph") or mod_name.startswith("nodes"):
+        if mod_name in (
+            "db",
+            "config",
+            "pipeline",
+            "retrieval_subgraph",
+        ) or mod_name.startswith("nodes"):
             del sys.modules[mod_name]
     from pipeline import app
     from logger import init_run_logger
+
     init_run_logger(question)
     merged = {}
     for event in app.stream({"question": question, "retry": 0}):
@@ -144,7 +152,8 @@ def llm_judge(question, expected, actual_answer):
 {{"correct": true/false, "reason": "簡短說明"}}"""
 
     resp = _client.chat.completions.create(
-        model=_MODEL, temperature=0,
+        model=_MODEL,
+        temperature=0,
         messages=[{"role": "user", "content": prompt}],
     )
     text = resp.choices[0].message.content.strip()
@@ -178,7 +187,9 @@ def run_single(item, use_rewritten_hint=False):
 
     try:
         result = run_pipeline(question, item["db_id"])
-        answer = result.get("display_answer") or result.get("final_answer") or "無法回答"
+        answer = (
+            result.get("display_answer") or result.get("final_answer") or "無法回答"
+        )
     except Exception as e:
         return False, f"pipeline error: {e}", str(e)
 
@@ -246,12 +257,19 @@ def main():
             change = "⚫ 都錯"
         print(f"  → {change}")
 
-        results.append({
-            "db_id": db_id, "question_id": qid, "difficulty": diff,
-            "question": item["question"][:60],
-            "a_correct": a_correct, "b_correct": b_correct, "change": change,
-            "a_reason": a_reason, "b_reason": b_reason,
-        })
+        results.append(
+            {
+                "db_id": db_id,
+                "question_id": qid,
+                "difficulty": diff,
+                "question": item["question"][:60],
+                "a_correct": a_correct,
+                "b_correct": b_correct,
+                "change": change,
+                "a_reason": a_reason,
+                "b_reason": b_reason,
+            }
+        )
 
     elapsed = time.time() - start
 
@@ -264,25 +282,38 @@ def main():
     print(f"\n{'='*60}")
     print(f"📊 A/B 測試結果（{len(results)} 題，{elapsed:.0f}s）")
     print(f"{'='*60}")
-    print(f"  A (原始 hint): {a_total}/{len(results)} ({a_total/len(results)*100:.1f}%)")
-    print(f"  B (改寫 hint): {b_total}/{len(results)} ({b_total/len(results)*100:.1f}%)")
+    print(
+        f"  A (原始 hint): {a_total}/{len(results)} ({a_total/len(results)*100:.1f}%)"
+    )
+    print(
+        f"  B (改寫 hint): {b_total}/{len(results)} ({b_total/len(results)*100:.1f}%)"
+    )
     print(f"  翻正（A錯→B對）: {flipped_good}")
     print(f"  翻錯（A對→B錯）: {flipped_bad}")
-    print(f"  淨提升: {flipped_good - flipped_bad} 題 ({(flipped_good - flipped_bad)/len(results)*100:.1f}%)")
+    print(
+        f"  淨提升: {flipped_good - flipped_bad} 題 ({(flipped_good - flipped_bad)/len(results)*100:.1f}%)"
+    )
     print(f"{'='*60}")
 
     # 寫入詳細報告
     report_path = EVAL_DIR / "report" / "ab_test_hint_rewriter.json"
     with open(report_path, "w", encoding="utf-8") as f:
-        json.dump({
-            "summary": {
-                "total": len(results),
-                "a_correct": a_total, "b_correct": b_total,
-                "flipped_good": flipped_good, "flipped_bad": flipped_bad,
-                "elapsed_seconds": elapsed,
+        json.dump(
+            {
+                "summary": {
+                    "total": len(results),
+                    "a_correct": a_total,
+                    "b_correct": b_total,
+                    "flipped_good": flipped_good,
+                    "flipped_bad": flipped_bad,
+                    "elapsed_seconds": elapsed,
+                },
+                "details": results,
             },
-            "details": results,
-        }, f, ensure_ascii=False, indent=2)
+            f,
+            ensure_ascii=False,
+            indent=2,
+        )
     print(f"\n📄 詳細報告: {report_path}")
 
 

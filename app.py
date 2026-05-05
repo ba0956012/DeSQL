@@ -23,6 +23,7 @@ _THIS_MODULE = "desql_app_state"
 if _THIS_MODULE not in _sys.modules:
     # First run: create a tiny namespace module to hold shared state
     import types
+
     _mod = types.ModuleType(_THIS_MODULE)
     _mod.call_log = []
     _sys.modules[_THIS_MODULE] = _mod
@@ -42,11 +43,13 @@ class _TrackedLLM:
         "analyze_conditions": "retrieval: 條件分析",
         "tokenize": "retrieval: 拆詞",
         "expand_synonyms": "retrieval: 同義詞擴展",
+        "_classify_question": "QA: pitfall 偵測",
         "question_analysis": "QA: 問題分解",
         "_review_plan": "QA: plan review",
         "_analyze_hint": "QA: hint 分析",
         "schema_filter": "schema filter: 表/欄位篩選",
         "generate_sql": "SQL 生成",
+        "_check_code_task": "code: 資料驗證",
         "generate_code": "Python code 生成",
         "format_answer": "答案格式化",
         "generate_chart": "chart: 視覺化判斷/生成",
@@ -56,6 +59,7 @@ class _TrackedLLM:
 
     def _detect_purpose(self):
         import inspect
+
         for frame_info in inspect.stack():
             fname = frame_info.function
             if fname in self._CALLER_MAP:
@@ -67,14 +71,16 @@ class _TrackedLLM:
         input_text = "\n".join(m.content for m in messages if hasattr(m, "content"))
         result = self._real.invoke(messages, *args, **kwargs)
         output_text = result.content if hasattr(result, "content") else str(result)
-        _sys.modules[_THIS_MODULE].call_log.append({
-            "label": object.__getattribute__(self, "_label"),
-            "purpose": purpose,
-            "input": input_text,
-            "output": output_text,
-            "input_len": len(input_text),
-            "output_len": len(output_text),
-        })
+        _sys.modules[_THIS_MODULE].call_log.append(
+            {
+                "label": object.__getattribute__(self, "_label"),
+                "purpose": purpose,
+                "input": input_text,
+                "output": output_text,
+                "input_len": len(input_text),
+                "output_len": len(output_text),
+            }
+        )
         return result
 
     def __getattr__(self, name):
@@ -112,8 +118,13 @@ import nodes.question_analysis
 import nodes.schema_filter
 
 # Use identity check: only replace if the node's llm is NOT already one of our tracked instances
-_tracked_set = {id(_llm_mod.llm), id(_llm_mod.sql_llm), id(_llm_mod.code_llm),
-                id(_llm_mod.qa_llm), id(_llm_mod.schema_llm)}
+_tracked_set = {
+    id(_llm_mod.llm),
+    id(_llm_mod.sql_llm),
+    id(_llm_mod.code_llm),
+    id(_llm_mod.qa_llm),
+    id(_llm_mod.schema_llm),
+}
 
 if id(nodes.sql.llm) not in _tracked_set:
     nodes.sql.llm = _llm_mod.sql_llm
@@ -130,6 +141,7 @@ if id(nodes.schema_filter.llm) not in _tracked_set:
 
 try:
     import nodes.chart_echarts
+
     if id(nodes.chart_echarts.llm) not in _tracked_set:
         nodes.chart_echarts.llm = _llm_mod.llm
 except ImportError:
@@ -139,6 +151,7 @@ except ImportError:
 with st.sidebar:
     st.subheader("⚙️ Pipeline Config")
     from config import LLM_MODEL, PROMPT_PROFILE, DEBUG
+
     provider = os.getenv("LLM_PROVIDER", "azure")
     st.text(f"Provider: {provider}")
     st.text(f"Model: {LLM_MODEL}")
@@ -171,25 +184,153 @@ if question:
     merged = {}
     progress_container = st.empty()
 
+    # Pipeline graph structure for Mermaid visualization
+    _GRAPH_NODES = [
+        "retrieval",
+        "schema_filter",
+        "question_analysis",
+        "generate_sql",
+        "execute_sql",
+        "validate_sql_result",
+        "generate_code",
+        "run_code",
+        "validate_result",
+        "format_answer",
+        "generate_chart",
+    ]
+    _NODE_LABELS = {
+        "retrieval": "📥 資料檢索",
+        "schema_filter": "🔍 Schema 篩選",
+        "question_analysis": "🧠 問題分析",
+        "generate_sql": "🔧 SQL 生成",
+        "execute_sql": "⚡ SQL 執行",
+        "validate_sql_result": "🔍 SQL 驗證",
+        "generate_code": "💻 Code 生成",
+        "run_code": "▶️ Code 執行",
+        "validate_result": "✔️ 結果驗證",
+        "format_answer": "📝 答案格式化",
+        "generate_chart": "📊 圖表生成",
+    }
+
+    # Detect disabled nodes from env
+    from nodes.result_validator import ENABLE_RESULT_VALIDATION
+
+    _DISABLED_NODES = set()
+    if not ENABLE_RESULT_VALIDATION:
+        _DISABLED_NODES.add("validate_result")
+    # Edges: (from, to, label)
+    _GRAPH_EDGES = [
+        ("retrieval", "schema_filter", ""),
+        ("schema_filter", "question_analysis", ""),
+        ("question_analysis", "generate_sql", ""),
+        ("generate_sql", "execute_sql", ""),
+        ("execute_sql", "validate_sql_result", ""),
+        ("execute_sql", "generate_sql", "retry"),
+        ("validate_sql_result", "generate_code", ""),
+        ("validate_sql_result", "generate_sql", "retry"),
+        ("validate_sql_result", "format_answer", "無資料"),
+        ("generate_code", "run_code", ""),
+        ("run_code", "validate_result", ""),
+        ("run_code", "generate_code", "retry"),
+        ("run_code", "generate_sql", "資料不足"),
+        ("validate_result", "format_answer", ""),
+        ("validate_result", "generate_code", "retry"),
+        ("format_answer", "generate_chart", ""),
+    ]
+
+    def _render_mermaid(steps_done, running=True):
+        """Render pipeline graph with Graphviz (natively supported by Streamlit)."""
+        done_set = set(steps_done)
+        last_step = steps_done[-1] if steps_done else ""
+
+        dot_lines = [
+            "digraph pipeline {",
+            "    rankdir=LR;",
+            '    node [shape=box, style="rounded,filled", fontsize=10, fontname="Arial"];',
+            '    edge [fontsize=8, color="#999999"];',
+        ]
+
+        # Define nodes with colors
+        for node_id in _GRAPH_NODES:
+            label = _NODE_LABELS.get(node_id, node_id)
+
+            # Disabled nodes
+            if node_id in _DISABLED_NODES:
+                color = "#ffffff"
+                fontcolor = "#adb5bd"
+                penwidth = "1"
+                label = f"⊘ {label}"
+                style = "rounded,filled,dashed"
+            elif not running and node_id in done_set:
+                color = "#d4edda"
+                fontcolor = "#155724"
+                penwidth = "1"
+                style = "rounded,filled"
+            elif running and node_id == last_step:
+                color = "#fff3cd"
+                fontcolor = "#856404"
+                penwidth = "2"
+                style = "rounded,filled"
+            elif node_id in done_set:
+                color = "#d4edda"
+                fontcolor = "#155724"
+                penwidth = "1"
+                style = "rounded,filled"
+            else:
+                color = "#f8f9fa"
+                fontcolor = "#6c757d"
+                penwidth = "1"
+                style = "rounded,filled"
+            dot_lines.append(
+                f'    {node_id} [label="{label}", fillcolor="{color}", '
+                f'fontcolor="{fontcolor}", penwidth={penwidth}, style="{style}"];'
+            )
+
+        # Define edges
+        for src, dst, label in _GRAPH_EDGES:
+            edge_style = ""
+            if label:
+                edge_style = f'label="{label}", style=dashed, color="#dc3545"'
+            else:
+                if src in done_set and dst in done_set:
+                    edge_style = 'color="#28a745", penwidth=2'
+                else:
+                    edge_style = 'color="#dee2e6"'
+            dot_lines.append(f"    {src} -> {dst} [{edge_style}];")
+
+        dot_lines.append("}")
+        return "\n".join(dot_lines)
+
+    # Track LLM sub-calls for fine-grained progress
+    _prev_call_count = len(_shared.call_log)
+
     for event in pipeline_app.stream({"question": question, "retry": 0}):
         for node_name, node_output in event.items():
             steps.append(node_name)
             if isinstance(node_output, dict):
                 merged.update(node_output)
+        _prev_call_count = len(_shared.call_log)
 
-        # Replace entire progress display each iteration
         with progress_container.container():
-            st.caption(f"處理中... ({len(steps)} nodes)")
-            for i, name in enumerate(steps):
-                icon = "✅" if i < len(steps) - 1 else "⏳"
-                st.write(f"{icon} {name}")
+            elapsed_so_far = time.time() - start_time
+            # Current status line with last sub-call
+            all_calls = _shared.call_log
+            last_purpose = all_calls[-1]["purpose"] if all_calls else ""
+            st.caption(
+                f"⏳ 處理中... ({len(steps)} steps, {elapsed_so_far:.1f}s) → {last_purpose}"
+            )
+            dot_code = _render_mermaid(steps, running=True)
+            st.graphviz_chart(dot_code, use_container_width=True)
 
     elapsed = time.time() - start_time
-    # Final: replace with completed status
+    # Final state: graph + summary of all LLM calls
+    all_calls = _shared.call_log
     with progress_container.container():
-        st.caption(f"完成（{elapsed:.1f}s, {len(steps)} nodes）")
-        for name in steps:
-            st.write(f"✅ {name}")
+        st.caption(
+            f"✅ 完成（{elapsed:.1f}s, {len(steps)} nodes, {len(all_calls)} LLM calls）"
+        )
+        dot_code = _render_mermaid(steps, running=False)
+        st.graphviz_chart(dot_code, use_container_width=True)
 
     # ── Answer ──
     with st.chat_message("assistant"):
@@ -205,6 +346,7 @@ if question:
     chart_b64 = merged.get("chart_image", "")
     if chart_html:
         import streamlit.components.v1 as components
+
         components.html(chart_html, height=550, scrolling=True)
     elif chart_b64:
         st.image(base64.b64decode(chart_b64), width=700)
@@ -290,13 +432,19 @@ if question:
                 with tabs[0]:
                     inp = call["input"]
                     if len(inp) > 8000:
-                        st.code(inp[:8000] + f"\n\n... ({len(inp):,} chars total)", language="text")
+                        st.code(
+                            inp[:8000] + f"\n\n... ({len(inp):,} chars total)",
+                            language="text",
+                        )
                     else:
                         st.code(inp, language="text")
                 with tabs[1]:
                     out = call["output"]
                     if len(out) > 8000:
-                        st.code(out[:8000] + f"\n\n... ({len(out):,} chars total)", language="text")
+                        st.code(
+                            out[:8000] + f"\n\n... ({len(out):,} chars total)",
+                            language="text",
+                        )
                     else:
                         st.code(out, language="text")
                 if i < len(_call_log) - 1:

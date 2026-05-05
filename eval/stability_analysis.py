@@ -42,7 +42,15 @@ def main():
     n = len(tags)
 
     # 收集每題在每次實驗的對錯
-    question_runs = defaultdict(lambda: {"correct": 0, "wrong": 0, "db_id": "", "difficulty": "", "question": ""})
+    question_runs = defaultdict(
+        lambda: {
+            "correct": 0,
+            "wrong": 0,
+            "db_id": "",
+            "difficulty": "",
+            "question": "",
+        }
+    )
 
     for tag in tags:
         results = load_results(tag)
@@ -57,10 +65,10 @@ def main():
                 entry["wrong"] += 1
 
     # 分類
-    always_wrong = []   # 5/5 錯
-    often_wrong = []    # 3-4/5 錯
-    sometimes_wrong = [] # 1-2/5 錯
-    always_right = []   # 0/5 錯
+    always_wrong = []  # 5/5 錯
+    often_wrong = []  # 3-4/5 錯
+    sometimes_wrong = []  # 1-2/5 錯
+    always_right = []  # 0/5 錯
 
     for qid, info in sorted(question_runs.items()):
         wrong_count = info["wrong"]
@@ -86,10 +94,18 @@ def main():
     total_q = len(question_runs)
     print(f"=== 穩定性分析 ({n} 次實驗: {', '.join(tags)}) ===\n")
     print(f"總題數: {total_q}")
-    print(f"  總是對 (0/{n} 錯): {len(always_right)} 題 ({len(always_right)/total_q*100:.1f}%)")
-    print(f"  偶爾錯 (1-2/{n} 錯): {len(sometimes_wrong)} 題 ({len(sometimes_wrong)/total_q*100:.1f}%)")
-    print(f"  容易錯 (3-4/{n} 錯): {len(often_wrong)} 題 ({len(often_wrong)/total_q*100:.1f}%)")
-    print(f"  總是錯 ({n}/{n} 錯): {len(always_wrong)} 題 ({len(always_wrong)/total_q*100:.1f}%)")
+    print(
+        f"  總是對 (0/{n} 錯): {len(always_right)} 題 ({len(always_right)/total_q*100:.1f}%)"
+    )
+    print(
+        f"  偶爾錯 (1-2/{n} 錯): {len(sometimes_wrong)} 題 ({len(sometimes_wrong)/total_q*100:.1f}%)"
+    )
+    print(
+        f"  容易錯 (3-4/{n} 錯): {len(often_wrong)} 題 ({len(often_wrong)/total_q*100:.1f}%)"
+    )
+    print(
+        f"  總是錯 ({n}/{n} 錯): {len(always_wrong)} 題 ({len(always_wrong)/total_q*100:.1f}%)"
+    )
 
     # 按 DB 細分
     for category_name, category_list in [
@@ -110,7 +126,9 @@ def main():
             diff_str = ", ".join(f"{d}: {c}" for d, c in sorted(diff_counts.items()))
             print(f"\n  {db_id} ({len(items)} 題 — {diff_str}):")
             for row in sorted(items, key=lambda x: -x["wrong_count"]):
-                print(f"    #{row['qid']:5d} [{row['difficulty']:12s}] {row['error_rate']} | {row['question']}")
+                print(
+                    f"    #{row['qid']:5d} [{row['difficulty']:12s}] {row['error_rate']} | {row['question']}"
+                )
 
     # 存 JSON
     output = {

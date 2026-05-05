@@ -21,6 +21,7 @@ PROJECT_DIR = EVAL_DIR.parent
 sys.path.insert(0, str(PROJECT_DIR))
 
 from dotenv import load_dotenv
+
 load_dotenv(EVAL_DIR / ".env.eval", override=True)
 
 # 我們測試的 3 個 DB
@@ -119,7 +120,9 @@ def llm_judge(question: str, expected: list, actual_answer: str) -> dict:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", required=True, help="Model name (e.g. gemma3-27b) or 'all'")
+    parser.add_argument(
+        "--model", required=True, help="Model name (e.g. gemma3-27b) or 'all'"
+    )
     parser.add_argument("--db", default=None, help="Only evaluate this DB")
     parser.add_argument("--limit", type=int, default=None)
     args = parser.parse_args()
@@ -150,10 +153,10 @@ def main():
             # 篩選該 DB 的題目
             candidates = [q for q in all_questions if q["db_id"] == db_id]
             if args.limit:
-                candidates = candidates[:args.limit]
+                candidates = candidates[: args.limit]
 
             # 結果目錄
-            result_dir = EVAL_DIR / "results" / f"deepeye_{model_name}" 
+            result_dir = EVAL_DIR / "results" / f"deepeye_{model_name}"
             result_dir.mkdir(parents=True, exist_ok=True)
 
             print(f"\n  {db_id} ({len(candidates)} 題)")
@@ -196,7 +199,9 @@ def main():
                     results.append(verdict)
                     _save(log_path, item, "", expected, pred_sql, [], verdict)
                     icon = "❌"
-                    print(f"    [{i+1}/{len(candidates)}] #{qid} {icon} SQL error: {str(e)[:50]}")
+                    print(
+                        f"    [{i+1}/{len(candidates)}] #{qid} {icon} SQL error: {str(e)[:50]}"
+                    )
                     continue
 
                 # Format + LLM Judge
@@ -206,7 +211,9 @@ def main():
                 _save(log_path, item, "", expected, pred_sql, actual, verdict, answer)
 
                 icon = "✅" if verdict.get("correct") else "❌"
-                print(f"    [{i+1}/{len(candidates)}] #{qid} ({item['difficulty']}) {icon}")
+                print(
+                    f"    [{i+1}/{len(candidates)}] #{qid} ({item['difficulty']}) {icon}"
+                )
 
             # 統計
             total = len(results)

@@ -10,6 +10,11 @@
    - 數值允許微小四捨五入差異
    - 列表不要求順序一致
    - 部分正確但方向正確視為正確
+4. PG gold fallback：若 SQLite judge 判錯，對符合資格的題目改用 PG gold result 重新判斷
+   - 背景：部分 BIRD gold SQL 在 SQLite 和 PostgreSQL 上因型別差異（日期排序、NULL 處理等）產生不同結果
+   - 預先用 `generate_pg_gold.py` 在 PG 上執行 gold SQL 並存入 `databases/*/pg_gold_results.json`
+   - 用 `validate_pg_gold.py` 驗證哪些題目的 PG 結果與 SQLite 結果一致或僅順序不同（eligible）
+   - 只有 eligible 題目才會觸發 fallback，避免放寬標準
 
 ## 評測結果摘要
 
@@ -21,18 +26,19 @@
 | v0.2.0 | 176/259 (67.9%) | 62 (69.7%) | 43 (67.2%) | 71 (67.0%) |
 | v0.3.0 | 182/259 (70.3%) | 62 (69.7%) | 43 (67.2%) | 77 (72.6%) |
 | v0.4.0 (Qwen3) | ~187/259 (~72%) | ~63 (~71%) | ~49 (~77%) | ~75 (~71%) |
+| v0.5.0 | ~194/259 (~75%) | ~65 (~73%) | ~49 (~77%) | ~80 (~75%) |
 
-v0.4.0 uses Qwen3 Next 80B + Qwen3 Coder 30B on Bedrock with English prompts and analyze-and-refine schema corrections.
+v0.5.0 adds dynamic QA advice (pitfall detection) and warning library for code generation on top of v0.4.0.
 
 See `EXPERIMENT_LOG.md` for full experiment history.
 
 ### 各資料庫表現
 
-| 資料庫 | 題數 | v0.1.0 | v0.2.0 | v0.3.0 | v0.4.0 (Qwen3) |
-|--------|------|--------|--------|--------|----------------|
-| california_schools | 89 | 67.4% | 69.7% | 69.7% | ~71% |
-| financial | 106 | 65.1% | 67.0% | 72.6% | ~71% |
-| debit_card_specializing | 64 | 60.9% | 67.2% | 67.2% | ~77% |
+| 資料庫 | 題數 | v0.1.0 | v0.2.0 | v0.3.0 | v0.4.0 (Qwen3) | v0.5.0 |
+|--------|------|--------|--------|--------|----------------|--------|
+| california_schools | 89 | 67.4% | 69.7% | 69.7% | ~71% | ~73% |
+| financial | 106 | 65.1% | 67.0% | 72.6% | ~71% | ~75% |
+| debit_card_specializing | 64 | 60.9% | 67.2% | 67.2% | ~77% | ~77% |
 
 ## Setup
 
@@ -72,7 +78,7 @@ python eval/import_to_pg.py
 - 偵測日期格式欄位轉為 DATE 型別
 - 建立 `bird_` 前綴的獨立 database
 
-## 復現 v0.4.0 評測結果
+## 復現 v0.5.0 評測結果
 
 完成 Setup 步驟 1-3 後，依序執行：
 
@@ -85,22 +91,27 @@ python -u eval/generate_schema_summary.py --all --model-tag gpt41mini_v9
 PROMPT_PROFILE=qwen3_en LLM_PROVIDER=bedrock LLM_MODEL=qwen.qwen3-next-80b-a3b \
 SQL_LLM_PROVIDER=bedrock SQL_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
 CODE_LLM_PROVIDER=bedrock CODE_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
-python eval/run_eval.py --db california_schools --full-desc --desc-tag gpt41mini_v9 --tag v040 --workers 3
+DOMAIN_RULES=false \
+python eval/run_eval.py --db california_schools --full-desc --desc-tag gpt41mini_v9 --tag v050 --workers 10
 
 # debit_card_specializing
 PROMPT_PROFILE=qwen3_en LLM_PROVIDER=bedrock LLM_MODEL=qwen.qwen3-next-80b-a3b \
 SQL_LLM_PROVIDER=bedrock SQL_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
 CODE_LLM_PROVIDER=bedrock CODE_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
-python eval/run_eval.py --db debit_card_specializing --full-desc --desc-tag gpt41mini_v9 --tag v040 --workers 3
+DOMAIN_RULES=false \
+python eval/run_eval.py --db debit_card_specializing --full-desc --desc-tag gpt41mini_v9 --tag v050 --workers 10
 
 # financial
 PROMPT_PROFILE=qwen3_en LLM_PROVIDER=bedrock LLM_MODEL=qwen.qwen3-next-80b-a3b \
 SQL_LLM_PROVIDER=bedrock SQL_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
 CODE_LLM_PROVIDER=bedrock CODE_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
-python eval/run_eval.py --db financial --full-desc --desc-tag gpt41mini_v9 --tag v040 --workers 3
+DOMAIN_RULES=false \
+python eval/run_eval.py --db financial --full-desc --desc-tag gpt41mini_v9 --tag v050 --workers 10
 ```
 
-預期結果：~72% overall（±3% due to LLM randomness）。
+預期結果：~75% overall（±4% due to LLM randomness）。
+
+v0.5.0 新增的 dynamic QA advice 和 warning library 為自動啟用，不需要額外參數或環境變數。
 
 ## 執行評測（通用）
 
@@ -124,7 +135,8 @@ python eval/run_eval.py --db california_schools --full-desc --tag desql_test --w
 PROMPT_PROFILE=qwen3_en LLM_PROVIDER=bedrock LLM_MODEL=qwen.qwen3-next-80b-a3b \
 SQL_LLM_PROVIDER=bedrock SQL_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
 CODE_LLM_PROVIDER=bedrock CODE_LLM_MODEL=qwen.qwen3-coder-30b-a3b-v1:0 \
-python eval/run_eval.py --db california_schools --full-desc --tag qwen3_test --workers 3
+DOMAIN_RULES=false \
+python eval/run_eval.py --db california_schools --full-desc --desc-tag gpt41mini_v9 --tag qwen3_test --workers 10
 
 # 不使用 evidence hint
 python eval/run_eval.py --db california_schools --no-evidence --tag desql_no_evidence
@@ -172,12 +184,16 @@ python eval/generate_html.py eval/report/california_schools/REPORT.md
 |------|------|
 | `run_eval.py` | DeSQL pipeline 評測腳本 |
 | `import_to_pg.py` | SQLite → PostgreSQL 匯入工具 |
+| `generate_pg_gold.py` | 在 PG 上執行 gold SQL 並存入 JSON（PG gold fallback 用） |
+| `validate_pg_gold.py` | 驗證 PG gold 與 SQLite gold 的一致性，產出 eligible 題目清單 |
+| `analyze_result.py` | 單次實驗結果分析（vs baseline 比較、validator 觸發統計） |
 | `summary.py` | 準確率統計（支援多組比較） |
 | `generate_report.py` | 生成 Markdown 報告（含圖表、統計顯著性） |
 | `generate_html.py` | Markdown → 獨立 HTML 轉換 |
 | `rerun_sql.py` | 重新執行指定題目的 SQL |
 | `test_pg.py` | PostgreSQL 連線測試 |
 | `report_template.md` | 報告模板 |
+| `databases/*/pg_gold_results.json` | PG 上執行 gold SQL 的結果快取 |
 | `databases/*/description_compact.txt` | 精簡版欄位描述（由 LLM 從 BIRD CSV 精簡而成） |
 | `databases/*/column_descs_refined_*.json` | 精煉的欄位描述修正（analyze-and-refine 產出） |
 | `databases/*/dataset_description.md` | 資料集說明 |
@@ -194,8 +210,19 @@ python eval/generate_html.py eval/report/california_schools/REPORT.md
 | `--full-desc` | 注入 BIRD CSV 欄位描述 | false |
 | `--desc-tag` | 指定精煉描述版本（如 gpt41mini_v9） | - |
 | `--workers` | 並行 worker 數 | 1 |
+| `--pg-gold` | 使用 PG gold results 作為標準答案（而非 SQLite） | false |
 | `--with-desc` | 附加精簡版欄位描述（舊版） | false |
 | `--no-evidence` | 不使用 evidence hint | false |
+
+### 環境變數
+
+| 變數 | 說明 |
+|------|------|
+| `PROMPT_PROFILE` | Prompt profile（如 `qwen3_en`） |
+| `LLM_PROVIDER` / `LLM_MODEL` | 主 LLM（QA node） |
+| `SQL_LLM_PROVIDER` / `SQL_LLM_MODEL` | SQL 生成 LLM |
+| `CODE_LLM_PROVIDER` / `CODE_LLM_MODEL` | Code 生成 LLM |
+| `DOMAIN_RULES` | 是否啟用 domain-specific SQL rules（設 `false` 關閉） |
 
 ## 已測試的資料庫
 

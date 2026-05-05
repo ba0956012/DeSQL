@@ -2,6 +2,7 @@
 分析 validate_sql_result 實驗結果
 用法: python eval/analyze_result.py --tag test_programmer --baseline test_bugfix
 """
+
 import json
 import os
 import argparse
@@ -61,7 +62,11 @@ def main():
 
     # === 2. Validator 觸發分析 ===
     exp = load_results(args.tag)
-    triggered = [r for r in exp.values() if r.get("sql_validation") or r.get("sql_validation_count", 0) > 0]
+    triggered = [
+        r
+        for r in exp.values()
+        if r.get("sql_validation") or r.get("sql_validation_count", 0) > 0
+    ]
     print(f"\n=== Validator 觸發分析 ===")
     print(f"  總觸發: {len(triggered)}/{len(exp)}")
 
@@ -77,7 +82,9 @@ def main():
             val = r.get("sql_validation", "") or "(cleared after retry)"
             cnt = r.get("sql_validation_count", 0)
             cnt_str = f" x{cnt}" if cnt > 1 else ""
-            print(f"    {icon} #{r['question_id']} ({r['difficulty']}){cnt_str} — {val[:80]}")
+            print(
+                f"    {icon} #{r['question_id']} ({r['difficulty']}){cnt_str} — {val[:80]}"
+            )
 
     # === 3. 跟 baseline 比較 ===
     base = load_results(args.baseline)
@@ -101,7 +108,9 @@ def main():
     base_c = sum(1 for r in base.values() if r.get("judge_correct"))
     print(f"  Baseline: {base_c}/{len(base)}")
     print(f"  Experiment: {grand_c}/{grand_t}")
-    print(f"  Improved: {len(improved)}, Regressed: {len(regressed)}, Net: {len(improved)-len(regressed)}")
+    print(
+        f"  Improved: {len(improved)}, Regressed: {len(regressed)}, Net: {len(improved)-len(regressed)}"
+    )
 
     if improved:
         print(f"\n  ✅ Improved (baseline錯→實驗對):")
@@ -142,11 +151,25 @@ def main():
         print(f"  True Positive (baseline也錯，validator正確發現): {val_tp}")
         print(f"  False Positive (baseline對，validator誤判): {val_fp}")
         if total_known:
-            print(f"  Precision: {val_tp}/{total_known} = {val_tp/total_known*100:.0f}%")
+            print(
+                f"  Precision: {val_tp}/{total_known} = {val_tp/total_known*100:.0f}%"
+            )
 
         # Retry 效果：觸發的題目中，retry 後答對了幾題
-        retry_helped = sum(1 for r in triggered if r.get("judge_correct") and r["question_id"] in base and not base[r["question_id"]].get("judge_correct"))
-        retry_hurt = sum(1 for r in triggered if not r.get("judge_correct") and r["question_id"] in base and base[r["question_id"]].get("judge_correct"))
+        retry_helped = sum(
+            1
+            for r in triggered
+            if r.get("judge_correct")
+            and r["question_id"] in base
+            and not base[r["question_id"]].get("judge_correct")
+        )
+        retry_hurt = sum(
+            1
+            for r in triggered
+            if not r.get("judge_correct")
+            and r["question_id"] in base
+            and base[r["question_id"]].get("judge_correct")
+        )
         print(f"\n=== Retry 效果 (觸發的題目) ===")
         print(f"  Retry 救回 (baseline錯→實驗對): {retry_helped}")
         print(f"  Retry 搞壞 (baseline對→實驗錯): {retry_hurt}")

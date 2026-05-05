@@ -37,7 +37,9 @@ def build_html(chart_type: str, reason: str, chart_html: str, chart_image: str) 
         body = f'<iframe srcdoc="{chart_html.replace(chr(34), "&quot;")}" style="width:100%;height:600px;border:none;"></iframe>'
     elif chart_image:
         # matplotlib: base64 PNG
-        body = f'<img src="data:image/png;base64,{chart_image}" style="max-width:100%;">'
+        body = (
+            f'<img src="data:image/png;base64,{chart_image}" style="max-width:100%;">'
+        )
     else:
         body = '<p style="color:#999;padding:40px;text-align:center;">LLM 判斷不需要圖表</p>'
 
@@ -62,9 +64,17 @@ def build_html(chart_type: str, reason: str, chart_html: str, chart_image: str) 
 
 
 def main():
-    parser = argparse.ArgumentParser(description="呼叫 Chart Service API 並產生 test-chart.html")
-    parser.add_argument("--url", default="http://aiot-chart-service-alb-247680518.ap-northeast-1.elb.amazonaws.com", help="Chart Service base URL")
-    parser.add_argument("--engine", default="echarts", choices=["echarts", "matplotlib"])
+    parser = argparse.ArgumentParser(
+        description="呼叫 Chart Service API 並產生 test-chart.html"
+    )
+    parser.add_argument(
+        "--url",
+        default="http://aiot-chart-service-alb-247680518.ap-northeast-1.elb.amazonaws.com",
+        help="Chart Service base URL",
+    )
+    parser.add_argument(
+        "--engine", default="echarts", choices=["echarts", "matplotlib"]
+    )
     parser.add_argument("--chart-type", default="auto")
     parser.add_argument("--question", default="各類別銷售佔比")
     parser.add_argument("--data", default=None, help="JSON 檔案路徑或 JSON 字串")

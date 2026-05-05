@@ -83,15 +83,15 @@ def test_property3_question_data_consistency(pair: tuple[str, int]) -> None:
     data = resp.json()
     expected = _BY_KEY[(db_id, question_id)]
 
-    assert data["question"] == expected["question"], (
-        f"question mismatch for ({db_id}, {question_id})"
-    )
-    assert data["evidence"] == expected.get("evidence", ""), (
-        f"evidence mismatch for ({db_id}, {question_id})"
-    )
-    assert data["difficulty"] == expected.get("difficulty", ""), (
-        f"difficulty mismatch for ({db_id}, {question_id})"
-    )
+    assert (
+        data["question"] == expected["question"]
+    ), f"question mismatch for ({db_id}, {question_id})"
+    assert data["evidence"] == expected.get(
+        "evidence", ""
+    ), f"evidence mismatch for ({db_id}, {question_id})"
+    assert data["difficulty"] == expected.get(
+        "difficulty", ""
+    ), f"difficulty mismatch for ({db_id}, {question_id})"
 
 
 # ── Property 4: 提示列表一致性 ──────────────────────────────────────
@@ -110,12 +110,12 @@ def test_property4_hints_list_consistency(db_id: str) -> None:
     expected_questions = _BY_DB[db_id]
 
     # Length must match
-    assert data["total"] == len(expected_questions), (
-        f"hints total {data['total']} != expected {len(expected_questions)} for {db_id}"
-    )
-    assert len(data["hints"]) == len(expected_questions), (
-        f"hints list length {len(data['hints'])} != expected {len(expected_questions)} for {db_id}"
-    )
+    assert data["total"] == len(
+        expected_questions
+    ), f"hints total {data['total']} != expected {len(expected_questions)} for {db_id}"
+    assert len(data["hints"]) == len(
+        expected_questions
+    ), f"hints list length {len(data['hints'])} != expected {len(expected_questions)} for {db_id}"
 
     # Each hint must match dev.json
     hints_by_qid = {h["question_id"]: h for h in data["hints"]}
@@ -123,12 +123,12 @@ def test_property4_hints_list_consistency(db_id: str) -> None:
         qid = q["question_id"]
         assert qid in hints_by_qid, f"question_id {qid} missing from hints for {db_id}"
         hint = hints_by_qid[qid]
-        assert hint["question"] == q["question"], (
-            f"question mismatch for ({db_id}, {qid})"
-        )
-        assert hint["evidence"] == q.get("evidence", ""), (
-            f"evidence mismatch for ({db_id}, {qid})"
-        )
+        assert (
+            hint["question"] == q["question"]
+        ), f"question mismatch for ({db_id}, {qid})"
+        assert hint["evidence"] == q.get(
+            "evidence", ""
+        ), f"evidence mismatch for ({db_id}, {qid})"
 
 
 # ── Property 5: 無效 DB_ID 一致回傳 404 ─────────────────────────────
@@ -139,7 +139,15 @@ _VALID_DB_ID_SET = set(_VALID_DB_IDS)
 
 
 @settings(max_examples=100)
-@given(fake_db=text(alphabet=characters(whitelist_categories=("L", "N", "P", "S"), blacklist_characters="/"), min_size=1, max_size=50))
+@given(
+    fake_db=text(
+        alphabet=characters(
+            whitelist_categories=("L", "N", "P", "S"), blacklist_characters="/"
+        ),
+        min_size=1,
+        max_size=50,
+    )
+)
 def test_property5_invalid_db_id_returns_404(fake_db: str) -> None:
     """所有端點對不存在的 DB_ID 回傳 404。"""
     assume(fake_db not in _VALID_DB_ID_SET)
@@ -153,18 +161,18 @@ def test_property5_invalid_db_id_returns_404(fake_db: str) -> None:
 
     for url in endpoints:
         resp = _CLIENT.get(url)
-        assert resp.status_code == 404, (
-            f"Expected 404 for GET {url}, got {resp.status_code}"
-        )
+        assert (
+            resp.status_code == 404
+        ), f"Expected 404 for GET {url}, got {resp.status_code}"
 
     # POST evaluate endpoint
     resp = _CLIENT.post(
         f"/databases/{fake_db}/questions/0/evaluate",
         json={"answer": "test"},
     )
-    assert resp.status_code == 404, (
-        f"Expected 404 for POST evaluate with db_id={fake_db!r}, got {resp.status_code}"
-    )
+    assert (
+        resp.status_code == 404
+    ), f"Expected 404 for POST evaluate with db_id={fake_db!r}, got {resp.status_code}"
 
 
 # ── Property 6: 無效 Question_ID 回傳 404 ───────────────────────────
@@ -177,25 +185,27 @@ def test_property5_invalid_db_id_returns_404(fake_db: str) -> None:
     db_id=sampled_from(_VALID_DB_IDS),
     question_id=integers(min_value=-10000, max_value=100000),
 )
-def test_property6_invalid_question_id_returns_404(db_id: str, question_id: int) -> None:
+def test_property6_invalid_question_id_returns_404(
+    db_id: str, question_id: int
+) -> None:
     """有效 DB_ID + 不存在的 Question_ID → 404。"""
     valid_qids = _VALID_QIDS_BY_DB[db_id]
     assume(question_id not in valid_qids)
 
     # GET question
     resp = _CLIENT.get(f"/databases/{db_id}/questions/{question_id}")
-    assert resp.status_code == 404, (
-        f"Expected 404 for GET question ({db_id}, {question_id}), got {resp.status_code}"
-    )
+    assert (
+        resp.status_code == 404
+    ), f"Expected 404 for GET question ({db_id}, {question_id}), got {resp.status_code}"
 
     # POST evaluate
     resp = _CLIENT.post(
         f"/databases/{db_id}/questions/{question_id}/evaluate",
         json={"answer": "test"},
     )
-    assert resp.status_code == 404, (
-        f"Expected 404 for POST evaluate ({db_id}, {question_id}), got {resp.status_code}"
-    )
+    assert (
+        resp.status_code == 404
+    ), f"Expected 404 for POST evaluate ({db_id}, {question_id}), got {resp.status_code}"
 
 
 # ── Property 7: 空答案拒絕 ──────────────────────────────────────────
@@ -215,6 +225,7 @@ def test_property7_empty_answer_rejected(answer: str) -> None:
         f"/databases/{_SAMPLE_DB_ID}/questions/{_SAMPLE_QID}/evaluate",
         json={"answer": answer},
     )
-    assert resp.status_code in (400, 422), (
-        f"Expected 400/422 for whitespace answer {answer!r}, got {resp.status_code}"
-    )
+    assert resp.status_code in (
+        400,
+        422,
+    ), f"Expected 400/422 for whitespace answer {answer!r}, got {resp.status_code}"

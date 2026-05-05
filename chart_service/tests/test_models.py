@@ -23,7 +23,6 @@ from pydantic import ValidationError
 
 from chart_service.models import VALID_CHART_TYPES, ChartRequest
 
-
 # ── Shared strategies ────────────────────────────────────────────────
 
 _VALID_ENGINES = ["echarts", "matplotlib"]
@@ -66,9 +65,7 @@ def test_property11_whitespace_only_question_rejected(
     bad_engine=text(min_size=1, max_size=30),
     data=_valid_data,
 )
-def test_property12_invalid_engine_rejected(
-    bad_engine: str, data: list[dict]
-) -> None:
+def test_property12_invalid_engine_rejected(bad_engine: str, data: list[dict]) -> None:
     """不在 {"echarts", "matplotlib"} 中的 engine 值應被拒絕。"""
     assume(bad_engine not in _VALID_ENGINES)
     with pytest.raises(ValidationError):
@@ -88,7 +85,10 @@ def test_property12_invalid_chart_type_rejected(
     assume(bad_chart_type not in VALID_CHART_TYPES)
     with pytest.raises(ValidationError):
         ChartRequest(
-            data=data, question="test question", engine=engine, chart_type=bad_chart_type
+            data=data,
+            question="test question",
+            engine=engine,
+            chart_type=bad_chart_type,
         )
 
 

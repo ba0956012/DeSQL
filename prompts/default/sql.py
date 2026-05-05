@@ -27,7 +27,15 @@ def build_task_section(sql_task: str, tables_info: str, join_info: str) -> str:
 """
 
 
-def build_sql_prompt_with_task(task_section, rules_text, schema_text, schema_desc_section, enum_info, conditions_context, sql_error_context) -> str:
+def build_sql_prompt_with_task(
+    task_section,
+    rules_text,
+    schema_text,
+    schema_desc_section,
+    enum_info,
+    conditions_context,
+    sql_error_context,
+) -> str:
     return f"""根據以下 SQL 任務指令和資料庫 schema，生成一個 PostgreSQL SELECT 查詢。
 {task_section}
 規則：
@@ -43,7 +51,15 @@ def build_sql_prompt_with_task(task_section, rules_text, schema_text, schema_des
 只輸出純 SQL，不要任何解釋。"""
 
 
-def build_sql_prompt_no_task(question, rules_text, schema_text, schema_desc_section, enum_info, conditions_context, sql_error_context) -> str:
+def build_sql_prompt_no_task(
+    question,
+    rules_text,
+    schema_text,
+    schema_desc_section,
+    enum_info,
+    conditions_context,
+    sql_error_context,
+) -> str:
     return f"""根據使用者問題和資料庫 schema，生成一個簡單的 PostgreSQL SELECT 查詢。
 
 規則：

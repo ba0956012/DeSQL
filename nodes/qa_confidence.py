@@ -10,8 +10,16 @@ from langchain_core.messages import HumanMessage
 from llm import llm as reviewer_llm, _build_llm
 from utils import debug_log
 
-ENABLE_QA_CONFIDENCE = os.getenv("ENABLE_QA_CONFIDENCE", "false").lower() in ("true", "1", "yes")
-ENABLE_QA_REPLAN = os.getenv("ENABLE_QA_REPLAN", "false").lower() in ("true", "1", "yes")
+ENABLE_QA_CONFIDENCE = os.getenv("ENABLE_QA_CONFIDENCE", "false").lower() in (
+    "true",
+    "1",
+    "yes",
+)
+ENABLE_QA_REPLAN = os.getenv("ENABLE_QA_REPLAN", "false").lower() in (
+    "true",
+    "1",
+    "yes",
+)
 QA_REPLAN_THRESHOLD = int(os.getenv("QA_REPLAN_THRESHOLD", "70"))
 
 # Support independent model for confidence scoring
@@ -79,6 +87,7 @@ def score_qa_confidence(state):
     # Use full raw schema (without column descriptions) for cleaner review
     # Descriptions make DDL too noisy and LLM may miss tables
     from db import SCHEMA_INFO
+
     schema = SCHEMA_INFO
 
     prompt = CONFIDENCE_PROMPT.format(
@@ -104,10 +113,12 @@ def score_qa_confidence(state):
         issues = result.get("issues", [])
         suggestion = result.get("suggestion", "")
 
-        debug_log("qa_confidence",
-                  confidence=confidence,
-                  issues=issues[:3] if issues else [],
-                  suggestion=suggestion[:100])
+        debug_log(
+            "qa_confidence",
+            confidence=confidence,
+            issues=issues[:3] if issues else [],
+            suggestion=suggestion[:100],
+        )
 
     except Exception as e:
         debug_log("qa_confidence", error=str(e))
@@ -117,7 +128,11 @@ def score_qa_confidence(state):
     output = {"qa_confidence_score": confidence, "qa_confidence_issues": issues[:3]}
 
     # If re-plan enabled and confidence is low, pass feedback for re-planning
-    if ENABLE_QA_REPLAN and confidence < QA_REPLAN_THRESHOLD and not state.get("qa_replanned"):
+    if (
+        ENABLE_QA_REPLAN
+        and confidence < QA_REPLAN_THRESHOLD
+        and not state.get("qa_replanned")
+    ):
         feedback_parts = []
         if issues:
             feedback_parts.append("Issues found: " + "; ".join(issues[:2]))

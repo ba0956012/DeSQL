@@ -9,7 +9,11 @@ from langchain_core.messages import HumanMessage
 from llm import llm as validator_llm
 from utils import debug_log
 
-ENABLE_RESULT_VALIDATION = os.getenv("ENABLE_RESULT_VALIDATION", "false").lower() in ("true", "1", "yes")
+ENABLE_RESULT_VALIDATION = os.getenv("ENABLE_RESULT_VALIDATION", "false").lower() in (
+    "true",
+    "1",
+    "yes",
+)
 
 
 def _build_data_profile(sql_result):
@@ -44,7 +48,9 @@ def _build_data_profile(sql_result):
                 except (ValueError, TypeError):
                     break
             if len(numeric_vals) > 5:
-                parts.append(f"range=[{min(numeric_vals):.2f} ~ {max(numeric_vals):.2f}]")
+                parts.append(
+                    f"range=[{min(numeric_vals):.2f} ~ {max(numeric_vals):.2f}]"
+                )
 
         lines.append(", ".join(parts))
 
@@ -135,7 +141,9 @@ def validate_result(state):
         # 解析失敗就放行
         return {"result_validated": True}
 
-    debug_log("validate_result", valid=result.get("valid"), issue=result.get("issue", ""))
+    debug_log(
+        "validate_result", valid=result.get("valid"), issue=result.get("issue", "")
+    )
 
     if result.get("valid", True):
         return {"result_validated": True, "error": ""}

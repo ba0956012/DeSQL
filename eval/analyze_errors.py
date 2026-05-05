@@ -16,6 +16,7 @@ from collections import Counter
 
 EVAL_DIR = Path(__file__).parent
 
+
 def load_results(tag, db_filter=None):
     results = []
     for f in sorted(glob.glob(str(EVAL_DIR / "results" / tag / "*.json"))):
@@ -25,6 +26,7 @@ def load_results(tag, db_filter=None):
             continue
         results.append(r)
     return results
+
 
 def run_gold_sql(db_id, gold_sql):
     sqlite_path = EVAL_DIR / "databases" / db_id / f"{db_id}.sqlite"
@@ -39,6 +41,7 @@ def run_gold_sql(db_id, gold_sql):
     except Exception as e:
         return f"ERROR: {e}"
 
+
 def classify_error(r, gold_result):
     """分類錯誤的環節"""
     pipeline_sql = r.get("pipeline_sql", "")
@@ -48,7 +51,11 @@ def classify_error(r, gold_result):
     expected = r.get("expected_result", [])
 
     # 1. Pipeline 完全失敗（無 SQL 產出）
-    if not pipeline_sql or "pipeline error" in judge_reason.lower() or "recursion" in judge_reason.lower():
+    if (
+        not pipeline_sql
+        or "pipeline error" in judge_reason.lower()
+        or "recursion" in judge_reason.lower()
+    ):
         return "pipeline_crash", "Pipeline 崩潰或 recursion limit"
 
     # 2. SQL 執行錯誤
@@ -56,7 +63,12 @@ def classify_error(r, gold_result):
         return "sql_exec_error", "SQL 執行失敗"
 
     # 3. 查無資料
-    if "查無" in pipeline_answer or "無法" in pipeline_answer[:20] or "沒有" in pipeline_answer[:20] or "no data" in pipeline_answer.lower()[:30]:
+    if (
+        "查無" in pipeline_answer
+        or "無法" in pipeline_answer[:20]
+        or "沒有" in pipeline_answer[:20]
+        or "no data" in pipeline_answer.lower()[:30]
+    ):
         return "empty_result", "SQL 結果為空（WHERE 條件太嚴格或值不匹配）"
 
     # 4. 比較 pipeline SQL 和 gold SQL 的結構差異
@@ -72,9 +84,15 @@ def classify_error(r, gold_result):
     g_has_where = "where" in g_sql_lower
 
     # 5. 數值/計算錯誤（judge 說數值不符）
-    if any(w in judge_reason for w in ["數值", "數量", "分數", "比例", "百分", "不一致", "不符"]):
+    if any(
+        w in judge_reason
+        for w in ["數值", "數量", "分數", "比例", "百分", "不一致", "不符"]
+    ):
         if abs(p_joins - g_joins) >= 1:
-            return "wrong_join", f"JOIN 結構不同（pipeline {p_joins} joins vs gold {g_joins} joins），導致數值錯誤"
+            return (
+                "wrong_join",
+                f"JOIN 結構不同（pipeline {p_joins} joins vs gold {g_joins} joins），導致數值錯誤",
+            )
         return "wrong_calculation", "SQL 欄位或計算邏輯錯誤"
 
     # 6. 回答不完整
@@ -92,7 +110,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--tag", default="desql_41mini_cn_validate")
     parser.add_argument("--db", default=None)
-    parser.add_argument("--difficulty", default=None, help="simple/moderate/challenging")
+    parser.add_argument(
+        "--difficulty", default=None, help="simple/moderate/challenging"
+    )
     args = parser.parse_args()
 
     results = load_results(args.tag, args.db)
@@ -110,17 +130,19 @@ def main():
         cat, desc = classify_error(r, gold_result)
         categories[cat] += 1
 
-        details.append({
-            "db_id": r["db_id"],
-            "question_id": r["question_id"],
-            "difficulty": r["difficulty"],
-            "question": r["question"][:60],
-            "category": cat,
-            "description": desc,
-            "gold_sql_short": r["gold_sql"][:80],
-            "pipeline_sql_short": r.get("pipeline_sql", "")[:80],
-            "judge_reason": r.get("judge_reason", "")[:80],
-        })
+        details.append(
+            {
+                "db_id": r["db_id"],
+                "question_id": r["question_id"],
+                "difficulty": r["difficulty"],
+                "question": r["question"][:60],
+                "category": cat,
+                "description": desc,
+                "gold_sql_short": r["gold_sql"][:80],
+                "pipeline_sql_short": r.get("pipeline_sql", "")[:80],
+                "judge_reason": r.get("judge_reason", "")[:80],
+            }
+        )
 
     # 印出分類統計
     print("=== 錯誤環節分佈 ===")
@@ -144,7 +166,9 @@ def main():
     # 印出每題明細
     print(f"\n=== 逐題明細 ===")
     for d in sorted(details, key=lambda x: (x["category"], x["db_id"])):
-        print(f"\n[{d['category']}] {d['db_id']} #{d['question_id']} ({d['difficulty']})")
+        print(
+            f"\n[{d['category']}] {d['db_id']} #{d['question_id']} ({d['difficulty']})"
+        )
         print(f"  Q: {d['question']}")
         print(f"  Desc: {d['description']}")
         print(f"  Gold SQL: {d['gold_sql_short']}")

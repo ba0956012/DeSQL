@@ -20,10 +20,11 @@ def clean_llm_json(text: str) -> dict:
     4. 不合法 JSON（換行、trailing comma、comment 等）透過 json_repair 修復
     """
     import re
+
     text = text.strip()
 
     # 嘗試從 code fence 中提取 JSON block
-    m = re.search(r'```(?:json)?\s*\n(.*?)```', text, re.DOTALL)
+    m = re.search(r"```(?:json)?\s*\n(.*?)```", text, re.DOTALL)
     if m:
         text = m.group(1).strip()
     else:
@@ -38,6 +39,7 @@ def clean_llm_json(text: str) -> dict:
         return json.loads(text)
     except json.JSONDecodeError:
         from json_repair import repair_json
+
         repaired = repair_json(text, return_objects=True)
         if isinstance(repaired, dict):
             return repaired
@@ -46,27 +48,28 @@ def clean_llm_json(text: str) -> dict:
 
 def strip_code_fences(text: str) -> str:
     """清除 LLM 回傳中的 markdown code fences 和尾部說明。
-    
+
     支援兩種格式：
     1. 純 code block: ```python\ncode\n```
     2. 分析文字 + code block: 分析...\n```python\ncode\n```\n說明...
     """
     text = text.strip()
-    
+
     # 找到最後一個 code block（LLM 可能先寫分析再寫 code）
     # 尋找 ```python 或 ``` 開頭的 code block
     import re
+
     # 匹配 ```(python)?\n...code...\n```
-    blocks = list(re.finditer(r'```(?:python)?\s*\n(.*?)```', text, re.DOTALL))
+    blocks = list(re.finditer(r"```(?:python)?\s*\n(.*?)```", text, re.DOTALL))
     if blocks:
         # 取最後一個 code block 的內容
         return blocks[-1].group(1).strip()
-    
+
     # fallback: 原本的邏輯
     if text.startswith("```"):
         text = text.split("\n", 1)[1] if "\n" in text else text[3:]
     if "```" in text:
-        text = text[:text.index("```")]
+        text = text[: text.index("```")]
     return text.strip()
 
 

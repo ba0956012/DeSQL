@@ -57,15 +57,15 @@ def test_property2_question_count_invariant(db_id: str) -> None:
     by_difficulty = result["by_difficulty"]
 
     # Sum of difficulty buckets must equal total
-    assert sum(by_difficulty.values()) == total, (
-        f"by_difficulty sum {sum(by_difficulty.values())} != total {total} for {db_id}"
-    )
+    assert (
+        sum(by_difficulty.values()) == total
+    ), f"by_difficulty sum {sum(by_difficulty.values())} != total {total} for {db_id}"
 
     # total must match the actual count from dev.json
     actual_count = len(_BY_DB.get(db_id, []))
-    assert total == actual_count, (
-        f"total {total} != actual dev.json count {actual_count} for {db_id}"
-    )
+    assert (
+        total == actual_count
+    ), f"total {total} != actual dev.json count {actual_count} for {db_id}"
 
 
 # ── Property 1: 資料庫描述一致性 ──────────────────────────────────
@@ -83,14 +83,18 @@ def test_property1_db_description_consistency(db_id: str) -> None:
 
     # Read expected files directly from disk (empty string if missing)
     original_path = base / "dataset_description.md"
-    expected_original = original_path.read_text(encoding="utf-8") if original_path.exists() else ""
+    expected_original = (
+        original_path.read_text(encoding="utf-8") if original_path.exists() else ""
+    )
 
     compact_path = base / "description_compact.txt"
-    expected_compact = compact_path.read_text(encoding="utf-8") if compact_path.exists() else ""
+    expected_compact = (
+        compact_path.read_text(encoding="utf-8") if compact_path.exists() else ""
+    )
 
-    assert result["original_desc"] == expected_original, (
-        f"original_desc mismatch for {db_id}"
-    )
-    assert result["compact_desc"] == expected_compact, (
-        f"compact_desc mismatch for {db_id}"
-    )
+    assert (
+        result["original_desc"] == expected_original
+    ), f"original_desc mismatch for {db_id}"
+    assert (
+        result["compact_desc"] == expected_compact
+    ), f"compact_desc mismatch for {db_id}"

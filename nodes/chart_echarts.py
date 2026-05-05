@@ -104,7 +104,7 @@ def _render_table_html(data, question, max_rows=50):
     if len(data) > max_rows:
         html_parts.append(
             f'<p style="text-align:center; color:gray; font-size:12px;">'
-            f'（僅顯示前 {max_rows} 筆，共 {len(data)} 筆）</p>'
+            f"（僅顯示前 {max_rows} 筆，共 {len(data)} 筆）</p>"
         )
     html_parts.append("</div>")
     return "\n".join(html_parts)
@@ -125,7 +125,12 @@ def generate_chart(state):
     sql_result = state.get("sql_result", [])
     if not sql_result or len(sql_result) < 3:
         debug_log("generate_chart_echarts", skip="data too small")
-        return {"chart_code": "", "chart_option": "", "chart_html": "", "chart_image": ""}
+        return {
+            "chart_code": "",
+            "chart_option": "",
+            "chart_html": "",
+            "chart_image": "",
+        }
 
     chart_data = state.get("chart_data", [])
     if chart_data and len(chart_data) >= 3:
@@ -169,19 +174,34 @@ def generate_chart(state):
         chart_type = "none"
         reason = "parse error"
 
-    debug_log("generate_chart_echarts_judge", should_chart=should_chart, chart_type=chart_type, insight=reason)
+    debug_log(
+        "generate_chart_echarts_judge",
+        should_chart=should_chart,
+        chart_type=chart_type,
+        insight=reason,
+    )
     if not should_chart or chart_type == "none":
-        return {"chart_code": "", "chart_option": "", "chart_html": "", "chart_image": "", "chart_reason": reason}
+        return {
+            "chart_code": "",
+            "chart_option": "",
+            "chart_html": "",
+            "chart_image": "",
+            "chart_reason": reason,
+        }
 
     # 使用者指定圖表類型
     question_lower = state["question"].lower()
     for kw, ct in {
-        "樹地圖": "treemap", "treemap": "treemap",
-        "圓餅": "pie", "pie": "pie",
-        "折線": "line", "line": "line",
+        "樹地圖": "treemap",
+        "treemap": "treemap",
+        "圓餅": "pie",
+        "pie": "pie",
+        "折線": "line",
+        "line": "line",
         "散佈": "scatter",
         "熱力": "heatmap",
-        "表格": "table", "table": "table",
+        "表格": "table",
+        "table": "table",
     }.items():
         if kw in question_lower:
             chart_type = ct
@@ -191,7 +211,13 @@ def generate_chart(state):
     if chart_type == "table":
         debug_log("generate_chart_echarts", mode="table", rows=len(plot_data))
         html = _render_table_html(plot_data, state["question"])
-        return {"chart_code": "", "chart_option": "", "chart_html": html, "chart_image": "", "chart_reason": reason}
+        return {
+            "chart_code": "",
+            "chart_option": "",
+            "chart_html": html,
+            "chart_image": "",
+            "chart_reason": reason,
+        }
 
     # Step 2: 生成 pyecharts code
     code_prompt = f"""根據以下資料用 pyecharts 畫一張 {chart_type} 圖表。
@@ -213,20 +239,29 @@ def generate_chart(state):
 - 標題和軸標籤用繁體中文
 - bar chart 項目多（>5）用 reversal_axis() 做水平並排序
 - pie chart 顯示百分比，項目太多（>8）只顯示前幾名，其餘合併為「其他」
-- 加上 ToolboxOpts 讓使用者可以下載圖片
+- 加上 ToolboxOpts 讓使用者可以下載圖片：toolbox_opts=opts.ToolboxOpts(is_show=True)，不要展開 feature 參數
+- init_opts 只能放在圖表建構子裡（如 Pie(init_opts=...)），不能放在 set_global_opts() 裡
 - 設定合適的圖表大小：init_opts=opts.InitOpts(width="800px", height="500px")
+- 避免標題和標籤重疊：標題用 pos_top="2%" 置頂，圖例用 pos_bottom="0%" 或 orient="vertical"+pos_right 放側邊
+- bar chart 水平時確保左側留足空間給 y 軸標籤（grid_opts 設 pos_left="30%"）
+- pie chart 項目多時隱藏圖例（legend_opts=opts.LegendOpts(is_show=False)），用 label 顯示名稱+百分比
+- 長文字標籤用 axisLabel rotate 或截斷避免重疊
 """
     debug_log("generate_chart_echarts_code", prompt=code_prompt)
     code_res = llm.invoke([HumanMessage(content=code_prompt)])
     chart_code = strip_code_fences(code_res.content)
 
     # 執行 + retry
-    for attempt in range(2):
+    for attempt in range(3):
         try:
             result = _exec_echarts_code(chart_code, plot_data)
             if result:
                 option_json, preview_html = result
-                debug_log("generate_chart_echarts", option_size=len(option_json), attempt=attempt)
+                debug_log(
+                    "generate_chart_echarts",
+                    option_size=len(option_json),
+                    attempt=attempt,
+                )
                 return {
                     "chart_code": chart_code,
                     "chart_option": option_json,
@@ -237,16 +272,28 @@ def generate_chart(state):
             raise ValueError("chart variable not found or render failed")
         except Exception as e:
             debug_log("generate_chart_echarts", error=str(e), attempt=attempt)
-            if attempt == 0:
+            if attempt < 2:
                 fix_prompt = (
                     f"上次的 pyecharts code 執行失敗。\n錯誤：{e}\n失敗的 code：\n{chart_code}\n\n"
-                    "請修正。datetime 是類別不是模組，日期欄位已是 datetime 物件。"
+                    "請修正。重要 API 提醒：\n"
+                    "- Pie.add(series_name, data_pair, radius=...) — data_pair 是 [(name, value), ...]\n"
+                    "- Bar.add_xaxis(list).add_yaxis(name, list)\n"
+                    "- set_global_opts() 接受: title_opts, legend_opts, toolbox_opts, tooltip_opts\n"
+                    "- set_series_opts() 接受: label_opts, tooltip_opts\n"
+                    "- init_opts 只能放在建構子裡如 Pie(init_opts=...)\n"
+                    "- 不要在 add() 裡放 legend_opts 或 title_opts\n"
                     "最後必須把圖表物件存入 chart 變數。只輸出修正後的純 Python code。"
                 )
                 fix_res = llm.invoke([HumanMessage(content=fix_prompt)])
                 chart_code = strip_code_fences(fix_res.content)
 
-    return {"chart_code": chart_code, "chart_option": "", "chart_html": "", "chart_image": "", "chart_reason": reason}
+    return {
+        "chart_code": chart_code,
+        "chart_option": "",
+        "chart_html": "",
+        "chart_image": "",
+        "chart_reason": reason,
+    }
 
 
 def _exec_echarts_code(code, plot_data):
@@ -255,7 +302,9 @@ def _exec_echarts_code(code, plot_data):
     from pyecharts import options as opts
     from pyecharts.globals import ThemeType
 
-    lines = [ln for ln in code.split("\n") if not ln.strip().startswith(("import ", "from "))]
+    lines = [
+        ln for ln in code.split("\n") if not ln.strip().startswith(("import ", "from "))
+    ]
 
     exec_ns = {
         "data": plot_data,
@@ -264,6 +313,7 @@ def _exec_echarts_code(code, plot_data):
         "date": date,
         "opts": opts,
         "ThemeType": ThemeType,
+        "charts": charts,
         "Bar": charts.Bar,
         "Pie": charts.Pie,
         "Line": charts.Line,
@@ -275,6 +325,15 @@ def _exec_echarts_code(code, plot_data):
         "Funnel": charts.Funnel,
         "Radar": charts.Radar,
         "WordCloud": charts.WordCloud,
+        # Common opts shortcuts (LLM sometimes imports these directly)
+        "InitOpts": opts.InitOpts,
+        "TitleOpts": opts.TitleOpts,
+        "ToolboxOpts": opts.ToolboxOpts,
+        "TooltipOpts": opts.TooltipOpts,
+        "LegendOpts": opts.LegendOpts,
+        "LabelOpts": opts.LabelOpts,
+        "AxisOpts": opts.AxisOpts,
+        "VisualMapOpts": opts.VisualMapOpts,
         **SAFE_BUILTINS,
     }
     exec("\n".join(lines), exec_ns)
@@ -284,6 +343,7 @@ def _exec_echarts_code(code, plot_data):
         return None
 
     import uuid
+
     options_json = chart_obj.dump_options()
     # 確保中文不被 escape 成 \uXXXX
     options_json = json.dumps(json.loads(options_json), ensure_ascii=False, indent=2)

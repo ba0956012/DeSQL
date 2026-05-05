@@ -23,7 +23,7 @@ def check_hint_compliance(state):
     hint_start = question.find("(Hint:")
     if hint_start == -1:
         return {}  # No hint
-    hint_text = question[hint_start + 6:].rstrip(")").strip()
+    hint_text = question[hint_start + 6 :].rstrip(")").strip()
     if not hint_text:
         return {}
 
@@ -75,7 +75,9 @@ Output ONLY JSON:"""
         action = fix.get("action", "")
         if action == "add_table":
             table = fix.get("table", "").lower()
-            if table and table not in [t.lower() for t in plan.get("tables_needed", [])]:
+            if table and table not in [
+                t.lower() for t in plan.get("tables_needed", [])
+            ]:
                 plan.setdefault("tables_needed", []).append(table)
                 changed = True
                 debug_log("hint_checker", fix=f"added table: {table}")

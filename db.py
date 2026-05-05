@@ -51,9 +51,11 @@ def load_enum_values(eng, max_distinct=50):
 engine, SCHEMA_INFO, ENUM_VALUES = build_db_context()
 
 
-def generate_schema_summary(schema_info: str, column_descs: dict, enum_values: dict) -> str:
+def generate_schema_summary(
+    schema_info: str, column_descs: dict, enum_values: dict
+) -> str:
     """一次性用 LLM 精煉 schema + column descriptions，產出修正後的欄位描述。
-    
+
     兩步驟（分析-調整）：
     1. 分析：結合 column_descs + 資料樣本，深度分析每個欄位的真實含義
     2. 調整：從分析結果中萃取出需要修正的欄位描述
@@ -87,6 +89,7 @@ def generate_schema_summary(schema_info: str, column_descs: dict, enum_values: d
 
     # Step 1: 分析 — 深度分析每個欄位
     import time
+
     print("  Step 1/2: Deep analysis (analyze)...", flush=True)
     t0 = time.time()
     analyze_prompt = f"""You are a database expert. Analyze each column in the database by cross-referencing the column descriptions with the actual data samples below.
@@ -147,6 +150,7 @@ Deep Column Analysis:
 
     # Parse JSON, fallback to original format
     import json as _json
+
     try:
         # Clean markdown fences
         text = refined_text
@@ -171,9 +175,15 @@ def _get_data_samples(engine, schema_info):
     for table in tables:
         try:
             with engine.connect() as conn:
-                rows = conn.execute(sa_text(f'SELECT * FROM "{table}" LIMIT 5')).fetchall()
+                rows = conn.execute(
+                    sa_text(f'SELECT * FROM "{table}" LIMIT 5')
+                ).fetchall()
                 if rows:
-                    cols = rows[0]._fields if hasattr(rows[0], '_fields') else list(range(len(rows[0])))
+                    cols = (
+                        rows[0]._fields
+                        if hasattr(rows[0], "_fields")
+                        else list(range(len(rows[0])))
+                    )
                     samples.append(f"Table {table} (sample):")
                     for row in rows:
                         vals = {c: str(v)[:50] for c, v in zip(cols, row)}

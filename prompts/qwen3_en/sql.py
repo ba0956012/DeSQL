@@ -29,7 +29,15 @@ SQL retrieves data only. No complex subqueries or self-joins. Python handles fil
 """
 
 
-def build_sql_prompt_with_task(task_section, rules_text, schema_text, schema_desc_section, enum_info, conditions_context, sql_error_context) -> str:
+def build_sql_prompt_with_task(
+    task_section,
+    rules_text,
+    schema_text,
+    schema_desc_section,
+    enum_info,
+    conditions_context,
+    sql_error_context,
+) -> str:
     return f"""Generate a PostgreSQL SELECT query based on the SQL task and database schema.
 {task_section}
 Rules:
@@ -45,7 +53,15 @@ Database Schema:
 Output only SQL."""
 
 
-def build_sql_prompt_no_task(question, rules_text, schema_text, schema_desc_section, enum_info, conditions_context, sql_error_context) -> str:
+def build_sql_prompt_no_task(
+    question,
+    rules_text,
+    schema_text,
+    schema_desc_section,
+    enum_info,
+    conditions_context,
+    sql_error_context,
+) -> str:
     return f"""Generate a simple PostgreSQL SELECT query based on the user question and database schema.
 
 Rules:

@@ -193,6 +193,7 @@ cp .env.example .env
 | `CODE_LLM_PROVIDER` / `CODE_LLM_MODEL` | Override LLM for code generation node (optional) |
 | `QA_LLM_PROVIDER` / `QA_LLM_MODEL` | Override LLM for QA / schema_filter nodes (optional) |
 | `ENABLE_CHART` | Enable chart generation (default: `true`) |
+| `DOMAIN_RULES` | Enable domain-specific SQL rules (default: `true`). Set to `false` for generic evaluation |
 | `LOG_MAX_FILES` | Max log files to keep (default: `50`) |
 
 > ⚠️ **Database Support**: Currently only **PostgreSQL** is supported.
@@ -259,11 +260,14 @@ desql/
 
 ## Changelog
 
+### v0.5.0
+- Dynamic QA advice: `_classify_question` uses LLM to detect 5 specific pitfalls (SEPARATE COUNTS, AGGREGATION NEEDED, HINT EXPLAINS COLUMN NAME, MULTI-STEP COMPUTATION, AMBIGUOUS ENTITY) and injects targeted guidance into the QA prompt only when needed
+- Warning library for code generation: `_check_code_task` verifies python_task against actual SQL results, selects from predefined warnings (PERCENTAGE, DISTINCT, COLUMN_MISMATCH, ALREADY_AGGREGATED, SORT_DIRECTION, FIRST_LAST) to guide code LLM
+
 ### v0.4.1
 - Robust JSON parsing: `clean_llm_json` now extracts JSON from mixed LLM output (text + code fence) and uses `json_repair` as fallback for malformed JSON
 - Pipeline robustness: defensive handling for non-standard LLM outputs (missing keys, list-instead-of-dict, dict-in-list)
 - Added `json_repair` to requirements.txt
-- Eval: traceback output for pipeline errors in verbose mode
 
 ### v0.4.0
 - Multi-LLM support: per-node model configuration (SQL_LLM, CODE_LLM, QA_LLM, SCHEMA_LLM)

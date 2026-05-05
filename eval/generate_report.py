@@ -14,6 +14,7 @@ from pathlib import Path
 from collections import Counter
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -51,16 +52,23 @@ def calc_stats(results):
                 error_types["Pipeline/API 失敗"] += 1
             elif "查無" in answer or "無法" in answer or "沒有" in answer[:20]:
                 error_types["查無資料"] += 1
-            elif any(w in reason for w in ["數值", "數量", "分數", "比例", "百分", "不一致", "不符"]) and any(w in reason for w in ["數值", "數", "分數", "比例", "百分", "數量"]):
+            elif any(
+                w in reason
+                for w in ["數值", "數量", "分數", "比例", "百分", "不一致", "不符"]
+            ) and any(w in reason for w in ["數值", "數", "分數", "比例", "百分", "數量"]):
                 error_types["數值/排名錯誤"] += 1
-            elif any(w in reason for w in ["不完整", "未包含", "缺少", "部分", "只列出"]):
+            elif any(
+                w in reason for w in ["不完整", "未包含", "缺少", "部分", "只列出"]
+            ):
                 error_types["回答不完整"] += 1
             else:
                 error_types["欄位/實體選錯"] += 1
     return {
-        "total": total, "correct": correct,
+        "total": total,
+        "correct": correct,
         "pct": correct / total * 100 if total > 0 else 0,
-        "by_diff": by_diff, "error_types": error_types
+        "by_diff": by_diff,
+        "error_types": error_types,
     }
 
 
@@ -126,8 +134,14 @@ def generate_charts(db_id, experiments, all_stats, out_dir):
     values = [all_stats[l]["pct"] for l in labels]
     bars = ax.bar(labels, values, color=colors, width=0.6)
     for bar, val in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1,
-                f"{val:.1f}%", ha="center", fontsize=11, fontweight="bold")
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 1,
+            f"{val:.1f}%",
+            ha="center",
+            fontsize=11,
+            fontweight="bold",
+        )
     ax.set_ylabel("Accuracy (%)", fontsize=12)
     ax.set_title(f"Overall Accuracy — {db_id}", fontsize=13)
     ax.set_ylim(0, 80)
@@ -154,8 +168,13 @@ def generate_charts(db_id, experiments, all_stats, out_dir):
             lbls.append(f"{d['correct']}/{d['total']}")
         bars = ax.barh(range(n), vals, color=colors, height=0.6)
         for i, (bar, lbl) in enumerate(zip(bars, lbls)):
-            ax.text(bar.get_width() + 1, bar.get_y() + bar.get_height()/2,
-                    f"{vals[i]:.1f}% ({lbl})", va="center", fontsize=10)
+            ax.text(
+                bar.get_width() + 1,
+                bar.get_y() + bar.get_height() / 2,
+                f"{vals[i]:.1f}% ({lbl})",
+                va="center",
+                fontsize=10,
+            )
         ax.set_title(title, fontsize=13, fontweight="bold", loc="left")
         ax.set_yticks(range(n))
         ax.set_yticklabels([l.replace("\n", " ") for l in labels], fontsize=9)
@@ -171,7 +190,11 @@ def generate_charts(db_id, experiments, all_stats, out_dir):
     print(f"  ✅ chart_by_difficulty.png")
 
     # Chart 3: 錯誤類型（所有實驗）
-    compare_list = [(l, all_stats[l]) for l in labels if all_stats[l]["total"] > all_stats[l]["correct"]]
+    compare_list = [
+        (l, all_stats[l])
+        for l in labels
+        if all_stats[l]["total"] > all_stats[l]["correct"]
+    ]
 
     n_charts = len(compare_list)
     cols = min(n_charts, 2)
@@ -180,7 +203,7 @@ def generate_charts(db_id, experiments, all_stats, out_dir):
     if n_charts == 1:
         axes = [axes]
     else:
-        axes = axes.flatten() if hasattr(axes, 'flatten') else [axes]
+        axes = axes.flatten() if hasattr(axes, "flatten") else [axes]
     pie_colors = ["#FF6B6B", "#FFA07A", "#FFD700", "#87CEEB", "#DDA0DD"]
     for idx, (label, s) in enumerate(compare_list):
         ax = axes[idx]
@@ -189,10 +212,18 @@ def generate_charts(db_id, experiments, all_stats, out_dir):
             continue
         cats = list(et.keys())
         vals = list(et.values())
-        wedges, texts, autotexts = ax.pie(vals, labels=cats, autopct="%1.0f%%",
-                                           colors=pie_colors[:len(cats)], startangle=90,
-                                           textprops={"fontsize": 9})
-        ax.set_title(f"{label.replace(chr(10), ' ')}\n({s['total'] - s['correct']} errors)", fontsize=11)
+        wedges, texts, autotexts = ax.pie(
+            vals,
+            labels=cats,
+            autopct="%1.0f%%",
+            colors=pie_colors[: len(cats)],
+            startangle=90,
+            textprops={"fontsize": 9},
+        )
+        ax.set_title(
+            f"{label.replace(chr(10), ' ')}\n({s['total'] - s['correct']} errors)",
+            fontsize=11,
+        )
     plt.suptitle(f"Error Type Distribution — {db_id}", fontsize=13, y=1.02)
     # 隱藏多餘的 axes
     for i in range(n_charts, len(axes)):
@@ -209,9 +240,21 @@ def generate_md(db_id, experiments, all_stats, out_dir, template_override=None):
     dataset_desc_path = EVAL_DIR / "databases" / db_id / "dataset_description.md"
     evidence_ex_path = EVAL_DIR / "databases" / db_id / "evidence_examples.md"
 
-    template = template_path.read_text(encoding="utf-8") if template_path.exists() else "# {db_id}\n"
-    dataset_desc = dataset_desc_path.read_text(encoding="utf-8").strip() if dataset_desc_path.exists() else ""
-    evidence_ex = evidence_ex_path.read_text(encoding="utf-8").strip() if evidence_ex_path.exists() else ""
+    template = (
+        template_path.read_text(encoding="utf-8")
+        if template_path.exists()
+        else "# {db_id}\n"
+    )
+    dataset_desc = (
+        dataset_desc_path.read_text(encoding="utf-8").strip()
+        if dataset_desc_path.exists()
+        else ""
+    )
+    evidence_ex = (
+        evidence_ex_path.read_text(encoding="utf-8").strip()
+        if evidence_ex_path.exists()
+        else ""
+    )
 
     header = template.format(
         db_id=db_id,
@@ -257,10 +300,17 @@ def generate_md(db_id, experiments, all_stats, out_dir, template_override=None):
     stat_labels = list(all_stats.keys())
     if len(stat_labels) >= 2:
         import math
+
         lines.append("\n## 7. 統計顯著性分析\n")
-        lines.append("使用 Two-proportion z-test 檢驗兩組準確率是否有統計上的顯著差異。\n")
-        lines.append("- 顯著性（p-value）：p 值越小，越有信心認為差異不是隨機波動。p < 0.05 為顯著，p < 0.01 為非常顯著，p < 0.001 為極顯著")
-        lines.append("- 95% 信賴區間：在 95% 的信心水準下，真實的準確率差距落在此範圍內。若區間下限 > 0%，代表優勢方確實優於對方\n")
+        lines.append(
+            "使用 Two-proportion z-test 檢驗兩組準確率是否有統計上的顯著差異。\n"
+        )
+        lines.append(
+            "- 顯著性（p-value）：p 值越小，越有信心認為差異不是隨機波動。p < 0.05 為顯著，p < 0.01 為非常顯著，p < 0.001 為極顯著"
+        )
+        lines.append(
+            "- 95% 信賴區間：在 95% 的信心水準下，真實的準確率差距落在此範圍內。若區間下限 > 0%，代表優勢方確實優於對方\n"
+        )
         for i in range(len(stat_labels)):
             for j in range(i + 1, len(stat_labels)):
                 l1, l2 = stat_labels[i], stat_labels[j]
@@ -271,10 +321,10 @@ def generate_md(db_id, experiments, all_stats, out_dir, template_override=None):
                 diff = abs(p1 - p2)
                 # Two-proportion z-test
                 p_pool = (c1 + c2) / (n1 + n2)
-                se = math.sqrt(p_pool * (1 - p_pool) * (1/n1 + 1/n2))
+                se = math.sqrt(p_pool * (1 - p_pool) * (1 / n1 + 1 / n2))
                 z = (p1 - p2) / se if se > 0 else 0
                 # 信賴區間
-                se_diff = math.sqrt(p1*(1-p1)/n1 + p2*(1-p2)/n2)
+                se_diff = math.sqrt(p1 * (1 - p1) / n1 + p2 * (1 - p2) / n2)
                 ci_lower = (p1 - p2 - 1.96 * se_diff) * 100
                 ci_upper = (p1 - p2 + 1.96 * se_diff) * 100
                 # p-value 近似計算（標準常態分布）
@@ -282,7 +332,22 @@ def generate_md(db_id, experiments, all_stats, out_dir, template_override=None):
                 # Abramowitz and Stegun approximation
                 t = 1.0 / (1.0 + 0.2316419 * abs_z)
                 d = 0.3989422804014327  # 1/sqrt(2*pi)
-                p_one_tail = d * math.exp(-abs_z * abs_z / 2.0) * (t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429)))))
+                p_one_tail = (
+                    d
+                    * math.exp(-abs_z * abs_z / 2.0)
+                    * (
+                        t
+                        * (
+                            0.319381530
+                            + t
+                            * (
+                                -0.356563782
+                                + t
+                                * (1.781477937 + t * (-1.821255978 + t * 1.330274429))
+                            )
+                        )
+                    )
+                )
                 p_value = 2 * p_one_tail
                 if p_value < 0.001:
                     sig = f"p = {p_value:.4f}（極顯著）"
@@ -303,14 +368,20 @@ def generate_md(db_id, experiments, all_stats, out_dir, template_override=None):
                 lines.append(f"| 準確率差距 | {diff*100:.1f}% |")
                 lines.append(f"| z-score | {abs(z):.3f} |")
                 lines.append(f"| 顯著性 | {sig} |")
-                lines.append(f"| 95% 信賴區間 | {winner} 優於對方 {ci_lo:.1f}% ~ {ci_hi:.1f}% |")
+                lines.append(
+                    f"| 95% 信賴區間 | {winner} 優於對方 {ci_lo:.1f}% ~ {ci_hi:.1f}% |"
+                )
                 lines.append("")
                 # 白話結論
                 if p_value < 0.05:
-                    lines.append(f"> ✅ **{winner}** 顯著優於對方，在 95% 信心下至少優 {ci_lo:.1f} 個百分點。")
+                    lines.append(
+                        f"> ✅ **{winner}** 顯著優於對方，在 95% 信心下至少優 {ci_lo:.1f} 個百分點。"
+                    )
                 elif p1 != p2:
                     higher = n1_name if p1 > p2 else n2_name
-                    lines.append(f"> ⚠️ {higher} 觀測上較高（差 {diff*100:.1f}%），但兩者無顯著差異，無法判斷誰更優。需要更多資料才能確認。")
+                    lines.append(
+                        f"> ⚠️ {higher} 觀測上較高（差 {diff*100:.1f}%），但兩者無顯著差異，無法判斷誰更優。需要更多資料才能確認。"
+                    )
                 else:
                     lines.append(f"> ➖ 兩者表現相同。")
                 lines.append("")
@@ -323,6 +394,7 @@ def generate_md(db_id, experiments, all_stats, out_dir, template_override=None):
 def generate_html(out_dir):
     """簡易 md → html 轉換"""
     import re, base64
+
     md_path = out_dir / "REPORT.md"
     html_path = out_dir / "REPORT.html"
     md_text = md_path.read_text(encoding="utf-8")
@@ -337,7 +409,9 @@ def generate_html(out_dir):
             p = out_dir / src
             if p.exists():
                 b64 = base64.b64encode(p.read_bytes()).decode()
-                html_lines.append(f'<img src="data:image/png;base64,{b64}" alt="{alt}" style="max-width:100%;">')
+                html_lines.append(
+                    f'<img src="data:image/png;base64,{b64}" alt="{alt}" style="max-width:100%;">'
+                )
             continue
         if s.startswith("# "):
             html_lines.append(f"<h1>{s[2:]}</h1>")
@@ -355,9 +429,13 @@ def generate_html(out_dir):
             if not in_table:
                 html_lines.append("<table>")
                 in_table = True
-                html_lines.append("<tr>" + "".join(f"<th>{c}</th>" for c in cells) + "</tr>")
+                html_lines.append(
+                    "<tr>" + "".join(f"<th>{c}</th>" for c in cells) + "</tr>"
+                )
             else:
-                html_lines.append("<tr>" + "".join(f"<td>{c}</td>" for c in cells) + "</tr>")
+                html_lines.append(
+                    "<tr>" + "".join(f"<td>{c}</td>" for c in cells) + "</tr>"
+                )
             continue
         else:
             if in_table:
@@ -390,10 +468,18 @@ img {{ margin: 16px 0; border: 1px solid #eee; border-radius: 4px; }}
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--db", required=True, help="DB name or 'all' for combined report")
-    parser.add_argument("--tags", nargs="*", default=None, help="只用指定的 tag（不指定則自動偵測全部）")
-    parser.add_argument("--output", default=None, help="自訂輸出資料夾名稱（預設用 db name）")
-    parser.add_argument("--template", default=None, help="自訂報告模板（如 report_template_model.md）")
+    parser.add_argument(
+        "--db", required=True, help="DB name or 'all' for combined report"
+    )
+    parser.add_argument(
+        "--tags", nargs="*", default=None, help="只用指定的 tag（不指定則自動偵測全部）"
+    )
+    parser.add_argument(
+        "--output", default=None, help="自訂輸出資料夾名稱（預設用 db name）"
+    )
+    parser.add_argument(
+        "--template", default=None, help="自訂報告模板（如 report_template_model.md）"
+    )
     args = parser.parse_args()
 
     if args.db == "all":
@@ -436,7 +522,13 @@ def main():
                 all_stats[label] = calc_stats(combined)
 
         generate_charts("combined (3 DBs)", experiments, all_stats, out_dir)
-        generate_md("combined (3 DBs)", experiments, all_stats, out_dir, template_override=args.template)
+        generate_md(
+            "combined (3 DBs)",
+            experiments,
+            all_stats,
+            out_dir,
+            template_override=args.template,
+        )
         generate_html(out_dir)
         print(f"\n✅ 整合報告已生成至 {out_dir}/")
     else:
@@ -460,7 +552,9 @@ def main():
                 all_stats[label] = calc_stats(data)
 
         generate_charts(db_id, experiments, all_stats, out_dir)
-        generate_md(db_id, experiments, all_stats, out_dir, template_override=args.template)
+        generate_md(
+            db_id, experiments, all_stats, out_dir, template_override=args.template
+        )
         generate_html(out_dir)
         print(f"\n✅ 報告已生成至 {out_dir}/")
 

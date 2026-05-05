@@ -27,7 +27,8 @@ eval/report/
 eval/run_output*.log
 eval/run_eval_api.py
 eval/report_template_greg.md
-eval/report_template_model.md.hypothesis/
+eval/report_template_model.md
+.hypothesis/
 .kiro/
 .vscode/
 eval/DeepEye-SQL/

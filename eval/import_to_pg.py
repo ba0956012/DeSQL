@@ -19,6 +19,7 @@ from pathlib import Path
 from sqlalchemy import create_engine, text
 
 from dotenv import load_dotenv
+
 load_dotenv(Path(__file__).parent / ".env.eval", override=True)
 
 # PostgreSQL 連線（從 .env.eval 讀取，或使用預設值）
@@ -111,8 +112,8 @@ def import_sqlite_to_pg(sqlite_path: str, pg_db_name: str):
 
         # 建表
         col_defs = []
-        col_names = []       # SQLite 原始欄位名（用於讀取資料）
-        pg_col_names = []    # PG 小寫欄位名
+        col_names = []  # SQLite 原始欄位名（用於讀取資料）
+        pg_col_names = []  # PG 小寫欄位名
         for col in columns:
             col_name = col[1]
             col_type = map_type(col[2])
@@ -133,6 +134,7 @@ def import_sqlite_to_pg(sqlite_path: str, pg_db_name: str):
 
         # 找出 DATE/TIMESTAMP 欄位的索引，用於格式轉換
         from datetime import datetime as _dt
+
         date_col_indices = set()
         for i, col in enumerate(columns):
             col_type_upper = (col[2] or "").upper().strip().split("(")[0].strip()
@@ -198,23 +200,29 @@ def import_sqlite_to_pg(sqlite_path: str, pg_db_name: str):
         pg_table = table_name.lower()
         try:
             cursor.execute(f'PRAGMA table_info("{table_name}")')
-            pk_cols = [row[1].lower() for row in cursor.fetchall() if row[5] > 0]  # pk flag > 0
+            pk_cols = [
+                row[1].lower() for row in cursor.fetchall() if row[5] > 0
+            ]  # pk flag > 0
             if pk_cols:
                 pk_col_str = ", ".join(f'"{c}"' for c in pk_cols)
                 with pg_engine.connect() as conn:
                     try:
-                        conn.execute(text(
-                            f'ALTER TABLE "{pg_table}" ADD PRIMARY KEY ({pk_col_str})'
-                        ))
+                        conn.execute(
+                            text(
+                                f'ALTER TABLE "{pg_table}" ADD PRIMARY KEY ({pk_col_str})'
+                            )
+                        )
                         conn.commit()
                         print(f"    🔑 PK: {pg_table}({', '.join(pk_cols)})")
                     except Exception as e:
                         conn.rollback()
                         # PK 可能因為重複資料失敗，改用 UNIQUE INDEX
                         try:
-                            conn.execute(text(
-                                f'CREATE UNIQUE INDEX IF NOT EXISTS "idx_{pg_table}_pk" ON "{pg_table}" ({pk_col_str})'
-                            ))
+                            conn.execute(
+                                text(
+                                    f'CREATE UNIQUE INDEX IF NOT EXISTS "idx_{pg_table}_pk" ON "{pg_table}" ({pk_col_str})'
+                                )
+                            )
                             conn.commit()
                             print(f"    🔑 UNIQUE: {pg_table}({', '.join(pk_cols)})")
                         except Exception:
@@ -228,15 +236,19 @@ def import_sqlite_to_pg(sqlite_path: str, pg_db_name: str):
             fk_name = f"fk_{from_table}_{from_col}_{ref_table}"
             with pg_engine.connect() as conn:
                 try:
-                    conn.execute(text(
-                        f'ALTER TABLE "{from_table}" ADD CONSTRAINT "{fk_name}" '
-                        f'FOREIGN KEY ("{from_col}") REFERENCES "{ref_table}" ("{to_col}")'
-                    ))
+                    conn.execute(
+                        text(
+                            f'ALTER TABLE "{from_table}" ADD CONSTRAINT "{fk_name}" '
+                            f'FOREIGN KEY ("{from_col}") REFERENCES "{ref_table}" ("{to_col}")'
+                        )
+                    )
                     conn.commit()
                     print(f"    🔗 FK: {from_table}.{from_col} → {ref_table}.{to_col}")
                 except Exception as e:
                     conn.rollback()
-                    print(f"    ⚠️  FK 跳過: {from_table}.{from_col} → {ref_table}.{to_col}")
+                    print(
+                        f"    ⚠️  FK 跳過: {from_table}.{from_col} → {ref_table}.{to_col}"
+                    )
 
     pg_engine.dispose()
     sqlite_conn.close()
@@ -247,10 +259,13 @@ def main():
     if len(sys.argv) > 1:
         targets = sys.argv[1:]
     else:
-        targets = sorted([
-            d.name for d in DATABASES_DIR.iterdir()
-            if d.is_dir() and not d.name.startswith(".")
-        ])
+        targets = sorted(
+            [
+                d.name
+                for d in DATABASES_DIR.iterdir()
+                if d.is_dir() and not d.name.startswith(".")
+            ]
+        )
 
     print(f"準備匯入 {len(targets)} 個資料庫\n")
 

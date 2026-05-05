@@ -2,7 +2,12 @@
 
 from fastapi import APIRouter, HTTPException, Request
 
-from eval_service.models import DatabaseListResponse, DescriptionResponse, HintsResponse, QuestionCountResponse
+from eval_service.models import (
+    DatabaseListResponse,
+    DescriptionResponse,
+    HintsResponse,
+    QuestionCountResponse,
+)
 
 router = APIRouter()
 

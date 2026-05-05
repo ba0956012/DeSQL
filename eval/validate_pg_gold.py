@@ -6,6 +6,7 @@ Only order_diff questions should use PG gold as alternative answer.
 Usage:
     conda run -n Greg-text-to-sql python eval/validate_pg_gold.py
 """
+
 import json
 import os
 import sqlite3
@@ -139,19 +140,27 @@ def main():
             total[status] += 1
 
             if status == "mismatch":
-                mismatches.append({
-                    "qid": q["question_id"],
-                    "db": db_id,
-                    "difficulty": q.get("difficulty"),
-                    "sqlite_sample": json.dumps(sqlite_rows[:1], default=str)[:100],
-                    "pg_sample": json.dumps(pg_rows[:1], default=str)[:100],
-                })
+                mismatches.append(
+                    {
+                        "qid": q["question_id"],
+                        "db": db_id,
+                        "difficulty": q.get("difficulty"),
+                        "sqlite_sample": json.dumps(sqlite_rows[:1], default=str)[:100],
+                        "pg_sample": json.dumps(pg_rows[:1], default=str)[:100],
+                    }
+                )
 
         conn.close()
-        print(f"{db_id}: match={db_stats['match']}, order_diff={db_stats['order_diff']}, mismatch={db_stats['mismatch']}, pg_error={db_stats['pg_error']}")
+        print(
+            f"{db_id}: match={db_stats['match']}, order_diff={db_stats['order_diff']}, mismatch={db_stats['mismatch']}, pg_error={db_stats['pg_error']}"
+        )
 
-    print(f"\nTOTAL: match={total['match']}, order_diff={total['order_diff']}, mismatch={total['mismatch']}, pg_error={total['pg_error']}")
-    print(f"Usable PG gold (match + order_diff): {total['match'] + total['order_diff']}")
+    print(
+        f"\nTOTAL: match={total['match']}, order_diff={total['order_diff']}, mismatch={total['mismatch']}, pg_error={total['pg_error']}"
+    )
+    print(
+        f"Usable PG gold (match + order_diff): {total['match'] + total['order_diff']}"
+    )
 
     if mismatches:
         print(f"\nMISMATCHES ({len(mismatches)}):")

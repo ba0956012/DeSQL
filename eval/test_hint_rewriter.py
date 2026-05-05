@@ -19,6 +19,7 @@ PROJECT_DIR = EVAL_DIR.parent
 sys.path.insert(0, str(PROJECT_DIR))
 
 from dotenv import load_dotenv
+
 load_dotenv(EVAL_DIR / ".env.eval", override=True)
 
 from openai import AzureOpenAI
@@ -73,7 +74,8 @@ def rewrite_hint(question: str, hint: str, schema: str, compact_desc: str) -> st
 改寫後的 Hint："""
 
     resp = client.chat.completions.create(
-        model=MODEL, temperature=0,
+        model=MODEL,
+        temperature=0,
         messages=[{"role": "user", "content": prompt}],
     )
     return resp.choices[0].message.content.strip()
@@ -85,13 +87,22 @@ def main():
 
     # 載入 moderate 錯題
     import glob
+
     results = []
-    for f in sorted(glob.glob(str(EVAL_DIR / "results" / "desql_41mini_cn_validate" / "*.json"))):
+    for f in sorted(
+        glob.glob(str(EVAL_DIR / "results" / "desql_41mini_cn_validate" / "*.json"))
+    ):
         with open(f) as fh:
             results.append(json.load(fh))
 
-    wrong_moderate = [r for r in results if r["difficulty"] == "moderate" and not r.get("judge_correct")]
-    correct_moderate = [r for r in results if r["difficulty"] == "moderate" and r.get("judge_correct")]
+    wrong_moderate = [
+        r
+        for r in results
+        if r["difficulty"] == "moderate" and not r.get("judge_correct")
+    ]
+    correct_moderate = [
+        r for r in results if r["difficulty"] == "moderate" and r.get("judge_correct")
+    ]
 
     # 抽樣：5 題錯題 + 5 題正確題
     random.seed(42)
@@ -105,13 +116,19 @@ def main():
         for r in samples:
             db_id = r["db_id"]
             qid = r["question_id"]
-            q_item = next(q for q in all_questions if q["db_id"] == db_id and q["question_id"] == qid)
+            q_item = next(
+                q
+                for q in all_questions
+                if q["db_id"] == db_id and q["question_id"] == qid
+            )
 
             schema = load_schema_from_tables_json(db_id)
             compact = load_compact_desc(db_id)
 
             print(f"Processing [{label}] {db_id} #{qid}...")
-            rewritten = rewrite_hint(q_item["question"], q_item.get("evidence", ""), schema, compact)
+            rewritten = rewrite_hint(
+                q_item["question"], q_item.get("evidence", ""), schema, compact
+            )
 
             lines.append(f"### [{db_id}] Question #{qid}\n")
             lines.append(f"**題目:** {q_item['question']}\n")

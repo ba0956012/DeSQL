@@ -38,9 +38,29 @@ Filter rules:
 }}"""
 
 
-def build_qa_prompt(question: str, schema_text: str, schema_desc_section: str, conditions_context: str = "", enum_info: str = "") -> str:
-    conditions_section = f"\nConfirmed values from database (use these exact table.column = value in your plan):\n{conditions_context}\n" if conditions_context else ""
-    enum_section = f"\nKnown column values (use these to identify the correct column for filtering):\n{enum_info}\n" if enum_info else ""
+def build_qa_prompt(
+    question: str,
+    schema_text: str,
+    schema_desc_section: str,
+    conditions_context: str = "",
+    enum_info: str = "",
+    dynamic_guidelines: str = "",
+) -> str:
+    conditions_section = (
+        f"\nConfirmed values from database (use these exact table.column = value in your plan):\n{conditions_context}\n"
+        if conditions_context
+        else ""
+    )
+    enum_section = (
+        f"\nKnown column values (use these to identify the correct column for filtering):\n{enum_info}\n"
+        if enum_info
+        else ""
+    )
+    dynamic_section = (
+        f"\nAdditional guidelines for this specific question:\n{dynamic_guidelines}\n"
+        if dynamic_guidelines
+        else ""
+    )
     return f"""You are a data analysis expert. Analyze the user's question and create a structured query plan.
 
 IMPORTANT guidelines:
@@ -52,7 +72,7 @@ IMPORTANT guidelines:
 - SQL should fetch more data rather than less. Python will handle precise filtering.
 - If "Confirmed values" are provided below, use the EXACT table and column specified there. Do NOT use a different table/column for the same value.
 - Use "Known column values" below to identify which column contains the values mentioned in the question. If a value appears in a specific column's known values, use THAT column.
-
+{dynamic_section}
 Database Schema:
 {schema_text}
 {schema_desc_section}

@@ -33,9 +33,10 @@ _logger = logging.getLogger("langgraph_sql_python")
 def _clean_llm_json(text: str) -> dict:
     """清除 LLM 回傳中的 markdown 包裹，解析 JSON"""
     import re
+
     text = text.strip()
 
-    m = re.search(r'```(?:json)?\s*\n(.*?)```', text, re.DOTALL)
+    m = re.search(r"```(?:json)?\s*\n(.*?)```", text, re.DOTALL)
     if m:
         text = m.group(1).strip()
     else:
@@ -49,6 +50,7 @@ def _clean_llm_json(text: str) -> dict:
         return json.loads(text)
     except json.JSONDecodeError:
         from json_repair import repair_json
+
         repaired = repair_json(text, return_objects=True)
         if isinstance(repaired, dict):
             return repaired
@@ -106,9 +108,9 @@ def build_conditions_context(state: RetrievalState) -> str:
     if enum_conds:
         lines = ["以下是已確認的精確值條件（直接用於 WHERE）："]
         for c in enum_conds:
-            t = c.get('table')
-            col = c.get('column')
-            val = c.get('value')
+            t = c.get("table")
+            col = c.get("column")
+            val = c.get("value")
             if t and col and val:
                 lines.append(f"  {t}.{col} = '{val}'")
         if len(lines) > 1:
@@ -126,10 +128,17 @@ def build_conditions_context(state: RetrievalState) -> str:
         # 判斷是否有精確匹配（檢索結果中有值完全包含關鍵字）
         exact_match = next((v for v in retrieved if kw.lower() == str(v).lower()), None)
         if not exact_match:
-            exact_match = next((v for v in retrieved if kw.lower() in str(v).lower() and len(str(v)) < len(kw) + 10), None)
+            exact_match = next(
+                (
+                    v
+                    for v in retrieved
+                    if kw.lower() in str(v).lower() and len(str(v)) < len(kw) + 10
+                ),
+                None,
+            )
 
         if exact_match:
-            # 精確匹配 → 用 = 
+            # 精確匹配 → 用 =
             parts.append(
                 f"以下是用關鍵字「{kw}」從 {tbl}.{col} 搜尋到的精確匹配值：\n"
                 + json.dumps(retrieved, ensure_ascii=False)
@@ -251,13 +260,18 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
                         v_str = str(v) if not isinstance(v, str) else v
                         if v_str.lower() == kw or kw in v_str.lower():
                             table, column = col_key.split(".", 1)
-                            fixed_conditions.append({
-                                "type": "enum",
-                                "table": table,
-                                "column": column,
-                                "value": v_str,
-                            })
-                            _debug_log("analyze_conditions", enum_fix=f"keyword '{kw}' → enum {col_key}='{v_str}'")
+                            fixed_conditions.append(
+                                {
+                                    "type": "enum",
+                                    "table": table,
+                                    "column": column,
+                                    "value": v_str,
+                                }
+                            )
+                            _debug_log(
+                                "analyze_conditions",
+                                enum_fix=f"keyword '{kw}' → enum {col_key}='{v_str}'",
+                            )
                             matched = True
                             break
                     if matched:
@@ -316,7 +330,9 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
         # Broad search fallback: if not found in LLM-specified column,
         # search ALL text columns across all tables
         if not docs:
-            _debug_log("retrieve_phrase", fallback="broad search across all text columns")
+            _debug_log(
+                "retrieve_phrase", fallback="broad search across all text columns"
+            )
             try:
                 col_sql = """
                 SELECT table_name, column_name
@@ -336,7 +352,11 @@ def build_retrieval_subgraph(llm, engine, schema_info: str, enum_values: dict):
                             if found:
                                 docs = [r[0] for r in found]
                                 # Update conditions: fix the table/column
-                                _debug_log("retrieve_phrase", broad_found=f"{tbl}.{col}", docs=docs)
+                                _debug_log(
+                                    "retrieve_phrase",
+                                    broad_found=f"{tbl}.{col}",
+                                    docs=docs,
+                                )
                                 return {
                                     "retrieved_docs": docs,
                                     "strategy": "PHRASE",

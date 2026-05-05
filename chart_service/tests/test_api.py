@@ -57,42 +57,54 @@ def test_health_returns_200_with_status_and_version(client):
 
 def test_empty_data_returns_422(client):
     """POST /chart/generate with empty data returns 422."""
-    resp = client.post("/chart/generate", json={
-        "data": [],
-        "question": "test question",
-        "engine": "echarts",
-    })
+    resp = client.post(
+        "/chart/generate",
+        json={
+            "data": [],
+            "question": "test question",
+            "engine": "echarts",
+        },
+    )
     assert resp.status_code == 422
 
 
 def test_blank_question_returns_422(client):
     """POST /chart/generate with blank question returns 422."""
-    resp = client.post("/chart/generate", json={
-        "data": [{"a": 1}],
-        "question": "   ",
-        "engine": "echarts",
-    })
+    resp = client.post(
+        "/chart/generate",
+        json={
+            "data": [{"a": 1}],
+            "question": "   ",
+            "engine": "echarts",
+        },
+    )
     assert resp.status_code == 422
 
 
 def test_invalid_engine_returns_422(client):
     """POST /chart/generate with invalid engine returns 422."""
-    resp = client.post("/chart/generate", json={
-        "data": [{"a": 1}],
-        "question": "test question",
-        "engine": "plotly",
-    })
+    resp = client.post(
+        "/chart/generate",
+        json={
+            "data": [{"a": 1}],
+            "question": "test question",
+            "engine": "plotly",
+        },
+    )
     assert resp.status_code == 422
 
 
 def test_invalid_chart_type_returns_422(client):
     """POST /chart/generate with invalid chart_type returns 422."""
-    resp = client.post("/chart/generate", json={
-        "data": [{"a": 1}],
-        "question": "test question",
-        "engine": "echarts",
-        "chart_type": "invalid_type",
-    })
+    resp = client.post(
+        "/chart/generate",
+        json={
+            "data": [{"a": 1}],
+            "question": "test question",
+            "engine": "echarts",
+            "chart_type": "invalid_type",
+        },
+    )
     assert resp.status_code == 422
 
 
@@ -101,12 +113,15 @@ def test_invalid_chart_type_returns_422(client):
 
 def test_echarts_table_returns_success_with_html(client):
     """POST /chart/generate with table type returns ChartResponse with chart_html."""
-    resp = client.post("/chart/generate", json={
-        "data": [{"name": "Alice", "score": 90}, {"name": "Bob", "score": 85}],
-        "question": "Show scores",
-        "engine": "echarts",
-        "chart_type": "table",
-    })
+    resp = client.post(
+        "/chart/generate",
+        json={
+            "data": [{"name": "Alice", "score": 90}, {"name": "Bob", "score": 85}],
+            "question": "Show scores",
+            "engine": "echarts",
+            "chart_type": "table",
+        },
+    )
     assert resp.status_code == 200
     data = resp.json()
     assert data["chart_type"] == "table"
@@ -116,12 +131,15 @@ def test_echarts_table_returns_success_with_html(client):
 
 def test_matplotlib_table_returns_success_with_image(client):
     """POST /chart/generate with matplotlib table returns base64 image."""
-    resp = client.post("/chart/generate", json={
-        "data": [{"name": "Alice", "score": 90}, {"name": "Bob", "score": 85}],
-        "question": "Show scores",
-        "engine": "matplotlib",
-        "chart_type": "table",
-    })
+    resp = client.post(
+        "/chart/generate",
+        json={
+            "data": [{"name": "Alice", "score": 90}, {"name": "Bob", "score": 85}],
+            "question": "Show scores",
+            "engine": "matplotlib",
+            "chart_type": "table",
+        },
+    )
     assert resp.status_code == 200
     data = resp.json()
     assert data["chart_type"] == "table"

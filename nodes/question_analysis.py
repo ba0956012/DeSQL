@@ -12,7 +12,11 @@ from llm import qa_llm as llm, schema_llm as review_llm
 from utils import debug_log, clean_llm_json
 from prompts import load_profile
 
-ENABLE_QA_REVIEW = os.getenv("ENABLE_QA_REVIEW", "false").lower() in ("true", "1", "yes")
+ENABLE_QA_REVIEW = os.getenv("ENABLE_QA_REVIEW", "false").lower() in (
+    "true",
+    "1",
+    "yes",
+)
 
 
 def _filter_enum_for_question(question: str, enum_values: dict) -> str:
@@ -30,7 +34,7 @@ def _filter_enum_for_question(question: str, enum_values: dict) -> str:
         str_vals = [str(v) for v in vals]
 
         # Skip if all values are numeric
-        if all(v.replace('.', '').replace('-', '').isdigit() for v in str_vals):
+        if all(v.replace(".", "").replace("-", "").isdigit() for v in str_vals):
             continue
 
         # Check if any value appears in the question (always include these)
@@ -58,6 +62,7 @@ def _embed_descs(schema_info, column_descs):
     if not column_descs:
         return schema_info
     import re
+
     lines = schema_info.split("\n")
     result = []
     current_table = ""
@@ -67,8 +72,12 @@ def _embed_descs(schema_info, column_descs):
             match = re.search(r'create\s+table\s+"?(\w+)"?', lower)
             if match:
                 current_table = match.group(1)
-        elif current_table and (line.startswith("\t") or line.startswith("    ")) and not lower.startswith(")"):
-            col_match = re.match(r'\s+(\w+)\s+', line)
+        elif (
+            current_table
+            and (line.startswith("\t") or line.startswith("    "))
+            and not lower.startswith(")")
+        ):
+            col_match = re.match(r"\s+(\w+)\s+", line)
             if col_match:
                 col_name = col_match.group(1).lower()
                 key = f"{current_table}.{col_name}"
@@ -96,10 +105,13 @@ def _parse_fk_edges(schema_info: str):
             continue
         if current_table and "references" in lower:
             fk_m = re.search(
-                r'foreign\s+key\s*\("?(\w+)"?\)\s+references\s+"?(\w+)"?\s*\("?(\w+)"?\)', lower
+                r'foreign\s+key\s*\("?(\w+)"?\)\s+references\s+"?(\w+)"?\s*\("?(\w+)"?\)',
+                lower,
             )
             if fk_m:
-                edges.append((current_table, fk_m.group(1), fk_m.group(2), fk_m.group(3)))
+                edges.append(
+                    (current_table, fk_m.group(1), fk_m.group(2), fk_m.group(3))
+                )
         if lower.startswith(")"):
             current_table = ""
     return edges
@@ -155,7 +167,10 @@ def _complete_fk_path(task_plan: str, schema_info: str) -> str:
             if neighbors:
                 sql_task = parsed.get("sql_task", "")
                 if sql_task:
-                    parsed["sql_task"] = sql_task + f" (Note: if you need columns not in {t}, consider JOINing with: {', '.join(neighbors)})"
+                    parsed["sql_task"] = (
+                        sql_task
+                        + f" (Note: if you need columns not in {t}, consider JOINing with: {', '.join(neighbors)})"
+                    )
                     debug_log("fk_path_complete", single_table=t, neighbors=neighbors)
                     return json.dumps(parsed, ensure_ascii=False, indent=2)
             return task_plan
@@ -173,8 +188,11 @@ def _complete_fk_path(task_plan: str, schema_info: str) -> str:
                 for t in path:
                     if t not in all_needed:
                         all_needed.add(t)
-                        debug_log("fk_path_complete", added_table=t,
-                                  between=(tables_lower[i], tables_lower[j]))
+                        debug_log(
+                            "fk_path_complete",
+                            added_table=t,
+                            between=(tables_lower[i], tables_lower[j]),
+                        )
                 # Add join conditions for consecutive pairs in path
                 for k in range(len(path) - 1):
                     t1, t2 = path[k], path[k + 1]
@@ -183,19 +201,31 @@ def _complete_fk_path(task_plan: str, schema_info: str) -> str:
                         join_str = f"{t1}.{c1} = {t2}.{c2}"
                         reverse_str = f"{t2}.{c2} = {t1}.{c1}"
                         existing = [j.lower() for j in new_joins]
-                        if join_str.lower() not in existing and reverse_str.lower() not in existing:
+                        if (
+                            join_str.lower() not in existing
+                            and reverse_str.lower() not in existing
+                        ):
                             new_joins.append(join_str)
 
-        if all_needed != set(tables_lower) or len(new_joins) != len(parsed.get("join_path", [])):
+        if all_needed != set(tables_lower) or len(new_joins) != len(
+            parsed.get("join_path", [])
+        ):
             parsed["tables_needed"] = sorted(all_needed)
             parsed["join_path"] = new_joins
             added = all_needed - set(tables_lower)
             if added:
                 sql_task = parsed.get("sql_task", "")
                 if sql_task:
-                    parsed["sql_task"] = sql_task + f" (Note: also JOIN through {', '.join(sorted(added))} for FK connectivity)"
-            debug_log("fk_path_complete", original_tables=tables_lower,
-                      final_tables=sorted(all_needed), joins=new_joins)
+                    parsed["sql_task"] = (
+                        sql_task
+                        + f" (Note: also JOIN through {', '.join(sorted(added))} for FK connectivity)"
+                    )
+            debug_log(
+                "fk_path_complete",
+                original_tables=tables_lower,
+                final_tables=sorted(all_needed),
+                joins=new_joins,
+            )
             return json.dumps(parsed, ensure_ascii=False, indent=2)
 
         return task_plan
@@ -236,24 +266,68 @@ def _review_plan(question, task_plan, schema_text, profile):
         return task_plan
 
 
+def _classify_question(question: str) -> str:
+    """Use LLM to provide specific supplementary advice ONLY for complex questions."""
+    prompt = f"""Analyze this data analysis question. ONLY provide advice if the question has one of these specific pitfalls:
+
+1. SEPARATE COUNTS: Question asks "how many X and Y" — need to count X and Y separately, not as a total
+2. AGGREGATION NEEDED: Question asks about a total/sum over a time period, but data has one row per month/transaction — need GROUP BY + SUM first
+3. HINT EXPLAINS COLUMN NAME: Hint says "X refers to Y" meaning a column name, NOT a filter condition
+4. MULTI-STEP COMPUTATION: Question requires computing an intermediate value (e.g., rate, difference) before answering
+5. AMBIGUOUS ENTITY: Question mentions an entity that could map to multiple columns (e.g., "district" could be district name or district code)
+
+For SIMPLE questions (direct lookup, single filter, straightforward count), output empty advice.
+Be very conservative — most questions do NOT need extra advice.
+
+Question: {question}
+
+Output JSON: {{"advice": "specific advice if needed, or empty string for simple questions"}}
+Output ONLY JSON:"""
+
+    try:
+        res = llm.invoke([HumanMessage(content=prompt)])
+        debug_log("classify_question", response=res.content[:200])
+        result = clean_llm_json(res.content)
+        advice = result.get("advice", "")
+        if advice:
+            debug_log("classify_question", advice=advice[:100])
+        return advice
+    except Exception as e:
+        debug_log("classify_question", error=str(e))
+        return ""
+
+
 def question_analysis(state):
     """分解問題，生成結構化的 task_plan 供 SQL 和 Python 使用。"""
     profile = load_profile()
     question = state["question"]
 
     schema_desc = state.get("schema_desc", "")
-    schema_desc_section = f"\nColumn descriptions:\n{schema_desc}\n" if schema_desc else ""
+    schema_desc_section = (
+        f"\nColumn descriptions:\n{schema_desc}\n" if schema_desc else ""
+    )
     base_schema = state.get("filtered_schema") or SCHEMA_INFO
     column_descs = state.get("column_descs")
-    schema_text = _embed_descs(base_schema, column_descs) if column_descs else base_schema
+    schema_text = (
+        _embed_descs(base_schema, column_descs) if column_descs else base_schema
+    )
 
     # Build enum values summary for QA (helps pick correct columns)
     from db import ENUM_VALUES
+
     enum_info = _filter_enum_for_question(question, ENUM_VALUES)
 
-    prompt = profile.build_qa_prompt(question, schema_text, schema_desc_section,
-                                      conditions_context=state.get("_conditions_context", ""),
-                                      enum_info=enum_info)
+    # Dynamic advice for complex questions only
+    dynamic_guidelines = _classify_question(question)
+
+    prompt = profile.build_qa_prompt(
+        question,
+        schema_text,
+        schema_desc_section,
+        conditions_context=state.get("_conditions_context", ""),
+        enum_info=enum_info,
+        dynamic_guidelines=dynamic_guidelines,
+    )
 
     debug_log("question_analysis", prompt=prompt)
     res = llm.invoke([HumanMessage(content=prompt)])
@@ -307,7 +381,7 @@ def _refine_aggregation(question: str, task_plan: str) -> str:
         sql_task = parsed.get("sql_task", "")
         python_task = parsed.get("python_task", "")
         tables = parsed.get("tables_needed", [])
-        filters = parsed.get("filters", [])
+        # filters = parsed.get("filters", [])
 
         if not sql_task or not tables:
             return task_plan
@@ -323,7 +397,9 @@ def _refine_aggregation(question: str, task_plan: str) -> str:
         granularity_info = []
         for t in used_composite:
             pk_cols = composite_pk_tables[t.lower()]
-            granularity_info.append(f"Table '{t}' has composite PK ({', '.join(pk_cols)}), meaning each row represents one combination of these columns.")
+            granularity_info.append(
+                f"Table '{t}' has composite PK ({', '.join(pk_cols)}), meaning each row represents one combination of these columns."
+            )
 
         prompt = f"""Review this query plan. A table used has a composite primary key, meaning multiple rows exist per entity.
 
@@ -372,8 +448,15 @@ Output ONLY JSON:"""
             fixed_sql = result.get("fixed_sql_task", "")
             if fixed_sql and fixed_sql != sql_task:
                 parsed["sql_task"] = fixed_sql
-                debug_log("refine_aggregation", action="fixed_sql", fixed=fixed_sql[:80])
-            debug_log("refine_aggregation", action="fixed", original=python_task[:80], fixed=fixed_py[:80])
+                debug_log(
+                    "refine_aggregation", action="fixed_sql", fixed=fixed_sql[:80]
+                )
+            debug_log(
+                "refine_aggregation",
+                action="fixed",
+                original=python_task[:80],
+                fixed=fixed_py[:80],
+            )
             return json.dumps(parsed, ensure_ascii=False, indent=2)
 
         return task_plan
@@ -404,9 +487,12 @@ def _detect_composite_pk_tables() -> dict:
             # Check for PRIMARY KEY constraint
             if "primary key" in lower:
                 # Inline PK: PRIMARY KEY (col1, col2)
-                pk_match = re.search(r'primary\s+key\s*\(([^)]+)\)', lower)
+                pk_match = re.search(r"primary\s+key\s*\(([^)]+)\)", lower)
                 if pk_match:
-                    cols = [c.strip().strip('"').lower() for c in pk_match.group(1).split(",")]
+                    cols = [
+                        c.strip().strip('"').lower()
+                        for c in pk_match.group(1).split(",")
+                    ]
                     if len(cols) > 1:
                         pk_cols = cols
 

@@ -5,7 +5,15 @@
 #   ./run_eval_debug.sh financial  # 直接指定
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PG_BASE_URL="postgresql+psycopg2://postgres:postgres@localhost:5432"
+
+# Load env from .env.eval_debug if exists
+if [ -f "$SCRIPT_DIR/.env.eval_debug" ]; then
+  set -a
+  source "$SCRIPT_DIR/.env.eval_debug"
+  set +a
+fi
+
+PG_BASE_URL="${PG_BASE_URL:-postgresql+psycopg2://postgres:postgres@localhost:5432}"
 
 if [ -z "$1" ]; then
   echo "🔬 Eval Debug — 選擇資料庫:"

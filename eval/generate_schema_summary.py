@@ -22,6 +22,7 @@ _cli_env_keys = ["LLM_PROVIDER", "LLM_MODEL", "LLM_DEPLOYMENT"]
 _cli_env = {k: os.environ[k] for k in _cli_env_keys if k in os.environ}
 
 from dotenv import load_dotenv
+
 load_dotenv(EVAL_DIR / ".env.eval", override=True)
 
 # 恢復 CLI 傳入的值
@@ -37,6 +38,7 @@ def generate_for_db(db_id: str, model_tag: str = None):
 
     # 載入 column_descs（直接實作，避免 import run_eval 觸發 pipeline 初始化）
     import csv
+
     column_descs = {}
     desc_dir = EVAL_DIR / "databases" / db_id / "database_description"
     if desc_dir.exists():
@@ -62,13 +64,18 @@ def generate_for_db(db_id: str, model_tag: str = None):
 
     print(f"  Loading DB context for {db_id}...", flush=True)
     from db import build_db_context, generate_schema_summary
+
     eng, schema_info, enum_values = build_db_context(db_uri)
 
-    print(f"  Generating summary ({len(column_descs)} column descs, {len(enum_values)} enums)...", flush=True)
+    print(
+        f"  Generating summary ({len(column_descs)} column descs, {len(enum_values)} enums)...",
+        flush=True,
+    )
     result = generate_schema_summary(schema_info, column_descs, enum_values)
 
     # 檔名帶模型標記
     import json as _json
+
     if isinstance(result, dict):
         # 精煉的 column_descs JSON
         if model_tag:
@@ -98,7 +105,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--db", default=None, help="DB name")
     parser.add_argument("--all", action="store_true", help="Generate for all eval DBs")
-    parser.add_argument("--model-tag", default=None, help="Model tag for filename (e.g., gpt41mini, qwen3)")
+    parser.add_argument(
+        "--model-tag",
+        default=None,
+        help="Model tag for filename (e.g., gpt41mini, qwen3)",
+    )
     args = parser.parse_args()
 
     if args.all:

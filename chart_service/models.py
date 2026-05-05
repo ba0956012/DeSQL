@@ -5,7 +5,15 @@ from typing import Literal
 from pydantic import BaseModel, Field, field_validator
 
 VALID_CHART_TYPES = {
-    "auto", "bar", "pie", "line", "treemap", "scatter", "table", "none", "heatmap",
+    "auto",
+    "bar",
+    "pie",
+    "line",
+    "treemap",
+    "scatter",
+    "table",
+    "none",
+    "heatmap",
 }
 
 

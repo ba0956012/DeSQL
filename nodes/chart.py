@@ -146,8 +146,13 @@ def _render_table_image(data, question, max_rows=50):
 
     if len(data) > max_rows:
         ax.text(
-            0.5, -0.01, f"（僅顯示前 {max_rows} 筆，共 {len(data)} 筆）",
-            transform=ax.transAxes, ha="center", fontsize=9, color="gray",
+            0.5,
+            -0.01,
+            f"（僅顯示前 {max_rows} 筆，共 {len(data)} 筆）",
+            transform=ax.transAxes,
+            ha="center",
+            fontsize=9,
+            color="gray",
         )
 
     buf = io.BytesIO()

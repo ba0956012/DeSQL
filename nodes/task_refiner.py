@@ -35,6 +35,7 @@ def _build_data_summary(sql_result, sample):
 
         if unique_count <= 10:
             from collections import Counter as _C
+
             counts = _C(str(v) for v in vals)
             dist = ", ".join(f"{v}:{c}" for v, c in counts.most_common())
             lines.append(f"  {col} (type={type_name}): {unique_count} unique — {dist}")
@@ -91,7 +92,11 @@ def refine_python_task(state):
 
     # Build data context
     sample = state.get("sample", [])[:3]
-    sample_str = json.dumps(sample, indent=2, ensure_ascii=False, default=str) if sample else "[]"
+    sample_str = (
+        json.dumps(sample, indent=2, ensure_ascii=False, default=str)
+        if sample
+        else "[]"
+    )
     data_summary = _build_data_summary(sql_result, sample)
 
     prompt = REFINE_PROMPT.format(
@@ -99,7 +104,11 @@ def refine_python_task(state):
         sql=state.get("sql", "")[:300],
         data_summary=data_summary,
         sample_str=sample_str[:500],
-        expected_result=json.dumps(expected_result, ensure_ascii=False) if expected_result else "N/A",
+        expected_result=(
+            json.dumps(expected_result, ensure_ascii=False)
+            if expected_result
+            else "N/A"
+        ),
         original_task=original_task,
     )
 
@@ -111,7 +120,9 @@ def refine_python_task(state):
         # Remove any JSON wrapping if LLM added it
         if refined.startswith('"') and refined.endswith('"'):
             refined = refined[1:-1]
-        debug_log("refine_python_task", original=original_task[:100], refined=refined[:200])
+        debug_log(
+            "refine_python_task", original=original_task[:100], refined=refined[:200]
+        )
     except Exception as e:
         debug_log("refine_python_task", error=str(e))
         return {}  # On error, keep original

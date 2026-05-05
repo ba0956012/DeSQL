@@ -24,7 +24,6 @@ from hypothesis.strategies import (
 from chart_service.chart_generator import ChartGenerator
 from chart_service.config import Settings
 
-
 # ── Helpers ──────────────────────────────────────────────────────────
 
 
@@ -79,7 +78,9 @@ _simple_row = fixed_dictionaries({"name": text(min_size=1), "value": just(42)})
 
 _non_empty_data = lists(_simple_row, min_size=1, max_size=5)
 
-_non_auto_chart_types = sampled_from(["bar", "pie", "line", "treemap", "scatter", "table"])
+_non_auto_chart_types = sampled_from(
+    ["bar", "pie", "line", "treemap", "scatter", "table"]
+)
 
 
 # ── Property 1: Judge 判斷不需圖表時回傳空結果 ──────────────────────
@@ -89,17 +90,19 @@ _non_auto_chart_types = sampled_from(["bar", "pie", "line", "treemap", "scatter"
 
 @h_settings(max_examples=100)
 @given(data=_non_empty_data, question=_non_blank_question)
-def test_property1_judge_no_chart_returns_none(
-    data: list[dict], question: str
-) -> None:
+def test_property1_judge_no_chart_returns_none(data: list[dict], question: str) -> None:
     """When LLM Judge returns should_chart=False, response has chart_type='none' and empty content."""
-    judge_json = json.dumps({
-        "insight": "不需要圖表",
-        "should_chart": False,
-        "chart_type": "none",
-    })
+    judge_json = json.dumps(
+        {
+            "insight": "不需要圖表",
+            "should_chart": False,
+            "chart_type": "none",
+        }
+    )
     gen = _make_generator(llm_return=judge_json)
-    resp = gen.generate(data=data, question=question, engine="echarts", chart_type="auto")
+    resp = gen.generate(
+        data=data, question=question, engine="echarts", chart_type="auto"
+    )
     assert resp.chart_type == "none"
     assert resp.chart_html == ""
     assert resp.chart_option == ""
@@ -124,15 +127,27 @@ def test_property2_explicit_chart_type_skips_judge(
     # For table types, no LLM call is needed at all.
     # For non-table types, LLM is called for code generation (not judging).
     gen = _make_generator(llm_return="x = 1")  # dummy code for non-table
-    resp = gen.generate(data=data, question=question, engine="matplotlib", chart_type=chart_type)
+    resp = gen.generate(
+        data=data, question=question, engine="matplotlib", chart_type=chart_type
+    )
 
     # The judge prompt contains "你是資料視覺化顧問" — verify it was NOT used.
     for call in gen._mock_client.chat.completions.create.call_args_list:
-        messages = call.kwargs.get("messages") or call.args[0] if call.args else call.kwargs.get("messages", [])
+        messages = (
+            call.kwargs.get("messages") or call.args[0]
+            if call.args
+            else call.kwargs.get("messages", [])
+        )
         if isinstance(messages, list):
             for m in messages:
-                content = m.get("content", "") if isinstance(m, dict) else getattr(m, "content", "")
-                assert "你是資料視覺化顧問" not in content, "Judge was called when chart_type was explicit"
+                content = (
+                    m.get("content", "")
+                    if isinstance(m, dict)
+                    else getattr(m, "content", "")
+                )
+                assert (
+                    "你是資料視覺化顧問" not in content
+                ), "Judge was called when chart_type was explicit"
 
 
 # ── Property 3: 無法解析的 Judge 回應回退為 "none" ──────────────────
@@ -140,15 +155,17 @@ def test_property2_explicit_chart_type_skips_judge(
 # **Validates: Requirements 2.4**
 
 
-_bad_json = sampled_from([
-    "this is not json",
-    "{ broken",
-    "```json\nnot valid\n```",
-    "",
-    "true",
-    "[1, 2, 3]",
-    "should_chart: yes",
-])
+_bad_json = sampled_from(
+    [
+        "this is not json",
+        "{ broken",
+        "```json\nnot valid\n```",
+        "",
+        "true",
+        "[1, 2, 3]",
+        "should_chart: yes",
+    ]
+)
 
 
 @h_settings(max_examples=100)
@@ -158,7 +175,9 @@ def test_property3_unparseable_judge_falls_back_to_none(
 ) -> None:
     """When LLM Judge returns unparseable JSON, response has chart_type='none'."""
     gen = _make_generator(llm_return=bad_response)
-    resp = gen.generate(data=data, question=question, engine="echarts", chart_type="auto")
+    resp = gen.generate(
+        data=data, question=question, engine="echarts", chart_type="auto"
+    )
     assert resp.chart_type == "none"
     assert resp.chart_html == ""
     assert resp.chart_option == ""
@@ -177,7 +196,9 @@ def test_property4_echarts_table_generates_html_table(
 ) -> None:
     """When engine=echarts and chart_type=table, response chart_html contains '<table'."""
     gen = _make_generator()  # No LLM call needed for table rendering
-    resp = gen.generate(data=data, question=question, engine="echarts", chart_type="table")
+    resp = gen.generate(
+        data=data, question=question, engine="echarts", chart_type="table"
+    )
     assert resp.chart_type == "table"
     assert "<table" in resp.chart_html
 
@@ -196,7 +217,9 @@ def test_property6_matplotlib_table_generates_valid_base64_png(
 ) -> None:
     """When engine=matplotlib and chart_type=table, response chart_image is valid base64 PNG."""
     gen = _make_generator()  # No LLM call needed for table rendering
-    resp = gen.generate(data=data, question=question, engine="matplotlib", chart_type="table")
+    resp = gen.generate(
+        data=data, question=question, engine="matplotlib", chart_type="table"
+    )
     assert resp.chart_type == "table"
     assert resp.chart_image != ""
     decoded = base64.b64decode(resp.chart_image)

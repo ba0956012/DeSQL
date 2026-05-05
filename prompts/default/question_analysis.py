@@ -38,7 +38,14 @@ QA_JSON_FORMAT = """\
 }}"""
 
 
-def build_qa_prompt(question: str, schema_text: str, schema_desc_section: str, conditions_context: str = "", enum_info: str = "") -> str:
+def build_qa_prompt(
+    question: str,
+    schema_text: str,
+    schema_desc_section: str,
+    conditions_context: str = "",
+    enum_info: str = "",
+    dynamic_guidelines: str = "",
+) -> str:
     return f"""你是一個資料分析專家。請分解問題為結構化的查詢計畫。
 
 資料庫 Schema：

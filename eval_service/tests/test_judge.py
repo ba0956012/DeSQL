@@ -8,10 +8,10 @@ import pytest
 from eval_service.judge import LLMJudge, run_gold_sql
 from eval_service.config import Settings
 
-
 # ---------------------------------------------------------------------------
 # run_gold_sql tests
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def tmp_sqlite(tmp_path):
@@ -53,6 +53,7 @@ def test_run_gold_sql_invalid_sql_raises(tmp_sqlite):
 # LLMJudge tests
 # ---------------------------------------------------------------------------
 
+
 def _make_settings(**overrides) -> Settings:
     defaults = {
         "azure_openai_api_key": "test-key",
@@ -65,8 +66,9 @@ def _make_settings(**overrides) -> Settings:
     return Settings(**defaults)
 
 
-def _make_judge_with_mock(llm_content: str = '{"correct": true, "reason": "ok"}',
-                          side_effect=None):
+def _make_judge_with_mock(
+    llm_content: str = '{"correct": true, "reason": "ok"}', side_effect=None
+):
     """Create an LLMJudge with a mocked OpenAI client."""
     with patch("openai.AzureOpenAI") as mock_cls:
         mock_client = MagicMock()

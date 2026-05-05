@@ -20,14 +20,26 @@ st.set_page_config(page_title="DeSQL Eval Debug", page_icon="🔬", layout="wide
 
 # ── Load env BEFORE any pipeline imports ──
 # Save CLI env vars (LLM settings from run_eval_debug.sh)
-_CLI_ENV_KEYS = ["LLM_PROVIDER", "LLM_MODEL", "SQL_LLM_PROVIDER", "SQL_LLM_MODEL",
-                 "CODE_LLM_PROVIDER", "CODE_LLM_MODEL", "PROMPT_PROFILE",
-                 "BEDROCK_API_TOKEN", "BEDROCK_BASE_URL", "ENABLE_CHART",
-                 "DATABASE_URL", "PG_BASE_URL", "DOMAIN_RULES"]
+_CLI_ENV_KEYS = [
+    "LLM_PROVIDER",
+    "LLM_MODEL",
+    "SQL_LLM_PROVIDER",
+    "SQL_LLM_MODEL",
+    "CODE_LLM_PROVIDER",
+    "CODE_LLM_MODEL",
+    "PROMPT_PROFILE",
+    "BEDROCK_API_TOKEN",
+    "BEDROCK_BASE_URL",
+    "ENABLE_CHART",
+    "DATABASE_URL",
+    "PG_BASE_URL",
+    "DOMAIN_RULES",
+]
 _cli_env = {k: os.environ[k] for k in _CLI_ENV_KEYS if k in os.environ}
 
 # Load eval debug env (sets DATABASE_URL, PG_BASE_URL)
 from dotenv import load_dotenv
+
 load_dotenv(".env.eval_debug", override=True)
 
 # Restore CLI env vars (LLM settings take priority)
@@ -36,6 +48,7 @@ os.environ.update(_cli_env)
 # ── Load BIRD dataset ──
 EVAL_DIR = Path("eval")
 
+
 @st.cache_data
 def load_questions():
     """Load all BIRD questions from dev.json"""
@@ -43,11 +56,13 @@ def load_questions():
         data = json.load(f)
     return data
 
+
 @st.cache_data
 def load_gold_results(db_id):
     """Load gold SQL results for comparison"""
     from sqlalchemy import create_engine, text as sa_text
     from dotenv import load_dotenv
+
     load_dotenv()
     load_dotenv(str(EVAL_DIR / ".env.eval"), override=True)
     pg_base = os.environ.get("PG_BASE_URL", "")
@@ -56,6 +71,7 @@ def load_gold_results(db_id):
     engine = create_engine(f"{pg_base}/bird_{db_id}")
     results = {}
     return results
+
 
 all_questions = load_questions()
 
@@ -66,10 +82,12 @@ PG_BASE_URL = os.environ.get("PG_BASE_URL", "")
 _THIS_MODULE = "desql_eval_state"
 if _THIS_MODULE not in sys.modules:
     import types
+
     _mod = types.ModuleType(_THIS_MODULE)
     _mod.call_log = []
     sys.modules[_THIS_MODULE] = _mod
 _shared = sys.modules[_THIS_MODULE]
+
 
 # ── TrackedLLM (same as app.py) ──
 class _TrackedLLM:
@@ -81,6 +99,7 @@ class _TrackedLLM:
         "analyze_conditions": "retrieval: 條件分析",
         "tokenize": "retrieval: 拆詞",
         "expand_synonyms": "retrieval: 同義詞擴展",
+        "_classify_question": "QA: pitfall 偵測",
         "question_analysis": "QA: 問題分解",
         "_review_plan": "QA: plan review",
         "_refine_aggregation": "QA: aggregation refine",
@@ -90,13 +109,15 @@ class _TrackedLLM:
         "generate_sql": "SQL 生成",
         "validate_sql_result": "SQL 驗證",
         "generate_code": "Python code 生成",
-        "_check_code_task": "code: task 檢查",
+        "_check_code_task": "code: 資料驗證",
+        "_judge_answer": "eval: 答案判斷",
         "format_answer": "答案格式化",
         "generate_chart": "chart 生成",
     }
 
     def _detect_purpose(self):
         import inspect
+
         for frame_info in inspect.stack():
             fname = frame_info.function
             if fname in self._CALLER_MAP:
@@ -108,21 +129,25 @@ class _TrackedLLM:
         input_text = "\n".join(m.content for m in messages if hasattr(m, "content"))
         result = self._real.invoke(messages, *args, **kwargs)
         output_text = result.content if hasattr(result, "content") else str(result)
-        sys.modules[_THIS_MODULE].call_log.append({
-            "label": object.__getattribute__(self, "_label"),
-            "purpose": purpose,
-            "input": input_text,
-            "output": output_text,
-            "input_len": len(input_text),
-            "output_len": len(output_text),
-        })
+        sys.modules[_THIS_MODULE].call_log.append(
+            {
+                "label": object.__getattribute__(self, "_label"),
+                "purpose": purpose,
+                "input": input_text,
+                "output": output_text,
+                "input_len": len(input_text),
+                "output_len": len(output_text),
+            }
+        )
         return result
 
     def __getattr__(self, name):
         return getattr(object.__getattribute__(self, "_real"), name)
 
+
 # Patch LLMs
 import llm as _llm_mod
+
 if not isinstance(_llm_mod.llm, _TrackedLLM):
     _llm_mod.llm = _TrackedLLM(_llm_mod.llm, "main")
     _llm_mod.sql_llm = _TrackedLLM(_llm_mod.sql_llm, "sql")
@@ -135,8 +160,14 @@ from logger import init_run_logger
 
 # Force-patch node refs
 import nodes.sql, nodes.code, nodes.answer, nodes.question_analysis, nodes.schema_filter
-_tracked_set = {id(_llm_mod.llm), id(_llm_mod.sql_llm), id(_llm_mod.code_llm),
-                id(_llm_mod.qa_llm), id(_llm_mod.schema_llm)}
+
+_tracked_set = {
+    id(_llm_mod.llm),
+    id(_llm_mod.sql_llm),
+    id(_llm_mod.code_llm),
+    id(_llm_mod.qa_llm),
+    id(_llm_mod.schema_llm),
+}
 if id(nodes.sql.llm) not in _tracked_set:
     nodes.sql.llm = _llm_mod.sql_llm
 if id(nodes.code.llm) not in _tracked_set:
@@ -151,6 +182,7 @@ if id(nodes.schema_filter.llm) not in _tracked_set:
     nodes.schema_filter.llm = _llm_mod.schema_llm
 try:
     import nodes.chart_echarts
+
     if id(nodes.chart_echarts.llm) not in _tracked_set:
         nodes.chart_echarts.llm = _llm_mod.llm
 except ImportError:
@@ -169,14 +201,18 @@ with st.sidebar:
     db_questions = [q for q in all_questions if q["db_id"] == db_name]
 
     # Difficulty filter
-    difficulties = ["all"] + sorted(set(q.get("difficulty", "unknown") for q in db_questions))
+    difficulties = ["all"] + sorted(
+        set(q.get("difficulty", "unknown") for q in db_questions)
+    )
     selected_diff = st.selectbox("Difficulty", difficulties)
     if selected_diff != "all":
         db_questions = [q for q in db_questions if q.get("difficulty") == selected_diff]
 
     # Question selector
-    q_options = {f"#{q['question_id']} ({q.get('difficulty','?')}): {q['question'][:60]}": q
-                 for q in db_questions}
+    q_options = {
+        f"#{q['question_id']} ({q.get('difficulty','?')}): {q['question'][:60]}": q
+        for q in db_questions
+    }
     selected_label = st.selectbox("Question", list(q_options.keys()))
     selected_q = q_options[selected_label] if selected_label else None
 
@@ -194,7 +230,9 @@ if selected_q:
     # Show question details
     col1, col2 = st.columns([3, 1])
     with col1:
-        st.markdown(f"### #{selected_q['question_id']} — {selected_q.get('difficulty', '?')}")
+        st.markdown(
+            f"### #{selected_q['question_id']} — {selected_q.get('difficulty', '?')}"
+        )
         st.write(f"**Question:** {selected_q['question']}")
         evidence = selected_q.get("evidence", "")
         if evidence:
@@ -238,15 +276,23 @@ if selected_q:
 
         # ── Answer comparison + Judging ──
         st.divider()
-        answer = merged.get("display_answer") or merged.get("final_answer") or "無法回答"
-        
+        answer = (
+            merged.get("display_answer") or merged.get("final_answer") or "無法回答"
+        )
+
         # Execute gold SQL on SQLite to get expected result
         gold_sql = selected_q.get("SQL", "")
         expected_result = None
         if gold_sql:
             try:
                 import sqlite3
-                sqlite_path = EVAL_DIR / "databases" / selected_q["db_id"] / f"{selected_q['db_id']}.sqlite"
+
+                sqlite_path = (
+                    EVAL_DIR
+                    / "databases"
+                    / selected_q["db_id"]
+                    / f"{selected_q['db_id']}.sqlite"
+                )
                 conn = sqlite3.connect(str(sqlite_path))
                 cursor = conn.cursor()
                 cursor.execute(gold_sql)
@@ -266,10 +312,16 @@ if selected_q:
                 if len(expected_result) == 1 and len(expected_result[0]) == 1:
                     expected_str = str(list(expected_result[0].values())[0])
                 elif len(expected_result) <= 20:
-                    expected_str = json.dumps(expected_result, ensure_ascii=False, default=str)
+                    expected_str = json.dumps(
+                        expected_result, ensure_ascii=False, default=str
+                    )
                 else:
-                    expected_str = json.dumps(expected_result[:10], ensure_ascii=False, default=str)
-                    expected_str += f"\n... ({len(expected_result)} rows total, showing first 10)"
+                    expected_str = json.dumps(
+                        expected_result[:10], ensure_ascii=False, default=str
+                    )
+                    expected_str += (
+                        f"\n... ({len(expected_result)} rows total, showing first 10)"
+                    )
 
                 judge_prompt = f"""Compare the predicted answer with the expected answer. Are they equivalent?
 
@@ -283,9 +335,18 @@ Expected (from gold SQL): {expected_str[:500]}
 Predicted: {str(answer)[:500]}
 
 Answer ONLY "correct" or "incorrect" followed by a brief reason."""
-                from langchain_core.messages import HumanMessage
-                judge_res = _llm_mod.llm.invoke([HumanMessage(content=judge_prompt)])
-                judge_text = judge_res.content.strip().lower() if hasattr(judge_res, 'content') else str(judge_res).lower()
+
+                def _judge_answer(prompt):
+                    from langchain_core.messages import HumanMessage
+
+                    return _llm_mod.llm.invoke([HumanMessage(content=prompt)])
+
+                judge_res = _judge_answer(judge_prompt)
+                judge_text = (
+                    judge_res.content.strip().lower()
+                    if hasattr(judge_res, "content")
+                    else str(judge_res).lower()
+                )
                 is_correct = judge_text.startswith("correct")
                 judge_reason = judge_text
             except Exception as e:

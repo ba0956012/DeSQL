@@ -16,44 +16,60 @@ from chart_service.sandbox import (
     execute_echarts_code,
 )
 
-
 # ── Dangerous builtins that must NOT be in SAFE_BUILTINS ─────────────
 
 DANGEROUS_BUILTINS = [
-    "open", "exec", "eval", "__import__", "compile",
-    "globals", "locals", "breakpoint", "exit", "quit",
-    "input", "memoryview", "vars", "dir",
+    "open",
+    "exec",
+    "eval",
+    "__import__",
+    "compile",
+    "globals",
+    "locals",
+    "breakpoint",
+    "exit",
+    "quit",
+    "input",
+    "memoryview",
+    "vars",
+    "dir",
 ]
 
 
 # ── Strategies ───────────────────────────────────────────────────────
 
-_import_prefixes = sampled_from([
-    "import os",
-    "import sys",
-    "from os import path",
-    "from collections import OrderedDict",
-    "import json",
-    "from pathlib import Path",
-    "import subprocess",
-])
+_import_prefixes = sampled_from(
+    [
+        "import os",
+        "import sys",
+        "from os import path",
+        "from collections import OrderedDict",
+        "import json",
+        "from pathlib import Path",
+        "import subprocess",
+    ]
+)
 
-_safe_code_lines = sampled_from([
-    "x = 1",
-    "y = len([1,2,3])",
-    "z = sum([1,2,3])",
-    "result = 'hello'",
-    "a = list(range(5))",
-])
+_safe_code_lines = sampled_from(
+    [
+        "x = 1",
+        "y = len([1,2,3])",
+        "z = sum([1,2,3])",
+        "result = 'hello'",
+        "a = list(range(5))",
+    ]
+)
 
-_error_code = sampled_from([
-    "1/0",
-    "raise ValueError('test')",
-    "raise RuntimeError('boom')",
-    "int('not_a_number')",
-    "[][999]",
-    "{}['missing_key']",
-])
+_error_code = sampled_from(
+    [
+        "1/0",
+        "raise ValueError('test')",
+        "raise RuntimeError('boom')",
+        "int('not_a_number')",
+        "[][999]",
+        "{}['missing_key']",
+    ]
+)
 
 
 # ── Property 8: 沙箱僅允許白名單內建函式 ────────────────────────────

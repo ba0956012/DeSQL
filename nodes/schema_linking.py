@@ -19,7 +19,6 @@ from llm import llm
 from utils import debug_log, clean_llm_json
 from retrieval_subgraph import format_enum_info
 
-
 # BIRD database_description CSV 目錄
 # 透過環境變數 BIRD_DESC_DIR 指定，或自動偵測
 _BIRD_DESC_DIR = os.environ.get("BIRD_DESC_DIR", "")
@@ -33,16 +32,16 @@ def _load_bird_csv_desc(db_id: str = "") -> str:
         candidates.append(Path(_BIRD_DESC_DIR))
     if db_id:
         candidates.append(Path("eval/databases") / db_id / "database_description")
-    
+
     desc_dir = None
     for p in candidates:
         if p.exists():
             desc_dir = p
             break
-    
+
     if not desc_dir:
         return ""
-    
+
     lines = []
     for csv_file in sorted(desc_dir.glob("*.csv")):
         table_name = csv_file.stem
@@ -80,11 +79,13 @@ def schema_linking(state):
     """分析問題，同時完成 schema linking 和欄位描述精煉。"""
     question = state["question"]
     enum_info = format_enum_info(ENUM_VALUES)
-    
+
     # 載入 BIRD 原始 CSV 描述
     db_id = _get_db_id_from_env()
     bird_desc = _load_bird_csv_desc(db_id)
-    bird_desc_section = f"\n原始欄位描述（來自資料庫文件）：\n{bird_desc}\n" if bird_desc else ""
+    bird_desc_section = (
+        f"\n原始欄位描述（來自資料庫文件）：\n{bird_desc}\n" if bird_desc else ""
+    )
 
     prompt = f"""你是一個資料庫專家。根據使用者問題，完成以下兩個任務：
 
@@ -154,10 +155,12 @@ def schema_linking(state):
         else:
             schema_desc = column_notes
 
-    debug_log("schema_linking",
-              tables=[t["name"] for t in linked_tables],
-              strategy=strategy,
-              column_notes=column_notes[:200] if column_notes else "")
+    debug_log(
+        "schema_linking",
+        tables=[t["name"] for t in linked_tables],
+        strategy=strategy,
+        column_notes=column_notes[:200] if column_notes else "",
+    )
 
     return {
         "linked_schema": linked_schema,
@@ -179,7 +182,7 @@ def _build_linked_schema(linked_tables: list) -> str:
     for line in lines:
         lower = line.strip().lower()
         if lower.startswith("create table"):
-            parts = lower.replace('"', '').replace('`', '').split()
+            parts = lower.replace('"', "").replace("`", "").split()
             if len(parts) >= 3:
                 tname = parts[2].rstrip("(").strip()
                 in_relevant_table = tname in table_names

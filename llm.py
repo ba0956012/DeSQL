@@ -38,10 +38,7 @@ class BedrockChat(BaseChatModel):
         bedrock_messages = []
         for msg in messages:
             role = "user" if isinstance(msg, HumanMessage) else "assistant"
-            bedrock_messages.append({
-                "role": role,
-                "content": [{"text": msg.content}]
-            })
+            bedrock_messages.append({"role": role, "content": [{"text": msg.content}]})
 
         body = {"messages": bedrock_messages}
         if self.temperature > 0:
@@ -62,21 +59,30 @@ class BedrockChat(BaseChatModel):
                 resp.raise_for_status()
                 break
             except requests.HTTPError as e:
-                status = getattr(e.response, 'status_code', 0)
+                status = getattr(e.response, "status_code", 0)
                 if (status >= 500 or status == 429) and attempt < max_retries - 1:
                     wait = 2 ** (attempt + 1)
-                    print(f"  ⚠️ Bedrock {status} retry {attempt+1}/{max_retries} after {wait}s", flush=True)
+                    print(
+                        f"  ⚠️ Bedrock {status} retry {attempt+1}/{max_retries} after {wait}s",
+                        flush=True,
+                    )
                     _time.sleep(wait)
                 elif attempt < max_retries - 1:
-                    wait = 2 ** attempt
-                    print(f"  ⚠️ Bedrock retry {attempt+1}/{max_retries} after {wait}s: {e}", flush=True)
+                    wait = 2**attempt
+                    print(
+                        f"  ⚠️ Bedrock retry {attempt+1}/{max_retries} after {wait}s: {e}",
+                        flush=True,
+                    )
                     _time.sleep(wait)
                 else:
                     raise
             except (requests.Timeout, requests.ConnectionError) as e:
                 if attempt < max_retries - 1:
-                    wait = 2 ** attempt
-                    print(f"  ⚠️ Bedrock retry {attempt+1}/{max_retries} after {wait}s: {e}", flush=True)
+                    wait = 2**attempt
+                    print(
+                        f"  ⚠️ Bedrock retry {attempt+1}/{max_retries} after {wait}s: {e}",
+                        flush=True,
+                    )
                     _time.sleep(wait)
                 else:
                     raise
@@ -100,7 +106,9 @@ def _build_llm(provider=None, model=None, deployment=None):
     deployment = deployment or LLM_DEPLOYMENT
 
     if provider == "bedrock":
-        base_url = os.getenv("BEDROCK_BASE_URL", "https://bedrock-runtime.us-east-1.amazonaws.com")
+        base_url = os.getenv(
+            "BEDROCK_BASE_URL", "https://bedrock-runtime.us-east-1.amazonaws.com"
+        )
         token = os.getenv("BEDROCK_API_TOKEN", "")
         # 用 model name 組出 endpoint URL
         endpoint_url = f"{base_url}/model/{model}/converse"

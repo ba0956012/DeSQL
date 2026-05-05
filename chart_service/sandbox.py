@@ -52,14 +52,14 @@ SAFE_BUILTINS = {
 def strip_imports(code: str) -> str:
     """移除程式碼中的所有 import 與 from...import 語句。"""
     return "\n".join(
-        ln for ln in code.split("\n")
-        if not ln.strip().startswith(("import ", "from "))
+        ln for ln in code.split("\n") if not ln.strip().startswith(("import ", "from "))
     )
 
 
 def execute_matplotlib_code(code: str, data: list[dict]) -> dict:
     """在受限命名空間中執行 matplotlib 程式碼，回傳 {"success", "image", "error"}。"""
     import matplotlib
+
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
@@ -134,9 +134,7 @@ def execute_echarts_code(code: str, data: list[dict]) -> dict:
             }
 
         option_json = chart_obj.dump_options()
-        option_json = json.dumps(
-            json.loads(option_json), ensure_ascii=False, indent=2
-        )
+        option_json = json.dumps(json.loads(option_json), ensure_ascii=False, indent=2)
 
         chart_id = uuid.uuid4().hex[:12]
         width = getattr(chart_obj, "width", "800px") or "800px"

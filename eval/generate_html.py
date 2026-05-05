@@ -50,7 +50,7 @@ def md_to_html(md_text: str) -> str:
                     f'<img src="data:image/png;base64,{b64}" alt="{alt}" style="max-width:100%;">'
                 )
             else:
-                html_lines.append(f'<p>[Image not found: {src}]</p>')
+                html_lines.append(f"<p>[Image not found: {src}]</p>")
             continue
 
         # heading
@@ -72,7 +72,9 @@ def md_to_html(md_text: str) -> str:
             if not in_table:
                 html_lines.append("<table>")
                 in_table = True
-                html_lines.append("<tr>" + "".join(f"<th>{c}</th>" for c in cells) + "</tr>")
+                html_lines.append(
+                    "<tr>" + "".join(f"<th>{c}</th>" for c in cells) + "</tr>"
+                )
             else:
                 # bold cell
                 cells_html = []

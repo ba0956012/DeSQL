@@ -24,19 +24,48 @@ def _safe_import(name, *args, **kwargs):
 
 
 SAFE_BUILTINS = {
-    "len": len, "sum": sum, "min": min, "max": max,
-    "sorted": sorted, "reversed": reversed, "enumerate": enumerate,
-    "zip": zip, "map": map, "filter": filter, "range": range,
-    "int": int, "float": float, "str": str, "bool": bool,
-    "list": list, "dict": dict, "set": set, "tuple": tuple,
-    "round": round, "abs": abs, "any": any, "all": all,
-    "isinstance": isinstance, "hasattr": hasattr, "getattr": getattr,
-    "type": type, "print": print, "next": next, "iter": iter,
-    "Counter": Counter, "defaultdict": defaultdict, "Decimal": Decimal,
-    "datetime": datetime, "timedelta": timedelta, "date": date,
-    "ValueError": ValueError, "TypeError": TypeError,
-    "KeyError": KeyError, "IndexError": IndexError,
-    "AttributeError": AttributeError, "ZeroDivisionError": ZeroDivisionError,
+    "len": len,
+    "sum": sum,
+    "min": min,
+    "max": max,
+    "sorted": sorted,
+    "reversed": reversed,
+    "enumerate": enumerate,
+    "zip": zip,
+    "map": map,
+    "filter": filter,
+    "range": range,
+    "int": int,
+    "float": float,
+    "str": str,
+    "bool": bool,
+    "list": list,
+    "dict": dict,
+    "set": set,
+    "tuple": tuple,
+    "round": round,
+    "abs": abs,
+    "any": any,
+    "all": all,
+    "isinstance": isinstance,
+    "hasattr": hasattr,
+    "getattr": getattr,
+    "type": type,
+    "print": print,
+    "next": next,
+    "iter": iter,
+    "Counter": Counter,
+    "defaultdict": defaultdict,
+    "Decimal": Decimal,
+    "datetime": datetime,
+    "timedelta": timedelta,
+    "date": date,
+    "ValueError": ValueError,
+    "TypeError": TypeError,
+    "KeyError": KeyError,
+    "IndexError": IndexError,
+    "AttributeError": AttributeError,
+    "ZeroDivisionError": ZeroDivisionError,
     "__import__": _safe_import,
 }
 
@@ -113,16 +142,21 @@ def _profile_data(sql_result, sample):
         if is_numeric and unique_count > 10:
             # 數值欄位，多 distinct → 連續型
             parts = [f"{col}: {unique_count} unique values"]
-            parts.append(f"min={min(numeric_vals):.4g}, max={max(numeric_vals):.4g}, sum={sum(numeric_vals):.4g}")
+            parts.append(
+                f"min={min(numeric_vals):.4g}, max={max(numeric_vals):.4g}, sum={sum(numeric_vals):.4g}"
+            )
             if null_count > 0:
                 parts.append(f"{null_count} nulls")
             lines.append(", ".join(parts))
         elif unique_count <= 10:
             # 分類欄位（≤10 distinct）→ 列出每個值的 count
             from collections import Counter as _Counter
+
             counts = _Counter(str_vals)
             dist_parts = [f"{v}: {c}" for v, c in counts.most_common()]
-            parts = [f"{col}: categorical, {unique_count} values — {', '.join(dist_parts)}"]
+            parts = [
+                f"{col}: categorical, {unique_count} values — {', '.join(dist_parts)}"
+            ]
             if null_count > 0:
                 parts.append(f"{null_count} nulls")
             lines.append(", ".join(parts))
@@ -139,17 +173,48 @@ def _profile_data(sql_result, sample):
     row_strs = [str(sorted(r.items())) for r in sql_result]
     unique_rows = len(set(row_strs))
     if unique_rows < total:
-        lines.append(f"WARNING: {total - unique_rows} duplicate rows in data (total {total}, unique {unique_rows})")
+        lines.append(
+            f"WARNING: {total - unique_rows} duplicate rows in data (total {total}, unique {unique_rows})"
+        )
 
-    return "Data profile (computed from full dataset):\n" + "\n".join(f"  {line}" for line in lines)
+    return "Data profile (computed from full dataset):\n" + "\n".join(
+        f"  {line}" for line in lines
+    )
 
 
 def _check_code_task(state, python_task, expected_result, sql_result):
-    """Check python_task against actual SQL result. Return data_notes string (empty if no issues)."""
+    """Check python_task against actual SQL result. Return data_notes string (empty if no issues).
+
+    Uses a 'select from library' approach: LLM picks applicable warnings from a predefined set,
+    and can optionally add a custom note. This prevents free-form hallucination while allowing
+    context-specific guidance.
+    """
     from llm import llm as _check_llm
+
+    # Predefined warning library — each has a fixed, tested message for code LLM
+    WARNING_LIBRARY = {
+        "PERCENTAGE": "PERCENTAGE WARNING: The SQL data may only contain the subset (numerator). "
+        "Use len(data) as denominator, do NOT re-filter to count the subset again.",
+        "DISTINCT": "DISTINCT WARNING: The data has duplicate values in a key column. "
+        "When counting items (districts, accounts, customers, schools), "
+        "use len(set(...)) on the entity ID column, not len(data).",
+        "COLUMN_MISMATCH": "COLUMN MISMATCH WARNING: The python_task references a column "
+        "that may not exist in the SQL result. Check actual column names.",
+        "ALREADY_AGGREGATED": "ALREADY AGGREGATED WARNING: SQL used GROUP BY, so the data "
+        "already contains aggregated values. Do NOT re-aggregate in Python.",
+        "SORT_DIRECTION": "SORT DIRECTION WARNING: Check sort order carefully. "
+        "youngest/newest/latest = MAX(date). oldest/earliest/first = MIN(date).",
+        "FIRST_LAST": "FIRST/LAST WARNING: 'first/earliest' = sort ascending, take [0]. "
+        "'last/latest' = sort descending, take [0].",
+    }
+
     try:
         question = state.get("question", "")
-        cols = list(sql_result[0].keys()) if sql_result and isinstance(sql_result[0], dict) else []
+        cols = (
+            list(sql_result[0].keys())
+            if sql_result and isinstance(sql_result[0], dict)
+            else []
+        )
         row_count = len(sql_result)
 
         sample_vals = {}
@@ -157,7 +222,7 @@ def _check_code_task(state, python_task, expected_result, sql_result):
             vals = [r.get(col) for r in sql_result[:5] if r.get(col) is not None]
             sample_vals[col] = [str(v)[:30] for v in vals[:3]]
 
-        # Detect duplicates in key columns (helps DISTINCT check)
+        # Detect duplicates in key columns
         dup_info = ""
         if row_count > 1:
             dup_parts = []
@@ -165,11 +230,14 @@ def _check_code_task(state, python_task, expected_result, sql_result):
                 all_vals = [r.get(col) for r in sql_result if r.get(col) is not None]
                 unique_count = len(set(str(v) for v in all_vals))
                 if unique_count < len(all_vals) and unique_count < row_count * 0.9:
-                    dup_parts.append(f"{col}: {unique_count} unique out of {len(all_vals)} rows")
+                    dup_parts.append(
+                        f"{col}: {unique_count} unique out of {len(all_vals)} rows"
+                    )
             if dup_parts:
                 dup_info = f"\nDuplicate detection: {'; '.join(dup_parts)}"
 
-        prompt = f"""You are verifying a Python task against actual SQL query results. Check for potential issues.
+        warning_ids = ", ".join(WARNING_LIBRARY.keys())
+        prompt = f"""You are verifying a Python task against actual SQL query results.
 
 Question: {question}
 Python task: {python_task}
@@ -179,16 +247,17 @@ SQL returned: {row_count} rows, Columns: {cols}
 Sample: {json.dumps(sample_vals, ensure_ascii=False, default=str)[:500]}
 {dup_info}
 
-Check these issues:
-1. PERCENTAGE: If computing a percentage/ratio, does the data have BOTH subset AND total? If SQL already filtered to only the subset, the denominator should be len(data), not a re-filtered count.
-2. DISTINCT: If the question asks "how many X" (districts, accounts, customers, etc.), check if the data has duplicate values in the key column. If duplicates exist, Python must count DISTINCT values, not just len(data). Look at the duplicate detection info above.
-3. COLUMN MISMATCH: Does python_task reference a column not in the Columns list?
-4. ALREADY AGGREGATED: If SQL used GROUP BY (few rows with pre-computed values), Python should NOT re-aggregate.
-5. SORT DIRECTION: If the question asks for "youngest/newest/latest/most recent", that means MAX(date/birth_date). If it asks for "oldest/earliest/first", that means MIN(date/birth_date). Check if python_task has the correct direction.
-6. FIRST/LAST: If the question asks for "the first transaction" or "earliest", Python should sort ascending and take [0]. If "last/latest", sort descending and take [0].
+Available warnings: {warning_ids}
+- PERCENTAGE: applies when computing a ratio but SQL only has the subset
+- DISTINCT: applies when counting entities and data has duplicates in the key column (NOT in filter columns like city/status that are already constrained by WHERE)
+- COLUMN_MISMATCH: applies when python_task references a column not in Columns list
+- ALREADY_AGGREGATED: applies when SQL used GROUP BY (few rows with pre-computed values)
+- SORT_DIRECTION: applies when question asks for youngest/oldest/newest and sort might be wrong
+- FIRST_LAST: applies when question asks for first/last item and indexing might be wrong
 
-If NO issues found, output exactly: {{"ok": true}}
-If issues found, output: {{"ok": false, "note": "brief note about the specific issue"}}
+Select which warnings apply to this task. Be conservative — only select if you are confident the issue exists.
+Output JSON: {{"select": ["WARNING_ID", ...], "custom": "optional extra note if none of the above covers the issue, otherwise empty string"}}
+If no issues: {{"select": [], "custom": ""}}
 Output ONLY JSON:"""
 
         debug_log("check_code_task", prompt=prompt[:300])
@@ -196,13 +265,24 @@ Output ONLY JSON:"""
         debug_log("check_code_task", response=res.content[:200])
 
         result = clean_llm_json(res.content)
-        if result.get("ok", True):
+        selected = result.get("select", [])
+        custom = result.get("custom", "")
+
+        if not selected and not custom:
             debug_log("check_code_task", result="no issues")
             return ""
 
-        note = result.get("note", "")
-        debug_log("check_code_task", note=note)
-        return note
+        # Assemble data_notes from selected warnings
+        notes = []
+        for wid in selected:
+            if wid in WARNING_LIBRARY:
+                notes.append(WARNING_LIBRARY[wid])
+                debug_log("check_code_task", selected_warning=wid)
+        if custom:
+            notes.append(f"ADDITIONAL NOTE: {custom}")
+            debug_log("check_code_task", custom_note=custom[:100])
+
+        return "\n".join(notes)
     except Exception as e:
         debug_log("check_code_task", error=str(e))
         return ""
@@ -217,7 +297,11 @@ def generate_code(state):
     if not sql_result:
         return {"final_answer": "查無資料", "error": ""}
 
-    enable_chart = os.environ.get("ENABLE_CHART", "true").lower() in ("true", "1", "yes")
+    enable_chart = os.environ.get("ENABLE_CHART", "true").lower() in (
+        "true",
+        "1",
+        "yes",
+    )
 
     error_context = ""
     if state.get("error") and state.get("code"):
@@ -241,7 +325,9 @@ def generate_code(state):
 
     parts = []
     if expected_result:
-        parts.append(f"Expected result: {expected_result.get('type', '')} — {expected_result.get('description', '')}")
+        parts.append(
+            f"Expected result: {expected_result.get('type', '')} — {expected_result.get('description', '')}"
+        )
     if python_task:
         parts.append(f"Python task: {python_task}")
     if parts:
@@ -261,9 +347,15 @@ def generate_code(state):
     chart_instruction = profile.build_chart_instruction(enable_chart)
     data_profile = _profile_data(sql_result, sample)
     prompt = profile.build_code_prompt(
-        state.get("question", ""), state.get("sql", ""), len(sql_result),
-        sample, result_guidance_section, error_context, chart_instruction,
-        data_profile=data_profile, data_notes=data_notes,
+        state.get("question", ""),
+        state.get("sql", ""),
+        len(sql_result),
+        sample,
+        result_guidance_section,
+        error_context,
+        chart_instruction,
+        data_profile=data_profile,
+        data_notes=data_notes,
     )
 
     debug_log("generate_code", prompt=prompt)

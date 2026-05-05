@@ -22,15 +22,28 @@ PROJECT_DIR = EVAL_DIR.parent
 sys.path.insert(0, str(PROJECT_DIR))
 
 # 保存命令列傳入的 LLM 相關環境變數（優先於 .env.eval）
-_cli_env_keys = ["LLM_PROVIDER", "LLM_MODEL", "LLM_DEPLOYMENT",
-                 "SQL_LLM_PROVIDER", "SQL_LLM_MODEL", "SQL_LLM_DEPLOYMENT",
-                 "CODE_LLM_PROVIDER", "CODE_LLM_MODEL", "CODE_LLM_DEPLOYMENT",
-                 "QA_LLM_PROVIDER", "QA_LLM_MODEL", "QA_LLM_DEPLOYMENT",
-                 "SCHEMA_LLM_PROVIDER", "SCHEMA_LLM_MODEL", "SCHEMA_LLM_DEPLOYMENT",
-                 "PROMPT_PROFILE"]
+_cli_env_keys = [
+    "LLM_PROVIDER",
+    "LLM_MODEL",
+    "LLM_DEPLOYMENT",
+    "SQL_LLM_PROVIDER",
+    "SQL_LLM_MODEL",
+    "SQL_LLM_DEPLOYMENT",
+    "CODE_LLM_PROVIDER",
+    "CODE_LLM_MODEL",
+    "CODE_LLM_DEPLOYMENT",
+    "QA_LLM_PROVIDER",
+    "QA_LLM_MODEL",
+    "QA_LLM_DEPLOYMENT",
+    "SCHEMA_LLM_PROVIDER",
+    "SCHEMA_LLM_MODEL",
+    "SCHEMA_LLM_DEPLOYMENT",
+    "PROMPT_PROFILE",
+]
 _cli_env = {k: os.environ[k] for k in _cli_env_keys if k in os.environ}
 
 from dotenv import load_dotenv
+
 load_dotenv(EVAL_DIR / ".env.eval", override=True)
 
 # 恢復命令列傳入的值（覆蓋 .env.eval）
@@ -69,13 +82,60 @@ def load_db_description(db_id: str, question: str = None) -> str:
 
     keywords = set()
     if question:
-        stop_words = {"the", "a", "an", "is", "are", "was", "were", "of", "in", "for",
-                      "to", "and", "or", "that", "which", "what", "how", "many", "much",
-                      "with", "from", "by", "on", "at", "has", "have", "do", "does",
-                      "all", "each", "every", "than", "more", "less", "most", "least",
-                      "between", "their", "its", "not", "no", "please", "list", "give",
-                      "name", "number", "find", "show", "tell", "provide", "state"}
-        words = re.findall(r'[a-zA-Z]+', question.lower())
+        stop_words = {
+            "the",
+            "a",
+            "an",
+            "is",
+            "are",
+            "was",
+            "were",
+            "of",
+            "in",
+            "for",
+            "to",
+            "and",
+            "or",
+            "that",
+            "which",
+            "what",
+            "how",
+            "many",
+            "much",
+            "with",
+            "from",
+            "by",
+            "on",
+            "at",
+            "has",
+            "have",
+            "do",
+            "does",
+            "all",
+            "each",
+            "every",
+            "than",
+            "more",
+            "less",
+            "most",
+            "least",
+            "between",
+            "their",
+            "its",
+            "not",
+            "no",
+            "please",
+            "list",
+            "give",
+            "name",
+            "number",
+            "find",
+            "show",
+            "tell",
+            "provide",
+            "state",
+        }
+        words = re.findall(r"[a-zA-Z]+", question.lower())
         keywords = {w for w in words if w not in stop_words and len(w) > 2}
 
     all_lines = []
@@ -113,6 +173,7 @@ def load_full_description(db_id: str) -> str:
     if not desc_dir.exists():
         return ""
     import csv
+
     lines = []
     for csv_file in sorted(desc_dir.glob("*.csv")):
         table_name = csv_file.stem.lower()
@@ -140,6 +201,7 @@ def load_column_descs(db_id: str) -> dict:
     if not desc_dir.exists():
         return {}
     import csv
+
     result = {}
     for csv_file in sorted(desc_dir.glob("*.csv")):
         table_name = csv_file.stem.lower()
@@ -199,6 +261,7 @@ def run_gold_sql_on_sqlite(db_id: str, gold_sql: str) -> list:
 
 # PG gold results cache
 _pg_gold_cache = {}
+
 
 def load_pg_gold(db_id: str) -> dict:
     """Load pre-computed PG gold results. Returns {question_id: result_list}."""
@@ -294,7 +357,22 @@ def llm_judge(question: str, expected: list, actual_answer: str) -> dict:
         return {"correct": False, "reason": f"parse error: {res.content[:200]}"}
 
 
-def _write_eval_log(item, expected, pipeline_sql, pipeline_answer, verdict, use_evidence, use_desc, tag, final_answer="", task_plan="", code="", sql_row_count=0, sql_validation="", sql_validation_count=0):
+def _write_eval_log(
+    item,
+    expected,
+    pipeline_sql,
+    pipeline_answer,
+    verdict,
+    use_evidence,
+    use_desc,
+    tag,
+    final_answer="",
+    task_plan="",
+    code="",
+    sql_row_count=0,
+    sql_validation="",
+    sql_validation_count=0,
+):
     eval_log = {
         "question_id": item["question_id"],
         "db_id": item["db_id"],
@@ -329,7 +407,18 @@ def _write_eval_log(item, expected, pipeline_sql, pipeline_answer, verdict, use_
         json.dump(eval_log, f, ensure_ascii=False, indent=2)
 
 
-def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_desc: bool = False, desc_in_question: bool = False, dynamic_desc: bool = False, full_desc: bool = False, desc_tag: str = None, tag: str = None, pg_gold: bool = False) -> dict:
+def run_single(
+    item: dict,
+    verbose: bool = True,
+    use_evidence: bool = True,
+    use_desc: bool = False,
+    desc_in_question: bool = False,
+    dynamic_desc: bool = False,
+    full_desc: bool = False,
+    desc_tag: str = None,
+    tag: str = None,
+    pg_gold: bool = False,
+) -> dict:
     """跑單題，回傳評測結果 dict"""
     if verbose:
         print(f"\n📋 Question #{item['question_id']} ({item['difficulty']})")
@@ -349,7 +438,9 @@ def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_
         if verbose:
             print(f"   ⚠️ Gold SQL 執行失敗: {e}")
         verdict = {"correct": False, "reason": f"gold SQL error: {e}", "error": True}
-        _write_eval_log(item, [], "", "gold SQL 執行失敗", verdict, use_evidence, use_desc, tag)
+        _write_eval_log(
+            item, [], "", "gold SQL 執行失敗", verdict, use_evidence, use_desc, tag
+        )
         return verdict
 
     # Step 2: Pipeline on PG
@@ -363,12 +454,20 @@ def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_
         if full_desc:
             # 優先用精煉的 column_descs JSON（如果有的話）
             if desc_tag:
-                refined_path = EVAL_DIR / "databases" / item["db_id"] / f"column_descs_refined_{desc_tag}.json"
+                refined_path = (
+                    EVAL_DIR
+                    / "databases"
+                    / item["db_id"]
+                    / f"column_descs_refined_{desc_tag}.json"
+                )
             else:
-                refined_path = EVAL_DIR / "databases" / item["db_id"] / "column_descs_refined.json"
+                refined_path = (
+                    EVAL_DIR / "databases" / item["db_id"] / "column_descs_refined.json"
+                )
 
             if refined_path.exists():
                 import json as _json
+
                 with open(refined_path, encoding="utf-8") as f:
                     corrections = _json.load(f)
                 # Merge: 原始 desc + 精煉修正（修正覆蓋原始）
@@ -385,11 +484,23 @@ def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_
                     init_state["column_descs"] = col_descs
                 # 注入 compact desc（如果有的話）
                 if desc_tag:
-                    compact_path = EVAL_DIR / "databases" / item["db_id"] / f"description_compact_{desc_tag}.txt"
+                    compact_path = (
+                        EVAL_DIR
+                        / "databases"
+                        / item["db_id"]
+                        / f"description_compact_{desc_tag}.txt"
+                    )
                 else:
-                    compact_path = EVAL_DIR / "databases" / item["db_id"] / "description_compact.txt"
+                    compact_path = (
+                        EVAL_DIR
+                        / "databases"
+                        / item["db_id"]
+                        / "description_compact.txt"
+                    )
                 if compact_path.exists():
-                    init_state["schema_desc"] = compact_path.read_text(encoding="utf-8").strip()
+                    init_state["schema_desc"] = compact_path.read_text(
+                        encoding="utf-8"
+                    ).strip()
 
         if dynamic_desc:
             # 先設定 DB，避免 llm import 時觸發錯誤的 db 連線
@@ -413,13 +524,26 @@ def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_
                 else:
                     init_state["schema_desc"] = desc
         result = run_pipeline_with_state(init_state, item["db_id"])
-        answer = result.get("display_answer") or result.get("final_answer") or "無法回答"
+        answer = (
+            result.get("display_answer") or result.get("final_answer") or "無法回答"
+        )
     except Exception as e:
         if verbose:
-            import traceback; traceback.print_exc()
+            import traceback
+
+            traceback.print_exc()
             print(f"   ⚠️ Pipeline 執行失敗: {e}")
         verdict = {"correct": False, "reason": f"pipeline error: {e}", "error": True}
-        _write_eval_log(item, expected, "", f"Pipeline 執行失敗: {e}", verdict, use_evidence, use_desc, tag)
+        _write_eval_log(
+            item,
+            expected,
+            "",
+            f"Pipeline 執行失敗: {e}",
+            verdict,
+            use_evidence,
+            use_desc,
+            tag,
+        )
         return verdict
 
     if verbose:
@@ -434,7 +558,9 @@ def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_
         if pg_validation_path.exists():
             with open(pg_validation_path) as _vf:
                 _validation = json.load(_vf)
-            eligible = set(_validation.get("match", []) + _validation.get("order_diff", []))
+            eligible = set(
+                _validation.get("match", []) + _validation.get("order_diff", [])
+            )
             if item["question_id"] in eligible:
                 pg_results = load_pg_gold(item["db_id"])
                 pg_expected = pg_results.get(item["question_id"])
@@ -451,8 +577,14 @@ def run_single(item: dict, verbose: bool = True, use_evidence: bool = True, use_
     # 寫入評測 log
     raw_answer = result.get("final_answer", "")
     _write_eval_log(
-        item, expected, result.get("sql", ""), answer, verdict,
-        use_evidence, use_desc, tag,
+        item,
+        expected,
+        result.get("sql", ""),
+        answer,
+        verdict,
+        use_evidence,
+        use_desc,
+        tag,
         final_answer=raw_answer,
         task_plan=result.get("task_plan", ""),
         code=result.get("code", ""),
@@ -498,17 +630,51 @@ def print_summary(results: list, items: list):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--db", default="california_schools")
-    parser.add_argument("--id", type=int, default=None, help="單題模式：指定 question_id")
+    parser.add_argument(
+        "--id", type=int, default=None, help="單題模式：指定 question_id"
+    )
     parser.add_argument("--limit", type=int, default=None, help="批次模式：最多跑幾題")
-    parser.add_argument("--no-evidence", action="store_true", help="不使用 evidence hint")
-    parser.add_argument("--with-desc", action="store_true", help="附加 BIRD database description 到問題中")
-    parser.add_argument("--desc-in-question", action="store_true", help="把 description 接在 question 裡（而非注入 SQL prompt）")
-    parser.add_argument("--dynamic-desc", action="store_true", help="用 LLM 從完整 description 動態精簡出跟問題相關的欄位說明")
-    parser.add_argument("--full-desc", action="store_true", help="注入 BIRD 原始 CSV 欄位描述（load_full_description）")
-    parser.add_argument("--desc-tag", default=None, help="指定 compact desc 檔案的模型標記（如 gpt41mini），預設用 description_compact.txt")
-    parser.add_argument("--tag", default=None, help="實驗標籤（如 v1, gpt4o, no_retrieval），用於區分不同版本的結果")
-    parser.add_argument("--pg-gold", action="store_true", help="使用 PG gold results（而非 SQLite）作為標準答案")
-    parser.add_argument("--workers", type=int, default=1, help="並行 worker 數（預設 1，建議 2-4）")
+    parser.add_argument(
+        "--no-evidence", action="store_true", help="不使用 evidence hint"
+    )
+    parser.add_argument(
+        "--with-desc",
+        action="store_true",
+        help="附加 BIRD database description 到問題中",
+    )
+    parser.add_argument(
+        "--desc-in-question",
+        action="store_true",
+        help="把 description 接在 question 裡（而非注入 SQL prompt）",
+    )
+    parser.add_argument(
+        "--dynamic-desc",
+        action="store_true",
+        help="用 LLM 從完整 description 動態精簡出跟問題相關的欄位說明",
+    )
+    parser.add_argument(
+        "--full-desc",
+        action="store_true",
+        help="注入 BIRD 原始 CSV 欄位描述（load_full_description）",
+    )
+    parser.add_argument(
+        "--desc-tag",
+        default=None,
+        help="指定 compact desc 檔案的模型標記（如 gpt41mini），預設用 description_compact.txt",
+    )
+    parser.add_argument(
+        "--tag",
+        default=None,
+        help="實驗標籤（如 v1, gpt4o, no_retrieval），用於區分不同版本的結果",
+    )
+    parser.add_argument(
+        "--pg-gold",
+        action="store_true",
+        help="使用 PG gold results（而非 SQLite）作為標準答案",
+    )
+    parser.add_argument(
+        "--workers", type=int, default=1, help="並行 worker 數（預設 1，建議 2-4）"
+    )
     args = parser.parse_args()
 
     with open(EVAL_DIR / "dev.json") as f:
@@ -523,21 +689,50 @@ def main():
         if not item:
             print(f"❌ 找不到 db_id={args.db}, question_id={args.id}")
             sys.exit(1)
-        verdict = run_single(item, verbose=True, use_evidence=not args.no_evidence, use_desc=args.with_desc, desc_in_question=args.desc_in_question, dynamic_desc=args.dynamic_desc, full_desc=args.full_desc, desc_tag=args.desc_tag, tag=args.tag, pg_gold=args.pg_gold)
+        verdict = run_single(
+            item,
+            verbose=True,
+            use_evidence=not args.no_evidence,
+            use_desc=args.with_desc,
+            desc_in_question=args.desc_in_question,
+            dynamic_desc=args.dynamic_desc,
+            full_desc=args.full_desc,
+            desc_tag=args.desc_tag,
+            tag=args.tag,
+            pg_gold=args.pg_gold,
+        )
         icon = "✅" if verdict.get("correct") else "❌"
         print(f"\n結果：{icon} {'PASS' if verdict.get('correct') else 'FAIL'}")
     else:
         # 批次模式
         if args.limit:
-            candidates = candidates[:args.limit]
+            candidates = candidates[: args.limit]
 
         evidence_label = "without evidence" if args.no_evidence else "with evidence"
-        desc_label = " +dynamic-desc" if args.dynamic_desc else (" +desc(in Q)" if args.desc_in_question else (" +desc" if args.with_desc else (" +full-desc" if args.full_desc else "")))
+        desc_label = (
+            " +dynamic-desc"
+            if args.dynamic_desc
+            else (
+                " +desc(in Q)"
+                if args.desc_in_question
+                else (
+                    " +desc"
+                    if args.with_desc
+                    else (" +full-desc" if args.full_desc else "")
+                )
+            )
+        )
         tag_label = f", tag={args.tag}" if args.tag else ""
         workers_label = f", workers={args.workers}" if args.workers > 1 else ""
-        print(f"🚀 開始評測：{args.db}（{len(candidates)} 題，{evidence_label}{desc_label}{tag_label}{workers_label}）\n")
+        print(
+            f"🚀 開始評測：{args.db}（{len(candidates)} 題，{evidence_label}{desc_label}{tag_label}{workers_label}）\n"
+        )
         start = time.time()
-        tag_dir = EVAL_DIR / "results" / (args.tag or ("with_evidence" if not args.no_evidence else "no_evidence"))
+        tag_dir = (
+            EVAL_DIR
+            / "results"
+            / (args.tag or ("with_evidence" if not args.no_evidence else "no_evidence"))
+        )
 
         # 分離已完成和待跑的題目
         done_results = {}  # {question_id: verdict}
@@ -547,7 +742,9 @@ def main():
             if log_path.exists():
                 with open(log_path) as fh:
                     existing = json.load(fh)
-                done_results[item["question_id"]] = {"correct": existing.get("judge_correct", False)}
+                done_results[item["question_id"]] = {
+                    "correct": existing.get("judge_correct", False)
+                }
                 print(f"⏭️ #{item['question_id']} (已完成)")
             else:
                 todo.append(item)
@@ -570,6 +767,7 @@ def main():
         if args.workers > 1 and len(todo) > 1:
             from concurrent.futures import ThreadPoolExecutor, as_completed
             import threading
+
             _counter = {"done": 0}
             _lock = threading.Lock()
 
@@ -578,7 +776,9 @@ def main():
                 with _lock:
                     _counter["done"] += 1
                     icon = "✅" if verdict.get("correct") else "❌"
-                    print(f"[{_counter['done']}/{len(todo)}] {icon} #{item['question_id']} ({item['difficulty']})")
+                    print(
+                        f"[{_counter['done']}/{len(todo)}] {icon} #{item['question_id']} ({item['difficulty']})"
+                    )
                 return item["question_id"], verdict
 
             with ThreadPoolExecutor(max_workers=args.workers) as pool:
@@ -590,7 +790,11 @@ def main():
                     except Exception as e:
                         item = futures[future]
                         print(f"❌ #{item['question_id']} exception: {e}")
-                        todo_results[item["question_id"]] = {"correct": False, "reason": str(e), "error": True}
+                        todo_results[item["question_id"]] = {
+                            "correct": False,
+                            "reason": str(e),
+                            "error": True,
+                        }
         else:
             for i, item in enumerate(todo):
                 print(f"[{i+1}/{len(todo)}]", end="")

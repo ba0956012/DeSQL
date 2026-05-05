@@ -57,7 +57,13 @@ def print_stats(tag: str, results: list):
             dp = d["correct"] / d["total"] * 100 if d["total"] > 0 else 0
             print(f"  {diff:12s}: {d['correct']}/{d['total']} ({dp:.1f}%)")
     print()
-    return {"tag": tag, "total": total, "correct": correct, "pct": pct, "by_diff": by_diff}
+    return {
+        "tag": tag,
+        "total": total,
+        "correct": correct,
+        "pct": pct,
+        "by_diff": by_diff,
+    }
 
 
 def print_comparison(stats_list: list):
@@ -86,16 +92,21 @@ def print_comparison(stats_list: list):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("tags", nargs="*", help="結果資料夾名稱（如 with_evidence no_evidence）")
+    parser.add_argument(
+        "tags", nargs="*", help="結果資料夾名稱（如 with_evidence no_evidence）"
+    )
     parser.add_argument("--db", default=None, help="只看指定 DB")
     args = parser.parse_args()
 
     # 自動偵測所有結果資料夾
     if not args.tags:
-        args.tags = sorted([
-            d.name for d in RESULTS_DIR.iterdir()
-            if d.is_dir() and not d.name.startswith(".")
-        ])
+        args.tags = sorted(
+            [
+                d.name
+                for d in RESULTS_DIR.iterdir()
+                if d.is_dir() and not d.name.startswith(".")
+            ]
+        )
 
     if not args.tags:
         print("❌ eval/results/ 下沒有結果資料夾")

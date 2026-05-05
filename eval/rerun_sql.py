@@ -19,6 +19,7 @@ PROJECT_DIR = EVAL_DIR.parent
 sys.path.insert(0, str(PROJECT_DIR))
 
 from dotenv import load_dotenv
+
 load_dotenv(EVAL_DIR / ".env.eval", override=True)
 
 from sqlalchemy import create_engine, text as sa_text
@@ -54,6 +55,7 @@ def run_gold_sql_on_sqlite(db_id, gold_sql):
 def format_answer(question, data):
     from llm import llm as fmt_llm
     from langchain_core.messages import HumanMessage
+
     if not data:
         return "查無資料"
     data_str = json.dumps(data[:20], ensure_ascii=False, default=str)
@@ -76,6 +78,7 @@ def format_answer(question, data):
 def llm_judge(question, expected, actual_answer):
     from llm import llm as judge_llm
     from langchain_core.messages import HumanMessage
+
     if len(expected) == 1 and len(expected[0]) == 1:
         expected_str = str(list(expected[0].values())[0])
     elif len(expected) <= 10:
@@ -96,8 +99,10 @@ def llm_judge(question, expected, actual_answer):
     res = judge_llm.invoke([HumanMessage(content=prompt)])
     try:
         t = res.content.strip()
-        if t.startswith("```"): t = t.split("\n", 1)[1]
-        if t.endswith("```"): t = t[:-3]
+        if t.startswith("```"):
+            t = t.split("\n", 1)[1]
+        if t.endswith("```"):
+            t = t[:-3]
         return json.loads(t.strip())
     except:
         return {"correct": False, "reason": f"parse error: {res.content[:200]}"}
@@ -107,7 +112,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--tag", required=True)
     parser.add_argument("--db", required=True)
-    parser.add_argument("--only-empty", action="store_true", help="只補跑 data 為空的題目")
+    parser.add_argument(
+        "--only-empty", action="store_true", help="只補跑 data 為空的題目"
+    )
     args = parser.parse_args()
 
     pattern = str(EVAL_DIR / "results" / args.tag / f"{args.db}_*.json")

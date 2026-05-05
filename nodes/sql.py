@@ -34,7 +34,9 @@ def _validate_filter_values(filters):
         checked += 1
         try:
             # Check if value exists
-            check_sql = f"""SELECT COUNT(*) FROM "{table}" WHERE "{column}" = '{value}'"""
+            check_sql = (
+                f"""SELECT COUNT(*) FROM "{table}" WHERE "{column}" = '{value}'"""
+            )
             with engine.connect() as conn:
                 count = conn.execute(sa_text(check_sql)).scalar()
 
@@ -49,24 +51,51 @@ def _validate_filter_values(filters):
                         f"\nWARNING: '{value}' not found in {table}.{column}. "
                         f"Similar values: {similar}. Use the exact value from this list."
                     )
-                    debug_log("validate_filter", action="similar_found", table=table, column=column,
-                              value=value, similar=similar)
+                    debug_log(
+                        "validate_filter",
+                        action="similar_found",
+                        table=table,
+                        column=column,
+                        value=value,
+                        similar=similar,
+                    )
                 else:
                     # Try case-insensitive exact match
                     ilike_sql = f"""SELECT DISTINCT "{column}" FROM "{table}" WHERE LOWER("{column}") = LOWER('{value}') LIMIT 3"""
                     with engine.connect() as conn:
-                        case_matches = [r[0] for r in conn.execute(sa_text(ilike_sql)).fetchall()]
+                        case_matches = [
+                            r[0] for r in conn.execute(sa_text(ilike_sql)).fetchall()
+                        ]
                     if case_matches:
                         warnings.append(
                             f"\nWARNING: '{value}' not found in {table}.{column} (case mismatch). "
                             f"Correct value: '{case_matches[0]}'"
                         )
-                        debug_log("validate_filter", action="case_mismatch", table=table, column=column,
-                                  value=value, case_match=case_matches[0])
+                        debug_log(
+                            "validate_filter",
+                            action="case_mismatch",
+                            table=table,
+                            column=column,
+                            value=value,
+                            case_match=case_matches[0],
+                        )
                     else:
-                        debug_log("validate_filter", action="not_found", table=table, column=column, value=value)
+                        debug_log(
+                            "validate_filter",
+                            action="not_found",
+                            table=table,
+                            column=column,
+                            value=value,
+                        )
             else:
-                debug_log("validate_filter", action="ok", table=table, column=column, value=value, count=count)
+                debug_log(
+                    "validate_filter",
+                    action="ok",
+                    table=table,
+                    column=column,
+                    value=value,
+                    count=count,
+                )
         except Exception as e:
             debug_log("validate_filter", action="error", error=str(e))
             continue
@@ -79,6 +108,7 @@ def _validate_filter_values(filters):
 def _embed_descs_in_ddl(schema_info: str, column_descs: dict) -> str:
     """把欄位描述嵌入 DDL 的每個欄位行後面作為 SQL 註解。"""
     import re
+
     lines = schema_info.split("\n")
     result = []
     current_table = ""
@@ -88,8 +118,12 @@ def _embed_descs_in_ddl(schema_info: str, column_descs: dict) -> str:
             match = re.search(r'create\s+table\s+"?(\w+)"?', lower)
             if match:
                 current_table = match.group(1)
-        elif current_table and (line.startswith("\t") or line.startswith("    ")) and not lower.startswith(")"):
-            col_match = re.match(r'\s+(\w+)\s+', line)
+        elif (
+            current_table
+            and (line.startswith("\t") or line.startswith("    "))
+            and not lower.startswith(")")
+        ):
+            col_match = re.match(r"\s+(\w+)\s+", line)
             if col_match:
                 col_name = col_match.group(1).lower()
                 key = f"{current_table}.{col_name}"
@@ -115,10 +149,18 @@ def generate_sql(state):
     if state.get("error") and state.get("sql"):
         validation = state.get("sql_validation", "")
         if validation:
-            sql_error_context = profile.build_error_context_validation(validation, state["sql"])
+            sql_error_context = profile.build_error_context_validation(
+                validation, state["sql"]
+            )
         else:
-            sql_error_context = profile.build_error_context_failed(state["sql"], state["error"])
-    elif state.get("sql") and not state.get("sql_result") and state.get("sql_retry", 0) > 0:
+            sql_error_context = profile.build_error_context_failed(
+                state["sql"], state["error"]
+            )
+    elif (
+        state.get("sql")
+        and not state.get("sql_result")
+        and state.get("sql_retry", 0) > 0
+    ):
         sql_error_context = profile.build_error_context_empty(state["sql"])
 
     all_rules = profile.SQL_RULES + DOMAIN_SQL_RULES
@@ -126,10 +168,14 @@ def generate_sql(state):
 
     base_schema = state.get("filtered_schema") or SCHEMA_INFO
     column_descs = state.get("column_descs")
-    schema_text = _embed_descs_in_ddl(base_schema, column_descs) if column_descs else base_schema
+    schema_text = (
+        _embed_descs_in_ddl(base_schema, column_descs) if column_descs else base_schema
+    )
 
     schema_desc = state.get("schema_desc", "")
-    schema_desc_section = f"\nColumn descriptions:\n{schema_desc}\n" if schema_desc else ""
+    schema_desc_section = (
+        f"\nColumn descriptions:\n{schema_desc}\n" if schema_desc else ""
+    )
 
     # Extract SQL task from task_plan
     task_plan = state.get("task_plan", "")
@@ -157,13 +203,23 @@ def generate_sql(state):
     if sql_task:
         task_section = profile.build_task_section(sql_task, tables_info, join_info)
         prompt = profile.build_sql_prompt_with_task(
-            task_section, rules_text, schema_text, schema_desc_section,
-            enum_info, conditions_context + filter_validation, sql_error_context
+            task_section,
+            rules_text,
+            schema_text,
+            schema_desc_section,
+            enum_info,
+            conditions_context + filter_validation,
+            sql_error_context,
         )
     else:
         prompt = profile.build_sql_prompt_no_task(
-            state["question"], rules_text, schema_text, schema_desc_section,
-            enum_info, conditions_context, sql_error_context
+            state["question"],
+            rules_text,
+            schema_text,
+            schema_desc_section,
+            enum_info,
+            conditions_context,
+            sql_error_context,
         )
 
     debug_log("generate_sql", prompt=prompt)
@@ -194,21 +250,29 @@ def validate_sql_result(state):
 
     # Parse actual SQL to find which tables were used
     sql = state.get("sql", "").lower()
-    sql_tables = set(re.findall(r'\bfrom\s+(\w+)', sql) + re.findall(r'\bjoin\s+(\w+)', sql))
+    sql_tables = set(
+        re.findall(r"\bfrom\s+(\w+)", sql) + re.findall(r"\bjoin\s+(\w+)", sql)
+    )
 
     missing_tables = planned_tables - sql_tables
     if not missing_tables:
         return {"sql_validation": ""}
 
     # Only flag if the missing table has columns referenced in python_task
-    reason = f"SQL is missing table(s): {', '.join(sorted(missing_tables))}. " \
-             f"Task plan requires: {', '.join(sorted(planned_tables))}. " \
-             f"SQL only uses: {', '.join(sorted(sql_tables))}. " \
-             f"Please add the missing table(s) with appropriate JOIN."
+    reason = (
+        f"SQL is missing table(s): {', '.join(sorted(missing_tables))}. "
+        f"Task plan requires: {', '.join(sorted(planned_tables))}. "
+        f"SQL only uses: {', '.join(sorted(sql_tables))}. "
+        f"Please add the missing table(s) with appropriate JOIN."
+    )
 
-    debug_log("validate_sql_result", result="missing_tables",
-              planned=sorted(planned_tables), actual=sorted(sql_tables),
-              missing=sorted(missing_tables))
+    debug_log(
+        "validate_sql_result",
+        result="missing_tables",
+        planned=sorted(planned_tables),
+        actual=sorted(sql_tables),
+        missing=sorted(missing_tables),
+    )
 
     return {
         "sql_validation": reason,
@@ -221,7 +285,9 @@ def execute_sql(state):
     sql = state.get("sql", "")
     if not sql:
         return {
-            "sql_result": [], "sample": [], "error": "No SQL generated",
+            "sql_result": [],
+            "sample": [],
+            "error": "No SQL generated",
             "sql_retry": state.get("sql_retry", 0) + 1,
         }
     debug_log("execute_sql", sql=sql)

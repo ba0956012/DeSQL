@@ -85,7 +85,9 @@ def test_gold_sql_failure_returns_500(client):
     hints = ds.get_db_hints(db_ids[0])
     qid = hints[0]["question_id"]
 
-    with patch("eval_service.routers.eval.run_gold_sql", side_effect=Exception("sqlite error")):
+    with patch(
+        "eval_service.routers.eval.run_gold_sql", side_effect=Exception("sqlite error")
+    ):
         resp = client.post(
             f"/databases/{db_ids[0]}/questions/{qid}/evaluate",
             json={"answer": "test answer"},

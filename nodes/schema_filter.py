@@ -37,12 +37,12 @@ def _parse_table_columns(schema_info: str):
             pk_fk.setdefault(current_table, set())
             continue
         if current_table and "primary key" in lower:
-            pk_m = re.search(r'primary\s+key\s*\(([^)]+)\)', lower)
+            pk_m = re.search(r"primary\s+key\s*\(([^)]+)\)", lower)
             if pk_m:
                 for col in pk_m.group(1).split(","):
                     pk_fk[current_table].add(col.strip().strip('"').lower())
         if current_table and "foreign key" in lower:
-            fk_m = re.search(r'foreign\s+key\s*\(([^)]+)\)', lower)
+            fk_m = re.search(r"foreign\s+key\s*\(([^)]+)\)", lower)
             if fk_m:
                 for col in fk_m.group(1).split(","):
                     pk_fk[current_table].add(col.strip().strip('"').lower())
@@ -117,7 +117,9 @@ def _build_desc_text(table: str, columns: list, column_descs: dict) -> str:
     return "\n".join(lines)
 
 
-def _filter_ddl(schema_info: str, keep_tables: set = None, keep_cols: dict = None) -> str:
+def _filter_ddl(
+    schema_info: str, keep_tables: set = None, keep_cols: dict = None
+) -> str:
     """過濾 DDL：移除不需要的表，過濾欄位"""
     lines = schema_info.split("\n")
     result = []
@@ -158,7 +160,9 @@ def _filter_ddl(schema_info: str, keep_tables: set = None, keep_cols: dict = Non
     return "\n".join(result)
 
 
-def _build_unique_columns_hint(table_cols: dict, pk_fk: dict, column_descs: dict) -> str:
+def _build_unique_columns_hint(
+    table_cols: dict, pk_fk: dict, column_descs: dict
+) -> str:
     """Auto-detect columns unique to each table (excluding PK/FK). Returns a hint string."""
     if len(table_cols) < 2:
         return ""
@@ -193,7 +197,10 @@ def _build_unique_columns_hint(table_cols: dict, pk_fk: dict, column_descs: dict
     if not lines:
         return ""
 
-    return "Unique columns per table (only in this table, not in others):\n" + "\n".join(lines)
+    return (
+        "Unique columns per table (only in this table, not in others):\n"
+        + "\n".join(lines)
+    )
 
 
 def schema_filter(state):
@@ -211,9 +218,9 @@ def schema_filter(state):
     lines = []
     for c in conditions:
         if c.get("type") == "enum":
-            t = c.get('table')
-            col = c.get('column')
-            val = c.get('value')
+            t = c.get("table")
+            col = c.get("column")
+            val = c.get("value")
             if t and col and val:
                 lines.append(f"  {t}.{col} = '{val}'")
         elif c.get("type") == "keyword" and retrieved:
@@ -241,19 +248,31 @@ def schema_filter(state):
             retrieval_cols.add(f"{t}.{c}")
 
     if SCHEMA_FILTER_MODE == "advanced":
-        result = _filter_advanced(state, profile, question, table_cols, pk_fk,
-                                all_tables, retrieval_cols, column_descs)
+        result = _filter_advanced(
+            state,
+            profile,
+            question,
+            table_cols,
+            pk_fk,
+            all_tables,
+            retrieval_cols,
+            column_descs,
+        )
     else:
-        result = _filter_big_tables(state, profile, question, table_cols, pk_fk,
-                                  retrieval_cols, column_descs)
+        result = _filter_big_tables(
+            state, profile, question, table_cols, pk_fk, retrieval_cols, column_descs
+        )
     result["_conditions_context"] = conditions_ctx
     return result
 
 
-def _filter_big_tables(state, profile, question, table_cols, pk_fk,
-                       retrieval_cols, column_descs):
+def _filter_big_tables(
+    state, profile, question, table_cols, pk_fk, retrieval_cols, column_descs
+):
     """v29 行為：只對大表（>COL_THRESHOLD）用 LLM 選相關欄位"""
-    big_tables = {t: cols for t, cols in table_cols.items() if len(cols) > COL_THRESHOLD}
+    big_tables = {
+        t: cols for t, cols in table_cols.items() if len(cols) > COL_THRESHOLD
+    }
     if not big_tables:
         debug_log("schema_filter", skip="no big tables")
         return {"filtered_schema": ""}
@@ -285,8 +304,7 @@ def _filter_big_tables(state, profile, question, table_cols, pk_fk,
                 final.add(parts[1])
 
         keep_cols[table] = final
-        debug_log("schema_filter", table=table,
-                  original=len(cols), kept=len(final))
+        debug_log("schema_filter", table=table, original=len(cols), kept=len(final))
 
     filtered = _filter_ddl(SCHEMA_INFO, keep_cols=keep_cols)
 
@@ -300,15 +318,26 @@ def _filter_big_tables(state, profile, question, table_cols, pk_fk,
                     filtered_descs[key] = desc
             else:
                 filtered_descs[key] = desc
-        debug_log("schema_filter", original_descs=len(column_descs),
-                  filtered_descs=len(filtered_descs))
+        debug_log(
+            "schema_filter",
+            original_descs=len(column_descs),
+            filtered_descs=len(filtered_descs),
+        )
         return {"filtered_schema": filtered, "column_descs": filtered_descs}
 
     return {"filtered_schema": filtered}
 
 
-def _filter_advanced(state, profile, question, table_cols, pk_fk,
-                     all_tables, retrieval_cols, column_descs):
+def _filter_advanced(
+    state,
+    profile,
+    question,
+    table_cols,
+    pk_fk,
+    all_tables,
+    retrieval_cols,
+    column_descs,
+):
     """進階模式：對所有表排除無關欄位 + 自底向上表級移除"""
     keep_cols = {}
     useful_cols = {}
@@ -345,8 +374,14 @@ def _filter_advanced(state, profile, question, table_cols, pk_fk,
                 non_pkfk.add(parts[1])
         useful_cols[table] = non_pkfk
 
-        debug_log("schema_filter", phase="col_filter", table=table,
-                  original=len(cols), kept=len(final), useful=len(non_pkfk))
+        debug_log(
+            "schema_filter",
+            phase="col_filter",
+            table=table,
+            original=len(cols),
+            kept=len(final),
+            useful=len(non_pkfk),
+        )
 
     # 表級移除
     keep_tables = None
@@ -361,11 +396,19 @@ def _filter_advanced(state, profile, question, table_cols, pk_fk,
             for table in candidates_to_remove:
                 if _is_on_path(fk_graph, table, tables_with_useful_cols):
                     keep_tables.add(table)
-                    debug_log("schema_filter", phase="table_prune",
-                              table=table, action="keep (bridge)")
+                    debug_log(
+                        "schema_filter",
+                        phase="table_prune",
+                        table=table,
+                        action="keep (bridge)",
+                    )
                 else:
-                    debug_log("schema_filter", phase="table_prune",
-                              table=table, action="remove")
+                    debug_log(
+                        "schema_filter",
+                        phase="table_prune",
+                        table=table,
+                        action="remove",
+                    )
 
             if keep_tables == all_tables:
                 keep_tables = None
@@ -383,8 +426,11 @@ def _filter_advanced(state, profile, question, table_cols, pk_fk,
                     filtered_descs[key] = desc
             else:
                 filtered_descs[key] = desc
-        debug_log("schema_filter", original_descs=len(column_descs),
-                  filtered_descs=len(filtered_descs))
+        debug_log(
+            "schema_filter",
+            original_descs=len(column_descs),
+            filtered_descs=len(filtered_descs),
+        )
         return {"filtered_schema": filtered, "column_descs": filtered_descs}
 
     return {"filtered_schema": filtered}

@@ -2,8 +2,8 @@
 
 from pydantic import BaseModel, Field, field_validator
 
-
 # ── 請求模型 ──────────────────────────────────────────────
+
 
 class EvaluateRequest(BaseModel):
     answer: str = Field(..., min_length=1, description="使用者的答案文字")
@@ -17,6 +17,7 @@ class EvaluateRequest(BaseModel):
 
 
 # ── 回應模型 ──────────────────────────────────────────────
+
 
 class HealthResponse(BaseModel):
     status: str = "ok"

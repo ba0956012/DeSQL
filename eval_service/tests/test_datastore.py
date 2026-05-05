@@ -47,7 +47,9 @@ def data_dir(tmp_path, sample_data):
     # Create database directories with description files
     db_a_dir = tmp_path / "databases" / "db_a"
     db_a_dir.mkdir(parents=True)
-    (db_a_dir / "dataset_description.md").write_text("# DB A original", encoding="utf-8")
+    (db_a_dir / "dataset_description.md").write_text(
+        "# DB A original", encoding="utf-8"
+    )
     (db_a_dir / "description_compact.txt").write_text("DB A compact", encoding="utf-8")
     (db_a_dir / "db_a.sqlite").write_bytes(b"")
 

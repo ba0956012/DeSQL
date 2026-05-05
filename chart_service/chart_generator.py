@@ -7,6 +7,7 @@ import base64
 import io
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -36,6 +37,7 @@ class ChartGenerator:
 
     def __init__(self, settings: Settings):
         from openai import AzureOpenAI
+
         self.client = AzureOpenAI(
             api_key=settings.azure_openai_api_key,
             azure_endpoint=settings.azure_openai_endpoint,
@@ -69,7 +71,9 @@ class ChartGenerator:
                 return ChartResponse(chart_type="table", reason=reason, chart_html=html)
             else:
                 image = self._render_table_image(data, question)
-                return ChartResponse(chart_type="table", reason=reason, chart_image=image)
+                return ChartResponse(
+                    chart_type="table", reason=reason, chart_image=image
+                )
 
         # Step 3: LLM 生成程式碼
         if engine == "echarts":
@@ -105,9 +109,7 @@ class ChartGenerator:
         self, data: list[dict], question: str
     ) -> tuple[bool, str, str]:
         """使用 LLM 判斷圖表類型。回傳 (should_chart, chart_type, reason)。"""
-        plot_sample = json.dumps(
-            data[:5], indent=2, ensure_ascii=False, default=str
-        )
+        plot_sample = json.dumps(data[:5], indent=2, ensure_ascii=False, default=str)
         prompt = f"""你是資料視覺化顧問。請判斷以下資料最適合用哪種方式呈現給使用者。
 
 判斷標準：
@@ -265,9 +267,13 @@ class ChartGenerator:
 
         if len(data) > max_rows:
             ax.text(
-                0.5, -0.01,
+                0.5,
+                -0.01,
                 f"（僅顯示前 {max_rows} 筆，共 {len(data)} 筆）",
-                transform=ax.transAxes, ha="center", fontsize=9, color="gray",
+                transform=ax.transAxes,
+                ha="center",
+                fontsize=9,
+                color="gray",
             )
 
         buf = io.BytesIO()
@@ -282,9 +288,7 @@ class ChartGenerator:
         self, data: list[dict], question: str, chart_type: str
     ) -> tuple[str, str]:
         """LLM 生成 pyecharts 程式碼 → 沙箱執行 → 回傳 (option_json, html)。含 1 次重試。"""
-        plot_sample = json.dumps(
-            data[:5], indent=2, ensure_ascii=False, default=str
-        )
+        plot_sample = json.dumps(data[:5], indent=2, ensure_ascii=False, default=str)
         code_prompt = f"""根據以下資料用 pyecharts 畫一張 {chart_type} 圖表。
 
 問題：{question}
@@ -330,9 +334,7 @@ class ChartGenerator:
         self, data: list[dict], question: str, chart_type: str
     ) -> str:
         """LLM 生成 matplotlib 程式碼 → 沙箱執行 → 回傳 base64 PNG。含 1 次重試。"""
-        plot_sample = json.dumps(
-            data[:5], indent=2, ensure_ascii=False, default=str
-        )
+        plot_sample = json.dumps(data[:5], indent=2, ensure_ascii=False, default=str)
         code_prompt = f"""根據以下資料畫一張 {chart_type} 圖表。
 
 問題：{question}

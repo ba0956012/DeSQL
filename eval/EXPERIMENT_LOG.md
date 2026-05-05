@@ -542,4 +542,43 @@ Pipeline SQL vs Gold SQL 的聚合使用率（259 題）：
 2. **例子引導比規則列表更安全**: OK/NOT OK 格式讓 LLM 知道邊界，不會過度使用
 3. **code 層的提示不能跟 QA 的 python_task 衝突**: aggregation warning 被 python_task 覆蓋
 4. **多步聚合問題的根因在 QA**: python_task 不夠精確，但在 QA prompt 加提示反而有害
-5. **10 次實驗 37 題全錯是硬天花板**: 需要架構改動（self-consistency、更強模型）才能突破
+
+---
+
+## v0.5.0 實驗：Dynamic QA Advice + Warning Library
+
+### 背景
+- Baseline: `test_rulesql` = 190/259（但因 Bedrock 模型漂移，實際穩定版約 185-187）
+- 常錯題分析（47 題）發現 5 類 pitfall 佔多數：SEPARATE COUNTS, AGGREGATION NEEDED, HINT EXPLAINS COLUMN NAME, MULTI-STEP COMPUTATION, AMBIGUOUS ENTITY
+
+### 實驗 A: Dynamic QA Advice（_classify_question）
+- 改動: QA node 前用 LLM 偵測問題是否有上述 5 類 pitfall，有的話注入 targeted advice 到 QA prompt
+- 機制: 保守策略 — 大多數簡單問題不加任何 advice，只在偵測到 pitfall 時才加
+- 結果:
+  - test_llmqa7: 200/259 (+10)
+  - test_llmqa8: 191/259 (+1)
+  - 兩次差異大，顯示 variance 較高
+
+### 實驗 B: Advice-mode _check_code_task
+- 改動: `_check_code_task` 也改用類似 `_classify_question` 的 advice-only 模式（不用 warning library）
+- 5-run 結果: 191, 194, 190, 191, 191 → avg 191.4, range 190-194
+- 特點: 非常穩定，variance 小
+
+### 實驗 C: Warning Library _check_code_task（最終採用）
+- 改動: `_check_code_task` 使用 predefined warning library（PERCENTAGE, DISTINCT, COLUMN_MISMATCH, ALREADY_AGGREGATED, SORT_DIRECTION, FIRST_LAST），LLM 從中選取適用的 + 可選 custom note
+- 5-run 結果: 195, 192, 195, 189, 199 → avg 194.0, range 189-199
+- 特點: 平均分更高，但 variance 較大
+
+### 失敗的嘗試
+| 改動 | 結果 | 結論 |
+|------|------|------|
+| Hint analysis chain-of-thought field | -8 | ❌ 增加 JSON 欄位分散 LLM 注意力 |
+| Static hint guideline | -6 | ❌ 固定提示不如動態偵測 |
+| Ministral 8B as QA planner | hallucinated JSON | ❌ 模型能力不足 |
+| Ministral 14B as QA planner | 151/259 (58.3%) | ❌ 結構化輸出品質差 |
+
+### 最終決定
+- 採用 **Warning Library 版本**（avg 194.0 > advice-mode avg 191.4）
+- `_classify_question`: 5 pitfall 偵測 + conservative advice
+- `_check_code_task`: select-from-library + optional custom note
+- 兩者皆自動啟用，無需額外參數

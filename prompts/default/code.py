@@ -1,8 +1,18 @@
 """Code node prompt templates — default (中文, gpt-4.1-mini)"""
 
 
-def build_code_prompt(question, sql, sql_result_len, sample, result_guidance_section, error_context, chart_instruction, data_profile="") -> str:
+def build_code_prompt(
+    question,
+    sql,
+    sql_result_len,
+    sample,
+    result_guidance_section,
+    error_context,
+    chart_instruction,
+    data_profile="",
+) -> str:
     import json
+
     columns = list(sample[0].keys()) if sample and isinstance(sample[0], dict) else []
     sample_str = json.dumps(sample, indent=2, ensure_ascii=False, default=str)
 

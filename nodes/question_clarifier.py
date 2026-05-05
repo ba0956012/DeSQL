@@ -13,7 +13,11 @@ from langchain_core.messages import HumanMessage
 from llm import llm
 from utils import debug_log
 
-ENABLE_QUESTION_CLARIFIER = os.getenv("ENABLE_QUESTION_CLARIFIER", "false").lower() in ("true", "1", "yes")
+ENABLE_QUESTION_CLARIFIER = os.getenv("ENABLE_QUESTION_CLARIFIER", "false").lower() in (
+    "true",
+    "1",
+    "yes",
+)
 
 CLARIFY_PROMPT = """Rewrite the following question by explicitly listing all conditions and requirements mentioned in it. Do NOT add new conditions or interpret beyond what is stated. Just make implicit conditions explicit.
 
@@ -52,9 +56,9 @@ def clarify_question(state):
     try:
         res = llm.invoke([HumanMessage(content=prompt)])
         clarified = res.content.strip()
-        debug_log("question_clarifier",
-                  original=question[:100],
-                  clarified=clarified[:200])
+        debug_log(
+            "question_clarifier", original=question[:100], clarified=clarified[:200]
+        )
 
         # Only update if clarifier added something (longer output)
         if clarified and len(clarified) > len(question):
